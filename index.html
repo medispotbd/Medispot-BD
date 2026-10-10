@@ -141,15 +141,20 @@ searchBox.addEventListener('input', function () {
   resultBox.style.display = 'block';
   resultBox.innerHTML = matches.length
     ? '<h3>সার্চের ফলাফল</h3>' +
-      
-matches.map(product =>
-  '<p><strong>' + product.name +
-  '</strong><br>কোম্পানি: ' +
-  product.company +
-  '<br>দাম: ৳' + product.price +
-  ' (' + product.unit + ')</p>'
-).join('')
 
+matches.map(product =>
+  '<div class="card">' +
+  (product.image
+    ? '<img src="' + product.image +
+      '" alt="' + product.name +
+      '" style="width:100%;max-width:240px;height:180px;object-fit:contain;border-radius:10px;">'
+    : '') +
+  '<h3>' + product.name + '</h3>' +
+  '<p>কোম্পানি: ' + product.company + '</p>' +
+  '<h3>৳' + product.price + '</h3>' +
+  '<p>' + product.unit + '</p>' +
+  '</div>'
+).join('')
     : '<p>কোনো ফলাফল পাওয়া যায়নি।</p>';
 });
 </script>
