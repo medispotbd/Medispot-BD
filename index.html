@@ -90,12 +90,34 @@
 <script>
 const searchBox = document.querySelector('.search');
 
+
 const products = [
-  { name: 'Napa 500 mg', company: 'Beximco' },
-  { name: 'Seclo 20 mg', company: 'Square' },
-  { name: 'Montene 10 mg', company: 'Square' },
-  { name: 'Ace 500 mg', company: 'Square' }
+  {
+    name: 'Napa 500 mg',
+    company: 'Beximco',
+    price: 612,
+    unit: 'প্রতি বক্স'
+  },
+  {
+    name: 'Seclo 20 mg',
+    company: 'Square',
+    price: 720,
+    unit: 'প্রতি বক্স'
+  },
+  {
+    name: 'Montene 10 mg',
+    company: 'Square',
+    price: 525,
+    unit: 'প্রতি বক্স'
+  },
+  {
+    name: 'Nexum Mups 20 mg',
+    company: 'Square',
+    price: 1000,
+    unit: 'প্রতি বক্স'
+  }
 ];
+
 
 const resultBox = document.createElement('div');
 resultBox.className = 'card';
