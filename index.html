@@ -87,5 +87,45 @@
     Medi Source © 2026
     <p>Medicine marketplace — under development</p>
   </footer>
+<script>
+const searchBox = document.querySelector('.search');
+
+const products = [
+  { name: 'Napa 500 mg', company: 'Beximco' },
+  { name: 'Seclo 20 mg', company: 'Square' },
+  { name: 'Montene 10 mg', company: 'Healthcare' },
+  { name: 'Ace 500 mg', company: 'Square' }
+];
+
+const resultBox = document.createElement('div');
+resultBox.className = 'card';
+resultBox.style.display = 'none';
+searchBox.insertAdjacentElement('afterend', resultBox);
+
+searchBox.addEventListener('input', function () {
+  const query = this.value.trim().toLowerCase();
+
+  if (!query) {
+    resultBox.style.display = 'none';
+    return;
+  }
+
+  const matches = products.filter(product =>
+    (product.name + ' ' + product.company)
+      .toLowerCase().includes(query)
+  );
+
+  resultBox.style.display = 'block';
+  resultBox.innerHTML = matches.length
+    ? '<h3>সার্চের ফলাফল</h3>' +
+      matches.map(product =>
+        '<p><strong>' + product.name +
+        '</strong><br>কোম্পানি: ' +
+        product.company + '</p>'
+      ).join('')
+    : '<p>কোনো ফলাফল পাওয়া যায়নি।</p>';
+});
+</script>
+
 </body>
 </html>
