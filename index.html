@@ -140,11 +140,15 @@ searchBox.addEventListener('input', function () {
   resultBox.style.display = 'block';
   resultBox.innerHTML = matches.length
     ? '<h3>সার্চের ফলাফল</h3>' +
-      matches.map(product =>
-        '<p><strong>' + product.name +
-        '</strong><br>কোম্পানি: ' +
-        product.company + '</p>'
-      ).join('')
+      
+matches.map(product =>
+  '<p><strong>' + product.name +
+  '</strong><br>কোম্পানি: ' +
+  product.company +
+  '<br>দাম: ৳' + product.price +
+  ' (' + product.unit + ')</p>'
+).join('')
+
     : '<p>কোনো ফলাফল পাওয়া যায়নি।</p>';
 });
 </script>
