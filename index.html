@@ -2,111 +2,556 @@
 <!DOCTYPE html>
 <html lang="bn">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Medispot BD | Medicine Marketplace</title>
-  <style>
-    * { box-sizing: border-box; }
-    body {
-      margin: 0;
-      font-family: Arial, sans-serif;
-      background: #f5f8f7;
-      color: #183b35;
-    }
-    header {
-      background: #123b35;
-      color: white;
-      padding: 24px 18px;
-    }
-    header h1 { margin: 0 0 8px; }
-    header p { margin: 0; color: #d7e8e2; }
-    main { padding: 20px 16px; }
-    .search {
-      width: 100%;
-      padding: 14px;
-      border: 1px solid #ccd9d5;
-      border-radius: 10px;
-      font-size: 16px;
-    }
-    h2 { margin-top: 28px; }
-.card {
-  background: #ffffff;
-  border: 1px solid #e5eee9;
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="theme-color" content="#123b35">
+<title>Medispot BD | Medicine Marketplace</title>
+
+<style>
+:root {
+  --green: #14765f;
+  --dark: #123b35;
+  --mint: #eaf7f1;
+  --bg: #f6f9f8;
+  --text: #193b35;
+  --muted: #7b8984;
+  --border: #e5eeea;
+}
+
+* { box-sizing: border-box; }
+
+body {
+  margin: 0;
+  background: var(--bg);
+  color: var(--text);
+  font-family: -apple-system, BlinkMacSystemFont,
+    "Segoe UI", Arial, sans-serif;
+}
+
+a { text-decoration: none; color: inherit; }
+
+.container {
+  width: min(1120px, 100%);
+  margin: auto;
+  padding-left: 18px;
+  padding-right: 18px;
+}
+
+/* HEADER */
+header {
+  background: white;
+  border-bottom: 1px solid var(--border);
+}
+
+.nav {
+  min-height: 76px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.brand {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.brand-mark {
+  width: 45px;
+  height: 45px;
+  border-radius: 14px;
+  display: grid;
+  place-items: center;
+  color: white;
+  background: linear-gradient(145deg, #17866a, #105345);
+  font-size: 27px;
+  font-weight: 800;
+}
+
+.brand h1 {
+  font-size: 21px;
+  letter-spacing: -.6px;
+  margin: 0;
+  color: var(--dark);
+}
+
+.brand p {
+  font-size: 11px;
+  margin: 4px 0 0;
+  color: var(--muted);
+}
+
+.nav-label {
+  color: var(--green);
+  font-size: 12px;
+  font-weight: 700;
+  background: var(--mint);
+  padding: 9px 12px;
+  border-radius: 30px;
+}
+
+/* HERO */
+.hero {
+  background: linear-gradient(120deg, #103d34, #19755c);
+  color: white;
+  overflow: hidden;
+}
+
+.hero-inner {
+  padding-top: 39px;
+  padding-bottom: 65px;
+}
+
+.eyebrow {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  background: rgba(255,255,255,.12);
+  border: 1px solid rgba(255,255,255,.15);
+  border-radius: 30px;
+  padding: 8px 12px;
+  color: #e1fff3;
+  font-size: 12px;
+}
+
+.hero h2 {
+  max-width: 640px;
+  font-size: clamp(29px, 5vw, 46px);
+  line-height: 1.3;
+  letter-spacing: -1px;
+  margin: 20px 0 12px;
+}
+
+.hero p {
+  color: #d6e9e2;
+  max-width: 510px;
+  line-height: 1.8;
+  font-size: 14px;
+  margin: 0;
+}
+
+.hero-points {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px 20px;
+  margin-top: 23px;
+  color: #f0fff8;
+  font-size: 12px;
+}
+
+/* SEARCH */
+.search-section {
+  position: relative;
+  margin-top: -25px;
+}
+
+.search-box {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  background: white;
+  border: 1px solid #e2ebe6;
+  border-radius: 17px;
+  padding: 7px 8px 7px 17px;
+  box-shadow: 0 10px 32px rgba(18,59,53,.09);
+}
+
+.search-symbol {
+  font-size: 24px;
+  color: var(--green);
+}
+
+.search-box input {
+  min-width: 0;
+  flex: 1;
+  padding: 12px 0;
+  border: 0;
+  outline: none;
+  background: transparent;
+  font-family: inherit;
+  font-size: 14px;
+  color: var(--text);
+}
+
+.search-hint {
+  display: none;
+  background: var(--green);
+  color: white;
+  padding: 12px 15px;
+  border-radius: 12px;
+  font-size: 13px;
+}
+
+/* MAIN */
+main { padding-top: 31px; padding-bottom: 45px; }
+
+.section-head {
+  display: flex;
+  align-items: end;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 18px;
+}
+
+.section-head h2 {
+  margin: 0;
+  font-size: 22px;
+  letter-spacing: -.4px;
+}
+
+.section-head p {
+  color: var(--muted);
+  font-size: 13px;
+  margin: 7px 0 0;
+}
+
+.result-count {
+  white-space: nowrap;
+  color: var(--green);
+  background: #e7f5ed;
+  border-radius: 30px;
+  padding: 8px 11px;
+  font-size: 12px;
+  font-weight: 700;
+}
+
+/* CATEGORY */
+.categories {
+  display: flex;
+  gap: 9px;
+  overflow-x: auto;
+  padding: 2px 0 20px;
+  scrollbar-width: none;
+}
+
+.categories::-webkit-scrollbar { display: none; }
+
+.category {
+  white-space: nowrap;
+  border: 1px solid #e2ebe6;
+  background: white;
+  color: #566a62;
+  border-radius: 30px;
+  padding: 10px 15px;
+  font-size: 12px;
+  cursor: pointer;
+  font-family: inherit;
+}
+
+.category.active,
+.category:hover {
+  background: var(--dark);
+  border-color: var(--dark);
+  color: white;
+}
+
+/* PRODUCT CARDS */
+.product-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 13px;
+}
+
+.product-card {
+  background: white;
+  border: 1px solid var(--border);
   border-radius: 18px;
-  padding: 20px;
-  margin: 16px 0;
-  box-shadow: 0 6px 24px rgba(20, 60, 50, 0.10);
-  transition: box-shadow 0.2s ease;
+  overflow: hidden;
+  min-width: 0;
+  box-shadow: 0 4px 17px rgba(22,60,48,.035);
+  transition: transform .2s, box-shadow .2s;
 }
 
-.card h3 {
-  color: #123b35;
-  font-size: 20px;
-  margin: 0 0 12px;
+.product-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 13px 28px rgba(22,60,48,.10);
+}
+
+.product-image {
+  position: relative;
+  height: 145px;
+  display: grid;
+  place-items: center;
+  padding: 13px;
+  background: linear-gradient(145deg, #f0f8f4, #f9fbfa);
+  border-bottom: 1px solid #edf2ef;
+}
+
+.product-image img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+}
+
+.placeholder {
+  font-size: 43px;
+  opacity: .7;
+}
+
+.wholesale {
+  position: absolute;
+  left: 9px;
+  top: 9px;
+  z-index: 1;
+  background: white;
+  color: var(--green);
+  border: 1px solid #e0eee6;
+  border-radius: 7px;
+  padding: 5px 7px;
+  font-size: 10px;
+  font-weight: 700;
+}
+
+.product-info { padding: 13px 12px 14px; }
+
+.product-name {
+  min-height: 41px;
+  margin: 0 0 7px;
+  color: var(--dark);
+  font-size: 14px;
   line-height: 1.5;
+  overflow-wrap: anywhere;
 }
 
-.card p {
-  color: #61736e;
+.company {
+  margin: 0;
+  color: var(--muted);
+  font-size: 12px;
+  line-height: 1.6;
+}
+
+.price-area { margin-top: 15px; }
+
+.price {
+  color: var(--green);
+  font-size: 21px;
+  font-weight: 800;
+  letter-spacing: -.5px;
+}
+
+.unit {
+  margin-top: 4px;
+  color: var(--muted);
+  font-size: 11px;
+}
+
+.divider {
+  height: 1px;
+  background: #edf1ef;
+  margin: 13px 0 11px;
+}
+
+.order-button {
+  width: 100%;
+  padding: 11px 4px;
+  display: block;
+  border: 0;
+  border-radius: 10px;
+  background: var(--green);
+  color: white;
+  font-family: inherit;
+  font-size: 12px;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.order-button:hover { background: var(--dark); }
+
+.empty {
+  grid-column: 1 / -1;
+  padding: 40px 15px;
+  background: white;
+  border: 1px solid var(--border);
+  border-radius: 17px;
+  text-align: center;
+  color: var(--muted);
+}
+
+.empty strong {
+  display: block;
+  color: var(--dark);
+  margin-bottom: 8px;
+}
+
+/* FEATURES */
+.feature-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 13px;
+  margin-top: 43px;
+}
+
+.feature {
+  display: flex;
+  gap: 13px;
+  background: white;
+  border: 1px solid var(--border);
+  border-radius: 17px;
+  padding: 17px;
+}
+
+.feature-icon {
+  flex-shrink: 0;
+  width: 45px;
+  height: 45px;
+  display: grid;
+  place-items: center;
+  border-radius: 13px;
+  background: var(--mint);
+  font-size: 23px;
+}
+
+.feature h3 {
+  margin: 2px 0 6px;
   font-size: 15px;
-  line-height: 1.7;
-  margin: 8px 0;
 }
-    .card p { color: #61736e; }
-    .button {
-      display: inline-block;
-      background: #16745e;
-      color: white;
-      border: 0;
-      padding: 12px 16px;
-      border-radius: 8px;
-      font-size: 15px;
-      text-decoration: none;
-    }
-    footer {
-      padding: 24px 16px;
-      text-align: center;
-      color: #61736e;
-    }
-  </style>
+
+.feature p {
+  color: var(--muted);
+  font-size: 12px;
+  line-height: 1.7;
+  margin: 0;
+}
+
+/* FOOTER */
+footer {
+  background: white;
+  border-top: 1px solid var(--border);
+  padding: 25px 18px;
+  text-align: center;
+  color: var(--muted);
+  font-size: 12px;
+  line-height: 1.8;
+}
+
+footer strong {
+  color: var(--dark);
+  font-size: 15px;
+}
+
+@media (min-width: 600px) {
+  .container { padding-left: 26px; padding-right: 26px; }
+  .hero-inner { padding-top: 54px; padding-bottom: 75px; }
+  .product-grid { grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 18px; }
+  .product-image { height: 185px; }
+  .product-info { padding: 16px; }
+  .product-name { font-size: 16px; }
+  .feature-grid { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+  .feature { display: block; }
+  .feature-icon { margin-bottom: 12px; }
+}
+
+@media (min-width: 900px) {
+  .product-grid { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+  .product-image { height: 200px; }
+}
+
+@media (max-width: 360px) {
+  .container { padding-left: 12px; padding-right: 12px; }
+  .product-grid { gap: 9px; }
+  .product-info { padding: 10px; }
+  .product-name { font-size: 13px; }
+  .price { font-size: 19px; }
+  .nav-label { font-size: 10px; padding: 8px; }
+}
+</style>
 </head>
+
 <body>
-  <header>
-    <h1>Medispot BD</h1>
-    <p>Trusted Medicine Supply Marketplace</p>
-  </header>
 
-  <main>
-    <input class="search" type="search"
-      placeholder="ওষুধের নাম বা কোম্পানি খুঁজুন..."
-      aria-label="ওষুধ খুঁজুন">
+<header>
+  <div class="container nav">
+    <a class="brand" href="#" aria-label="Medispot BD Home">
+      <div class="brand-mark">✚</div>
+      <div>
+        <h1>Medispot BD</h1>
+        <p>Medicine Wholesale Marketplace</p>
+      </div>
+    </a>
+    <span class="nav-label">B2B MARKETPLACE</span>
+  </div>
+</header>
 
-    <h2>আমাদের প্ল্যাটফর্ম</h2>
+<section class="hero">
+  <div class="container hero-inner">
+    <span class="eyebrow">✦ ফার্মেসির জন্য ডিজিটাল সমাধান</span>
+    <h2>আপনার প্রয়োজনীয় ওষুধ<br>খুঁজুন সহজেই</h2>
+    <p>
+      ওষুধের নাম, কোম্পানি ও পাইকারি দাম এক জায়গায় দেখুন।
+      ফার্মেসির কেনাকাটাকে আরও সহজ করার পথে Medispot BD।
+    </p>
+    <div class="hero-points">
+      <span>✓ সহজে সার্চ</span>
+      <span>✓ পণ্যের তথ্য</span>
+      <span>✓ ফার্মেসি-কেন্দ্রিক</span>
+    </div>
+  </div>
+</section>
 
-    <div class="card">
-      <h3>💊 ওষুধ খুঁজুন</h3>
-      <p>বিভিন্ন পণ্যের তথ্য ও বিক্রেতার তালিকা দেখুন।</p>
+<main class="container">
+  <div class="search-section">
+    <div class="search-box">
+      <span class="search-symbol">⌕</span>
+      <input id="search" type="search"
+        placeholder="ওষুধের নাম বা কোম্পানি লিখুন..."
+        aria-label="ওষুধ খুঁজুন">
+      <span class="search-hint">Search</span>
+    </div>
+  </div>
+
+  <section>
+    <div class="section-head">
+      <div>
+        <h2 id="listTitle">জনপ্রিয় ওষুধ</h2>
+        <p id="listSubtitle">পণ্য দেখুন এবং প্রয়োজনীয় তথ্য খুঁজুন</p>
+      </div>
+      <span class="result-count" id="count">৪টি পণ্য</span>
     </div>
 
-    <div class="card">
-      <h3>🏪 বিক্রেতা হিসেবে যোগ দিন</h3>
-      <p>যোগ্য ও লাইসেন্সধারী বিক্রেতাদের জন্য নিবন্ধন ব্যবস্থা আসছে।</p>
+    <div class="categories" id="categories">
+      <button class="category active" data-filter="all">সব পণ্য</button>
+      <button class="category" data-filter="Square">Square</button>
+      <button class="category" data-filter="Beximco">Beximco</button>
     </div>
 
-    <div class="card">
-      <h3>📦 ফার্মেসি অর্ডার</h3>
-      <p>ফার্মেসির জন্য সহজ অর্ডার ব্যবস্থা তৈরি হচ্ছে।</p>
-    </div>
-  </main>
+    <div class="product-grid" id="products"></div>
+  </section>
 
-  <footer>
-    Medispot BD © 2026
-    <p>Medicine marketplace — under development</p>
-  </footer>
+  <section class="feature-grid">
+    <div class="feature">
+      <div class="feature-icon">💊</div>
+      <div>
+        <h3>ওষুধ খুঁজুন</h3>
+        <p>পণ্যের নাম ও কোম্পানি দিয়ে দ্রুত তথ্য খুঁজে নিন।</p>
+      </div>
+    </div>
+
+    <div class="feature">
+      <div class="feature-icon">🏪</div>
+      <div>
+        <h3>বিক্রেতা হিসেবে যোগ দিন</h3>
+        <p>লাইসেন্সধারী বিক্রেতাদের যুক্ত করার ব্যবস্থা উন্নয়নের কাজ চলছে।</p>
+      </div>
+    </div>
+
+    <div class="feature">
+      <div class="feature-icon">📦</div>
+      <div>
+        <h3>ফার্মেসি অর্ডার</h3>
+        <p>সহজ ও গোছানো অর্ডার ব্যবস্থা তৈরির পরিকল্পনা রয়েছে।</p>
+      </div>
+    </div>
+  </section>
+</main>
+
+<footer>
+  <strong>Medispot BD</strong><br>
+  Medicine Marketplace · Under Development<br>
+  © 2026 Medispot BD
+</footer>
+
 <script>
-const searchBox = document.querySelector('.search');
-
-
 const products = [
   {
     name: 'Napa 500 mg',
@@ -129,51 +574,121 @@ const products = [
   },
   {
     name: 'Nexum Mups 20 mg',
-    image:'nexum.jpg.JPG',
+    image: 'nexum.jpg.JPG',
     company: 'Square',
     price: 1000,
     unit: 'প্রতি বক্স'
   }
 ];
 
+const search = document.getElementById('search');
+const grid = document.getElementById('products');
+const count = document.getElementById('count');
+const listTitle = document.getElementById('listTitle');
+const listSubtitle = document.getElementById('listSubtitle');
+const categories = document.getElementById('categories');
 
-const resultBox = document.createElement('div');
-resultBox.className = 'card';
-resultBox.style.display = 'none';
-searchBox.insertAdjacentElement('afterend', resultBox);
+let activeFilter = 'all';
 
-searchBox.addEventListener('input', function () {
-  const query = this.value.trim().toLowerCase();
+function renderProducts() {
+  const query = search.value.trim().toLowerCase();
 
-  if (!query) {
-    resultBox.style.display = 'none';
+  const found = products.filter(product => {
+    const matchesText =
+      (product.name + ' ' + product.company)
+        .toLowerCase().includes(query);
+
+    const matchesCompany =
+      activeFilter === 'all' ||
+      product.company === activeFilter;
+
+    return matchesText && matchesCompany;
+  });
+
+  count.textContent = found.length + 'টি পণ্য';
+  listTitle.textContent = query ? 'সার্চের ফলাফল' : 'জনপ্রিয় ওষুধ';
+  listSubtitle.textContent = query
+    ? 'আপনার সার্চ অনুযায়ী পণ্য'
+    : 'পণ্য দেখুন এবং প্রয়োজনীয় তথ্য খুঁজুন';
+
+  if (!found.length) {
+    grid.innerHTML = `
+      <div class="empty">
+        <strong>কোনো পণ্য পাওয়া যায়নি</strong>
+        অন্য নাম বা কোম্পানি দিয়ে চেষ্টা করুন।
+      </div>`;
     return;
   }
 
-  const matches = products.filter(product =>
-    (product.name + ' ' + product.company)
-      .toLowerCase().includes(query)
+  grid.innerHTML = found.map((product, index) => `
+    <article class="product-card">
+      <div class="product-image">
+        <span class="wholesale">পাইকারি পণ্য</span>
+        ${
+          product.image
+          ? `<img src="${product.image}"
+              alt="${product.name}"
+              loading="lazy"
+              onerror="this.style.display='none';
+              this.nextElementSibling.style.display='block';">`
+          : ''
+        }
+        <span class="placeholder"
+          style="display:${product.image ? 'none' : 'block'}">💊</span>
+      </div>
+
+      <div class="product-info">
+        <h3 class="product-name">${product.name}</h3>
+        <p class="company">কোম্পানি: ${product.company}</p>
+
+        <div class="price-area">
+          <div class="price">৳${product.price.toLocaleString('en-BD')}</div>
+          <div class="unit">${product.unit}</div>
+        </div>
+
+        <div class="divider"></div>
+        <button class="order-button" data-name="${product.name}">
+          অর্ডার তথ্য →
+        </button>
+      </div>
+    </article>
+  `).join('');
+}
+
+search.addEventListener('input', renderProducts);
+
+categories.addEventListener('click', event => {
+  const button = event.target.closest('button[data-filter]');
+  if (!button) return;
+
+  activeFilter = button.dataset.filter;
+
+  categories.querySelectorAll('.category').forEach(item => {
+    item.classList.toggle('active', item === button);
+  });
+
+  renderProducts();
+});
+
+grid.addEventListener('click', event => {
+  const button = event.target.closest('.order-button');
+  if (!button) return;
+
+  const product = products.find(item =>
+    item.name === button.dataset.name
   );
 
-  resultBox.style.display = 'block';
-  resultBox.innerHTML = matches.length
-    ? '<h3>সার্চের ফলাফল</h3>' +
+  if (!product) return;
 
-matches.map(product =>
-  '<div class="card">' +
-  (product.image
-    ? '<img src="' + product.image +
-      '" alt="' + product.name +
-      '" style="width:100%;max-width:240px;height:180px;object-fit:contain;border-radius:10px;">'
-    : '') +
-  '<h3>' + product.name + '</h3>' +
-  '<p>কোম্পানি: ' + product.company + '</p>' +
-  '<h3>৳' + product.price + '</h3>' +
-  '<p>' + product.unit + '</p>' +
-  '</div>'
-).join('')
-    : '<p>কোনো ফলাফল পাওয়া যায়নি।</p>';
+  alert(
+    product.name + '\n' +
+    'কোম্পানি: ' + product.company + '\n' +
+    'দাম: ৳' + product.price + ' ' + product.unit +
+    '\n\nঅনলাইন অর্ডার ব্যবস্থা এখনো চালু হয়নি।'
+  );
 });
+
+renderProducts();
 </script>
 
 </body>
