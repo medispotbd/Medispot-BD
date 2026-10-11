@@ -929,7 +929,7 @@
   try {
     const response = await fetch(
       SUPABASE_URL + "/rest/v1/medicines" +
-      "?select=id,name,company,strength,price,image_url,stock,category",
+      "?select=id,name,company,strength,price,discount_percent,image_url,stock,category",
       {
         headers: {
           apikey: SUPABASE_PUBLISHABLE_KEY,
@@ -959,7 +959,7 @@
               : name,
           company: row.company || "",
           strength: strength,
-          price: row.price,
+          discount_percent: Number(row.discount_percent) || 0,
           unit: "প্রতি বক্স",
           image_url: row.image_url || "",
           category: row.category || ""
