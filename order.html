@@ -9,30 +9,39 @@
 <style>
 *{box-sizing:border-box}
 body{margin:0;background:#f3f7f5;color:#18352b;font-family:Arial,sans-serif}
-header{background:#075e46;color:white;padding:22px 16px}
-header h1{margin:0;font-size:23px}
-header p{margin:7px 0 0;color:#d5f3e6;font-size:13px}
-main{max-width:1100px;margin:auto;padding:18px}
-.panel,.stat,.order{background:white;border:1px solid #e1ebe5;border-radius:14px;padding:17px;margin-bottom:15px}
-h2{font-size:18px;margin:0 0 15px}
-input,button,select{font:inherit;padding:11px;border-radius:9px;border:1px solid #d4e1d9}
+header{background:#075e46;color:white;padding:20px 16px}
+header h1{margin:0}
+header p{margin:7px 0 0;color:#d5f3e6}
+main{max-width:1100px;margin:auto;padding:15px}
+.panel,.stat,.order{background:white;border:1px solid #e1ebe5;border-radius:13px;padding:15px;margin-bottom:14px}
+h2{font-size:18px}
+input,select,button{font:inherit;padding:11px;border-radius:8px;border:1px solid #d4e1d9}
 input{width:100%;margin-bottom:10px}
-button{cursor:pointer;background:#087653;color:white;border:0;font-weight:bold}
+button{background:#087653;color:white;border:0;font-weight:bold;cursor:pointer}
 button:disabled{opacity:.5}
 .secondary{background:#e7f3ed;color:#075e46}
 .danger{background:#a72c2c}
-.grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px}
-.stat strong{display:block;font-size:25px;margin-top:8px}
+.grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px}
+.stat strong{display:block;font-size:24px;margin-top:8px}
 .muted{color:#6c7c73;font-size:13px}
-.row{display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap}
-.order h3{margin:0 0 8px;font-size:17px}
-.order table{width:100%;border-collapse:collapse;margin-top:12px;font-size:13px}
-th,td{text-align:left;border-bottom:1px solid #e5ece7;padding:9px 5px}
+.row{display:flex;justify-content:space-between;align-items:center;gap:8px;flex-wrap:wrap}
+.order h3{margin:0 0 8px}
+.order table{width:100%;border-collapse:collapse;margin-top:10px;font-size:13px}
+th,td{text-align:left;border-bottom:1px solid #e5ece7;padding:8px 5px}
 .tablewrap{overflow-x:auto}
 .tag{background:#e6f5ed;color:#075e46;padding:5px 8px;border-radius:7px;font-size:12px}
 #dashboard{display:none}
-#message{white-space:pre-wrap;font-size:13px;margin-top:10px}
-@media(max-width:600px){.grid{grid-template-columns:1fr 1fr}main{padding:12px}.panel,.order{padding:13px}}
+#message{white-space:pre-wrap;font-size:13px}
+.filters{display:grid;grid-template-columns:2fr 1fr 1fr;gap:8px}
+.filters input,.filters select{width:100%;margin:0}
+.actions{display:flex;gap:8px;flex-wrap:wrap}
+@media(max-width:650px){
+ .grid{grid-template-columns:1fr 1fr}
+ .filters{grid-template-columns:1fr}
+ main{padding:10px}
+ .panel,.order{padding:12px}
+}
+@media print{.no-print{display:none!important}}
 </style>
 </head>
 <body>
@@ -43,226 +52,251 @@ th,td{text-align:left;border-bottom:1px solid #e5ece7;padding:9px 5px}
 <main>
 <section id="login" class="panel">
 <h2>Admin Login</h2>
-<p class="muted">তোমার Supabase Admin account দিয়ে লগইন করো।</p>
-<input id="email" type="email" placeholder="Admin email" autocomplete="username">
-<input id="password" type="password" placeholder="Password" autocomplete="current-password">
+<p class="muted">Supabase Admin account দিয়ে লগইন করো।</p>
+<input id="email" type="email" placeholder="Admin email">
+<input id="password" type="password" placeholder="Password">
 <button id="loginBtn" onclick="login()">Login to Dashboard</button>
-<div id="message"></div>
+<p id="message"></p>
 </section>
 
 <section id="dashboard">
-<div class="row" style="margin-bottom:15px">
+<div class="row no-print">
 <div>
-<h2 style="margin-bottom:5px">অর্ডার ম্যানেজমেন্ট</h2>
-<div class="muted">নতুন অর্ডার দেখতে Refresh চাপো।</div>
+<h2>অর্ডার ম্যানেজমেন্ট</h2>
+<p class="muted">তারিখ অনুযায়ী অর্ডার দেখো এবং Receipt তৈরি করো।</p>
 </div>
-<div class="row">
-<button class="secondary" onclick="enableNotifications()">Notification চালু</button>
+<div class="actions">
+<button class="secondary" onclick="enableNotifications()">Notification</button>
 <button onclick="loadOrders()">Refresh</button>
 <button class="danger" onclick="logout()">Logout</button>
 </div>
 </div>
 
 <div class="grid">
-<div class="stat"><span class="muted">মোট অর্ডার</span><strong id="totalCount">0</strong></div>
-<div class="stat"><span class="muted">Pending</span><strong id="pendingCount">0</strong></div>
-<div class="stat"><span class="muted">মোট অর্ডার মূল্য</span><strong id="totalAmount">৳0</strong></div>
+<div class="stat">দেখানো অর্ডার<strong id="totalCount">0</strong></div>
+<div class="stat">Pending<strong id="pendingCount">0</strong></div>
+<div class="stat">মোট মূল্য<strong id="totalAmount">৳0</strong></div>
 </div>
 
-<div class="panel">
-<input id="search" placeholder="অর্ডার নম্বর / ফার্মেসি / ফোন দিয়ে খুঁজুন" oninput="renderOrders()">
-<select id="filter" onchange="renderOrders()" style="width:100%">
-<option value="">সব অর্ডার</option>
+<div class="panel no-print">
+<div class="filters">
+<input id="search" placeholder="অর্ডার / ফার্মেসি / ফোন খুঁজুন" oninput="renderOrders()">
+<input id="dateFilter" type="date" onchange="renderOrders()">
+<select id="filter" onchange="renderOrders()">
+<option value="">সব Status</option>
 <option value="pending">Pending</option>
 <option value="confirmed">Confirmed</option>
+<option value="processing">Processing</option>
+<option value="shipped">Shipped</option>
 <option value="delivered">Delivered</option>
 <option value="cancelled">Cancelled</option>
 </select>
 </div>
-<div id="ordersList"><p class="muted">অর্ডার লোড হচ্ছে...</p></div>
+<button class="secondary" style="margin-top:10px" onclick="clearFilters()">সব তারিখের অর্ডার</button>
+</div>
+<div id="ordersList">অর্ডার লোড হচ্ছে...</div>
 </section>
 </main>
 
 <script>
-const SUPABASE_URL = "https://pnaaqkuzazjiabnnwxjq.supabase.co";
-const SUPABASE_PUBLISHABLE_KEY = "sb_publishable_ckj65sbFnET7xOjxPJOwfw_-KrevOkv";
+const SUPABASE_URL="https://pnaaqkuzazjiabnnwxjq.supabase.co";
+const SUPABASE_PUBLISHABLE_KEY="sb_publishable_ckj65sbFnET7xOjxPJOwfw_-KrevOkv";
+const db=window.supabase.createClient(SUPABASE_URL,SUPABASE_PUBLISHABLE_KEY);
+let orders=[];
+let previousIds=new Set();
+let firstLoad=true;
 
-const db = window.supabase.createClient(SUPABASE_URL, SUPABASE_PUBLISHABLE_KEY);
-let orders = [];
-let previousIds = new Set();
-let firstLoad = true;
-
-function msg(text){
-  document.getElementById("message").textContent = text;
+function money(v){
+ return "৳"+Number(v||0).toLocaleString("en-BD",{maximumFractionDigits:2});
 }
-
-function money(value){
-  return "৳" + Number(value || 0).toLocaleString("en-BD",{maximumFractionDigits:2});
+function esc(v){
+ return String(v??"").replace(/[&<>"']/g,c=>({
+ "&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"
+ }[c]));
 }
-
+function dateKey(v){
+ if(!v)return "";
+ const d=new Date(v);
+ if(isNaN(d.getTime()))return "";
+ return d.getFullYear()+"-"+String(d.getMonth()+1).padStart(2,"0")+"-"+String(d.getDate()).padStart(2,"0");
+}
+function dateText(v){
+ const d=new Date(v);
+ return isNaN(d.getTime())?"-":d.toLocaleString("bn-BD");
+}
 async function login(){
-  const email = document.getElementById("email").value.trim();
-  const password = document.getElementById("password").value;
-  const btn = document.getElementById("loginBtn");
-  if(!email || !password){msg("Email ও password দাও।");return;}
-  btn.disabled = true;
-  msg("Login হচ্ছে...");
-  try{
-    const {data,error} = await db.auth.signInWithPassword({email,password});
-    if(error) throw error;
-    document.getElementById("login").style.display="none";
-    document.getElementById("dashboard").style.display="block";
-    msg("");
-    await loadOrders();
-    subscribeOrders();
-  }catch(e){
-    msg("Login হয়নি: " + e.message);
-  }finally{
-    btn.disabled=false;
-  }
-}
-
-async function logout(){
-  await db.auth.signOut();
-  document.getElementById("dashboard").style.display="none";
-  document.getElementById("login").style.display="block";
-  document.getElementById("password").value="";
-}
-
-async function loadOrders(){
-  const list = document.getElementById("ordersList");
-  list.innerHTML='<div class="panel">অর্ডার লোড হচ্ছে...</div>';
-  try{
-    const {data,error} = await db.from("orders")
-      .select("id,customer_name,pharmacy_name,phone,address,total_amount,status,created_at,items")
-      .order("created_at",{ascending:false})
-      .limit(200);
-    if(error) throw error;
-
-    const fresh = data || [];
-    if(!firstLoad){
-      const newOnes = fresh.filter(o=>!previousIds.has(String(o.id)));
-      if(newOnes.length && "Notification" in window && Notification.permission==="granted"){
-        new Notification("Medispot BD: নতুন অর্ডার",{body:newOnes.length+"টি নতুন অর্ডার এসেছে।"});
-      }
-    }
-    previousIds = new Set(fresh.map(o=>String(o.id)));
-    firstLoad = false;
-    orders = fresh;
-    renderOrders();
-  }catch(e){
-    list.innerHTML='<div class="panel">অর্ডার লোড হয়নি: '+escapeHtml(e.message)+
-      '<p class="muted">Admin SELECT policy, login email এবং items কলাম পরীক্ষা করো।</p></div>';
-  }
-}
-
-function renderOrders(){
-  const search = document.getElementById("search").value.toLowerCase().trim();
-  const filter = document.getElementById("filter").value;
-  document.getElementById("totalCount").textContent=orders.length;
-  document.getElementById("pendingCount").textContent=orders.filter(o=>o.status==="pending").length;
-  document.getElementById("totalAmount").textContent=money(
-    orders.reduce((sum,o)=>sum+Number(o.total_amount||0),0)
-  );
-
-  const shown = orders.filter(o=>{
-    const hay=[o.id,o.customer_name,o.pharmacy_name,o.phone].join(" ").toLowerCase();
-    return (!search||hay.includes(search))&&(!filter||o.status===filter);
-  });
-
-  const list=document.getElementById("ordersList");
-  if(!shown.length){
-    list.innerHTML='<div class="panel">কোনো অর্ডার পাওয়া যায়নি।</div>';
-    return;
-  }
-
-  list.innerHTML=shown.map(o=>{
-    const items=Array.isArray(o.items)?o.items:[];
-    const status=String(o.status||"pending").toLowerCase();
-    const itemRows=items.length?items.map(i=>`
-      <tr>
-        <td>${escapeHtml(i.name||i.medicine_name||"ওষুধ")}</td>
-        <td>${escapeHtml(i.company||"-")}</td>
-        <td>${Number(i.quantity||0)}</td>
-        <td>${money(i.unit_price)}</td>
-        <td>${money(Number(i.quantity||0)*Number(i.unit_price||0))}</td>
-      </tr>`).join(""):'<tr><td colspan="5">এই অর্ডারে items তালিকা নেই। নতুন অর্ডার দিয়ে পরীক্ষা করো।</td></tr>';
-
-    return `<article class="order">
-      <div class="row">
-        <div><h3>অর্ডার #${escapeHtml(o.id)}</h3>
-        <span class="muted">${escapeHtml(new Date(o.created_at).toLocaleString("bn-BD"))}</span></div>
-        <span class="tag">${escapeHtml(status.toUpperCase())}</span>
-      </div>
-      <hr style="border:0;border-top:1px solid #e5ece7;margin:14px 0">
-      <p><b>মালিক:</b> ${escapeHtml(o.customer_name||"-")}</p>
-      <p><b>ফার্মেসি:</b> ${escapeHtml(o.pharmacy_name||"-")}</p>
-      <p><b>ফোন:</b> ${escapeHtml(o.phone||"-")}</p>
-      <p><b>ঠিকানা:</b> ${escapeHtml(o.address||"-")}</p>
-      <h3>ওষুধের তালিকা</h3>
-      <div class="tablewrap"><table>
-      <thead><tr><th>ওষুধ</th><th>কোম্পানি</th><th>পরিমাণ</th><th>দাম</th><th>মোট</th></tr></thead>
-      <tbody>${itemRows}</tbody></table></div>
-      <div class="row" style="margin-top:14px">
-        <b>অর্ডারের মোট: ${money(o.total_amount)}</b>
-        <div class="row">
-          <select id="status-${escapeHtml(o.id)}">
-            <option value="pending" ${status==="pending"?"selected":""}>Pending</option>
-            <option value="confirmed" ${status==="confirmed"?"selected":""}>Confirmed</option>
-            <option value="delivered" ${status==="delivered"?"selected":""}>Delivered</option>
-            <option value="cancelled" ${status==="cancelled"?"selected":""}>Cancelled</option>
-          </select>
-          <button onclick="updateStatus('${escapeHtml(o.id)}')">Save Status</button>
-        </div>
-      </div>
-    </article>`;
-  }).join("");
-}
-
-async function updateStatus(id){
-  const status=document.getElementById("status-"+id).value;
-  const {error}=await db.from("orders").update({status}).eq("id",id);
-  if(error){
-    alert("স্ট্যাটাস পরিবর্তন হয়নি: "+error.message);
-    return;
-  }
-  alert("অর্ডার স্ট্যাটাস আপডেট হয়েছে।");
+ const email=document.getElementById("email").value.trim();
+ const password=document.getElementById("password").value;
+ const btn=document.getElementById("loginBtn");
+ if(!email||!password){document.getElementById("message").textContent="Email ও password দাও।";return;}
+ btn.disabled=true;
+ document.getElementById("message").textContent="Login হচ্ছে...";
+ try{
+  const {error}=await db.auth.signInWithPassword({email,password});
+  if(error)throw error;
+  document.getElementById("login").style.display="none";
+  document.getElementById("dashboard").style.display="block";
   await loadOrders();
+  subscribeOrders();
+ }catch(e){
+  document.getElementById("message").textContent="Login হয়নি: "+e.message;
+ }finally{btn.disabled=false;}
 }
-
+async function logout(){
+ await db.auth.signOut();
+ document.getElementById("dashboard").style.display="none";
+ document.getElementById("login").style.display="block";
+ document.getElementById("password").value="";
+}
+function clearFilters(){
+ document.getElementById("search").value="";
+ document.getElementById("dateFilter").value="";
+ document.getElementById("filter").value="";
+ renderOrders();
+}
+async function loadOrders(){
+ const list=document.getElementById("ordersList");
+ list.innerHTML='<div class="panel">অর্ডার লোড হচ্ছে...</div>';
+ try{
+  const {data,error}=await db.from("orders")
+   .select("id,customer_name,pharmacy_name,phone,address,total_amount,status,created_at,items")
+   .order("created_at",{ascending:false}).limit(1000);
+  if(error)throw error;
+  const fresh=data||[];
+  if(!firstLoad&&"Notification"in window&&Notification.permission==="granted"){
+   const newOnes=fresh.filter(o=>!previousIds.has(String(o.id)));
+   if(newOnes.length)new Notification("Medispot BD",{body:newOnes.length+"টি নতুন অর্ডার এসেছে।"});
+  }
+  previousIds=new Set(fresh.map(o=>String(o.id)));
+  firstLoad=false;
+  orders=fresh;
+  renderOrders();
+ }catch(e){
+  list.innerHTML='<div class="panel">অর্ডার লোড হয়নি: '+esc(e.message)+
+   '<p class="muted">Supabase SELECT policy এবং items কলাম পরীক্ষা করো।</p></div>';
+ }
+}
+function renderOrders(){
+ const search=document.getElementById("search").value.toLowerCase().trim();
+ const filter=document.getElementById("filter").value;
+ const day=document.getElementById("dateFilter").value;
+ const shown=orders.filter(o=>{
+  const hay=[o.id,o.customer_name,o.pharmacy_name,o.phone].join(" ").toLowerCase();
+  return (!search||hay.includes(search))&&
+   (!filter||String(o.status||"").toLowerCase()===filter)&&
+   (!day||dateKey(o.created_at)===day);
+ });
+ document.getElementById("totalCount").textContent=shown.length;
+ document.getElementById("pendingCount").textContent=shown.filter(o=>o.status==="pending").length;
+ document.getElementById("totalAmount").textContent=money(shown.reduce((s,o)=>s+Number(o.total_amount||0),0));
+ const list=document.getElementById("ordersList");
+ if(!shown.length){list.innerHTML='<div class="panel">এই ফিল্টারে কোনো অর্ডার পাওয়া যায়নি।</div>';return;}
+ list.innerHTML=shown.map(o=>{
+  const items=Array.isArray(o.items)?o.items:[];
+  const status=String(o.status||"pending").toLowerCase();
+  const rows=items.map(i=>{
+   const q=Number(i.quantity??i.qty??0);
+   const p=Number(i.unit_price??i.price??i.sale_price??0);
+   return `<tr><td>${esc(i.name||i.medicine_name||i.product_name||"ওষুধ")}</td>
+   <td>${esc(i.company||i.company_name||"-")}</td><td>${q}</td>
+   <td>${money(p)}</td><td>${money(q*p)}</td></tr>`;
+  }).join("")||'<tr><td colspan="5">পণ্যের বিস্তারিত পাওয়া যায়নি।</td></tr>';
+  return `<article class="order">
+   <div class="row"><div><h3>অর্ডার #${esc(o.id)}</h3>
+   <span class="muted">${esc(dateText(o.created_at))}</span></div>
+   <span class="tag">${esc(status.toUpperCase())}</span></div>
+   <hr>
+   <p><b>অর্ডারকারীর নাম:</b> ${esc(o.customer_name||"-")}</p>
+   <p><b>ফার্মেসি:</b> ${esc(o.pharmacy_name||"-")}</p>
+   <p><b>ফোন:</b> ${esc(o.phone||"-")}</p>
+   <p><b>ঠিকানা:</b> ${esc(o.address||"-")}</p>
+   <h3>ওষুধের তালিকা</h3>
+   <div class="tablewrap"><table><thead><tr><th>ওষুধ</th><th>কোম্পানি</th><th>পরিমাণ</th><th>একক দাম</th><th>মোট</th></tr></thead><tbody>${rows}</tbody></table></div>
+   <div class="row" style="margin-top:12px"><b>সর্বমোট: ${money(o.total_amount)}</b>
+   <div class="actions no-print">
+   <select id="status-${esc(o.id)}">
+   <option value="pending" ${status==="pending"?"selected":""}>Pending</option>
+   <option value="confirmed" ${status==="confirmed"?"selected":""}>Confirmed</option>
+   <option value="processing" ${status==="processing"?"selected":""}>Processing</option>
+   <option value="shipped" ${status==="shipped"?"selected":""}>Shipped</option>
+   <option value="delivered" ${status==="delivered"?"selected":""}>Delivered</option>
+   <option value="cancelled" ${status==="cancelled"?"selected":""}>Cancelled</option>
+   </select>
+   <button onclick="updateStatus('${esc(o.id)}',this)">Save Status</button>
+   <button class="secondary" onclick="printReceipt('${esc(o.id)}')">Receipt / PDF</button>
+   </div></div></article>`;
+ }).join("");
+}
+async function updateStatus(id,button){
+ const status=document.getElementById("status-"+id).value;
+ button.disabled=true;
+ try{
+  const {data,error}=await db.from("orders").update({status}).eq("id",id).select("id,status").maybeSingle();
+  if(error)throw error;
+  if(!data)throw new Error("কোনো অর্ডার update হয়নি। Supabase Admin UPDATE policy পরীক্ষা করতে হবে।");
+  alert("Status আপডেট হয়েছে: "+status.toUpperCase());
+  await loadOrders();
+ }catch(e){alert("Status পরিবর্তন হয়নি: "+e.message);}
+ finally{button.disabled=false;}
+}
+function printReceipt(id){
+ const o=orders.find(x=>String(x.id)===String(id));
+ if(!o){alert("অর্ডার পাওয়া যায়নি। Refresh করো।");return;}
+ const items=Array.isArray(o.items)?o.items:[];
+ const rows=items.map(i=>{
+  const q=Number(i.quantity??i.qty??0);
+  const p=Number(i.unit_price??i.price??i.sale_price??0);
+  return `<tr><td>${esc(i.name||i.medicine_name||i.product_name||"ওষুধ")}</td>
+  <td>${esc(i.company||i.company_name||"-")}</td><td>${q}</td>
+  <td>${money(p)}</td><td>${money(q*p)}</td></tr>`;
+ }).join("")||'<tr><td colspan="5">এই অর্ডারের পণ্যের বিস্তারিত সংরক্ষিত নেই।</td></tr>';
+ const w=window.open("","_blank","width=850,height=700");
+ if(!w){alert("Receipt খুলতে browser popup allow করো।");return;}
+ w.document.write(`<!DOCTYPE html><html lang="bn"><head><meta charset="UTF-8"><title>Receipt #${esc(o.id)}</title>
+ <style>body{font-family:Arial,sans-serif;color:#18352b;max-width:850px;margin:25px auto;padding:20px}
+ header{text-align:center;border-bottom:2px solid #075e46;padding-bottom:12px}
+ h1{color:#075e46;margin:0}h2{font-size:18px}
+ .line{display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap}
+ p{margin:8px 0}table{width:100%;border-collapse:collapse;margin-top:12px}
+ th,td{border-bottom:1px solid #ddd;padding:9px 5px;text-align:left;font-size:13px}
+ .total{text-align:right;font-size:22px;font-weight:bold;margin-top:20px;border-top:2px solid #075e46;padding-top:14px}
+ .muted{color:#666;font-size:12px}.print{padding:10px 15px;background:#075e46;color:white;border:0;border-radius:6px}
+ @media print{.print{display:none}body{margin:0;padding:0}}</style></head><body>
+ <header><h1>MEDISPOT BD</h1><p>Medicine Order Receipt</p></header>
+ <div class="line"><p><b>Order ID:</b> #${esc(o.id)}<br><b>তারিখ:</b> ${esc(dateText(o.created_at))}</p>
+ <p><b>Status:</b> ${esc(String(o.status||"pending").toUpperCase())}</p></div>
+ <h2>অর্ডারকারীর তথ্য</h2>
+ <p><b>নাম:</b> ${esc(o.customer_name||"-")}</p>
+ <p><b>ফার্মেসি:</b> ${esc(o.pharmacy_name||"-")}</p>
+ <p><b>ফোন:</b> ${esc(o.phone||"-")}</p>
+ <p><b>ঠিকানা:</b> ${esc(o.address||"-")}</p>
+ <h2>অর্ডার করা পণ্য</h2><table><thead><tr><th>পণ্যের নাম</th><th>কোম্পানি</th><th>পরিমাণ</th><th>একক দাম</th><th>মোট</th></tr></thead><tbody>${rows}</tbody></table>
+ <div class="total">সর্বমোট: ${money(o.total_amount)}</div>
+ <p class="muted">এই রসিদ Medispot BD অর্ডার রেকর্ড থেকে তৈরি।</p>
+ <button class="print" onclick="window.print()">Print / Save as PDF</button>
+ </body></html>`);
+ w.document.close();
+}
 async function enableNotifications(){
-  if(!("Notification" in window)){
-    alert("এই ব্রাউজারে Notification support নেই।");
-    return;
-  }
-  const permission=await Notification.requestPermission();
-  alert(permission==="granted"?"Notification চালু হয়েছে।":"Browser notification অনুমতি পাওয়া যায়নি।");
+ if(!("Notification"in window)){alert("এই ব্রাউজারে Notification নেই।");return;}
+ const p=await Notification.requestPermission();
+ alert(p==="granted"?"Notification চালু হয়েছে।":"Notification অনুমতি পাওয়া যায়নি।");
 }
-
 function subscribeOrders(){
-  db.channel("orders-dashboard")
-    .on("postgres_changes",{event:"INSERT",schema:"public",table:"orders"},payload=>{
-      loadOrders();
-      if("Notification" in window && Notification.permission==="granted"){
-        new Notification("Medispot BD: নতুন অর্ডার",{body:"অর্ডার #"+payload.new.id+" এসেছে।"});
-      }
-    })
-    .subscribe();
-}
-
-function escapeHtml(value){
-  return String(value??"").replace(/[&<>"']/g,c=>({
-    "&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"
-  }[c]));
-}
-
-db.auth.getSession().then(({data})=>{
-  if(data.session){
-    document.getElementById("login").style.display="none";
-    document.getElementById("dashboard").style.display="block";
-    loadOrders();
-    subscribeOrders();
+ db.channel("orders-dashboard").on("postgres_changes",
+ {event:"INSERT",schema:"public",table:"orders"},payload=>{
+  loadOrders();
+  if("Notification"in window&&Notification.permission==="granted"){
+   new Notification("Medispot BD: নতুন অর্ডার",{body:"অর্ডার #"+payload.new.id+" এসেছে।"});
   }
+ }).subscribe();
+}
+db.auth.getSession().then(({data})=>{
+ if(data.session){
+  document.getElementById("login").style.display="none";
+  document.getElementById("dashboard").style.display="block";
+  loadOrders();subscribeOrders();
+ }
 });
 </script>
 </body>
