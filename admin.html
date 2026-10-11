@@ -63,10 +63,7 @@ button.danger{background:#b42318}
 <div class="grid">
 <input
   id="discount"
-  type="number"
-  min="0"
-  max="100"
-  step="0.01"
+  type="text"
   inputmode="decimal"
   placeholder="Discount % (যেমন 16.32)"
 >
@@ -244,7 +241,7 @@ document.getElementById("medicineForm").addEventListener("submit",async e=>{
   const discountInput = document.getElementById("discount");
   const discountText = discountInput.value.trim();
 
-  const discount = discountText === "" ? 0 : Number(discountText);
+const discount = discountText === "" ? 0 : Number(discountText.replace(",", ".")););
 
   if(!Number.isFinite(discount) || discount < 0 || discount > 100){
     msg.textContent = "Discount 0 থেকে 100-এর মধ্যে দাও।";
