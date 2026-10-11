@@ -926,56 +926,71 @@
       );
     });
     async function loadProducts() {
-      try {
-        const response = await fetch(
-          SUPABASE_URL + "/rest/v1/medicines" +
-          "?select=id,name,company,strength,price,image_url,stock,category",
-          {
-            headers: {
-              "apikey": SUPABASE_PUBLISHABLE_KEY,
-              "Authorization": "Bearer " + SUPABASE_PUBLISHABLE_KEY
-            }
-          }
-        );
-        if (!response.ok) {
-          throw new Error("Supabase request failed: " + response.status);
+  try {
+    const response = await fetch(
+      SUPABASE_URL + "/rest/v1/medicines" +
+      "?select=id,name,company,strength,price,image_url,stock,category",
+      {
+        headers: {
+          apikey: SUPABASE_PUBLISHABLE_KEY,
+          Authorization: "Bearer " + SUPABASE_PUBLISHABLE_KEY
         }
-        const rows = await response.json();
-        if (Array.isArray(rows) && rows.length > 0) {
-          allProducts = rows
-            .filter(row => row.stock === undefined ||
-              row.stock === null || Number(row.stock) > 0)
-            .map(row => {
-              const name = String(row.name || "").trim();
-              const strength = String(row.strength || "").trim();
-              return {
-                id: row.id,
-                name: name.toLowerCase().includes(strength.toLowerCase()) &&
-                  strength ? name : [name, strength].filter(Boolean).join(" "),
-                company: row.company || "",
-                strength: strength,
-                price: row.price,
-                unit: "প্রতি বক্স",
-                image_url: row.image_url || "",
-                category: row.category || ""
-              };
-            });
-          statusMessage.textContent =
-            "ডেটাবেজ থেকে পণ্যের তথ্য দেখানো হচ্ছে।";
-        } else {
-          allProducts = [...LOCAL_PRODUCTS];
-          statusMessage.textContent =
-            "প্রাথমিক পণ্যের তালিকা দেখানো হচ্ছে।";
-        }
-      } catch (error) {
-        console.error("Medicine loading error:", error);
-        allProducts = [...LOCAL_PRODUCTS];
-        statusMessage.textContent =
-          "প্রাথমিক পণ্যের তালিকা দেখানো হচ্ছে। ডেটাবেজ সংযোগ এখনো যাচাই করা যায়নি।";
       }
-      renderCompanyFilters();
-      renderProducts();
+    );
+    if (!response.ok) {
+      throw new Error("Supabase request failed: " + response.status);
     }
+    const rows = await response.json();
+    // GitHub-এর আগের ওষুধগুলো সবসময় থাকবে
+    const databaseProducts = rows
+      .filter(row =>
+        row.stock === undefined ||
+        row.stock === null ||
+        Number(row.stock) > 0
+      )
+      .map(row => {
+        const name = String(row.name || "").trim();
+        const strength = String(row.strength || "").trim();
+        return {
+          id: "db-" + row.id,
+          name:
+            strength && !name.toLowerCase().includes(strength.toLowerCase())
+              ? name + " " + strength
+              : name,
+          company: row.company || "",
+          strength: strength,
+          price: row.price,
+          unit: "প্রতি বক্স",
+          image_url: row.image_url || "",
+          category: row.category || ""
+        };
+      });
+    // একই নাম ও কোম্পানির পণ্য দুবার দেখাবে না
+    const combinedProducts = [...LOCAL_PRODUCTS];
+    for (const product of databaseProducts) {
+      const duplicate = combinedProducts.some(existing =>
+        String(existing.name).trim().toLowerCase() ===
+          String(product.name).trim().toLowerCase() &&
+        String(existing.company).trim().toLowerCase() ===
+          String(product.company).trim().toLowerCase()
+      );
+      if (!duplicate) {
+        combinedProducts.push(product);
+      }
+    }
+    allProducts = combinedProducts;
+    statusMessage.textContent =
+      "GitHub ও Supabase-এর পণ্যের তালিকা দেখানো হচ্ছে।";
+  } catch (error) {
+    console.error("Medicine loading error:", error);
+    // Supabase কাজ না করলেও পুরোনো ওষুধ থাকবে
+    allProducts = [...LOCAL_PRODUCTS];
+    statusMessage.textContent =
+      "প্রাথমিক পণ্যের তালিকা দেখানো হচ্ছে। ডেটাবেজ সংযোগ যাচাই করুন।";
+  }
+  renderCompanyFilters();
+  renderProducts();
+}
     loadProducts();
   </script>
 </body>
