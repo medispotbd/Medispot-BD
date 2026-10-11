@@ -241,7 +241,7 @@ document.getElementById("medicineForm").addEventListener("submit",async e=>{
   const discountInput = document.getElementById("discount");
   const discountText = discountInput.value.trim();
 
-const discount = discountText === "" ? 0 : Number(discountText.replace(",", ".")););
+const discount = discountText === "" ? 0 : Number(discountText.replace(",", "."));
 
   if(!Number.isFinite(discount) || discount < 0 || discount > 100){
     msg.textContent = "Discount 0 থেকে 100-এর মধ্যে দাও।";
