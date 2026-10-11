@@ -1,541 +1,982 @@
-
 <!DOCTYPE html>
 <html lang="bn">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<meta name="theme-color" content="#123b35">
-<title>Medispot BD | Medicine Marketplace</title>
-
-<style>
-:root {
-  --green: #14765f;
-  --dark: #123b35;
-  --mint: #eaf7f1;
-  --bg: #f6f9f8;
-  --text: #193b35;
-  --muted: #7b8984;
-  --border: #e5eeea;
-}
-* { box-sizing: border-box; }
-body {
-  margin: 0;
-  background: var(--bg);
-  color: var(--text);
-  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Arial, sans-serif;
-}
-a { text-decoration: none; color: inherit; }
-.container {
-  width: min(1120px, 100%);
-  margin: auto;
-  padding-left: 18px;
-  padding-right: 18px;
-}
-header { background: white; border-bottom: 1px solid var(--border); }
-.nav {
-  min-height: 76px;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 12px;
-}
-.brand { display: flex; align-items: center; gap: 10px; }
-.brand-mark {
-  width: 45px; height: 45px; border-radius: 14px;
-  display: grid; place-items: center; color: white;
-  background: linear-gradient(145deg, #17866a, #105345);
-  font-size: 27px; font-weight: 800;
-}
-.brand h1 {
-  font-size: 21px; letter-spacing: -.6px;
-  margin: 0; color: var(--dark);
-}
-.brand p { font-size: 11px; margin: 4px 0 0; color: var(--muted); }
-.nav-label {
-  color: var(--green); font-size: 12px; font-weight: 700;
-  background: var(--mint); padding: 9px 12px; border-radius: 30px;
-}
-.hero {
-  background: linear-gradient(120deg, #103d34, #19755c);
-  color: white; overflow: hidden;
-}
-.hero-inner { padding-top: 39px; padding-bottom: 65px; }
-.eyebrow {
-  display: inline-flex; align-items: center; gap: 7px;
-  background: rgba(255,255,255,.12);
-  border: 1px solid rgba(255,255,255,.15);
-  border-radius: 30px; padding: 8px 12px;
-  color: #e1fff3; font-size: 12px;
-}
-.hero h2 {
-  max-width: 640px; font-size: clamp(29px, 5vw, 46px);
-  line-height: 1.3; letter-spacing: -1px; margin: 20px 0 12px;
-}
-.hero p {
-  color: #d6e9e2; max-width: 510px;
-  line-height: 1.8; font-size: 14px; margin: 0;
-}
-.hero-points {
-  display: flex; flex-wrap: wrap; gap: 10px 20px;
-  margin-top: 23px; color: #f0fff8; font-size: 12px;
-}
-.search-section { position: relative; margin-top: -25px; }
-.search-box {
-  display: flex; align-items: center; gap: 12px;
-  background: white; border: 1px solid #e2ebe6;
-  border-radius: 17px; padding: 7px 8px 7px 17px;
-  box-shadow: 0 10px 32px rgba(18,59,53,.09);
-}
-.search-symbol { font-size: 24px; color: var(--green); }
-.search-box input {
-  min-width: 0; flex: 1; padding: 12px 0;
-  border: 0; outline: none; background: transparent;
-  font-family: inherit; font-size: 14px; color: var(--text);
-}
-.search-hint {
-  display: none; background: var(--green); color: white;
-  padding: 12px 15px; border-radius: 12px; font-size: 13px;
-}
-main { padding-top: 31px; padding-bottom: 45px; }
-.section-head {
-  display: flex; align-items: end; justify-content: space-between;
-  gap: 12px; margin-bottom: 18px;
-}
-.section-head h2 { margin: 0; font-size: 22px; letter-spacing: -.4px; }
-.section-head p { color: var(--muted); font-size: 13px; margin: 7px 0 0; }
-.result-count {
-  white-space: nowrap; color: var(--green); background: #e7f5ed;
-  border-radius: 30px; padding: 8px 11px; font-size: 12px; font-weight: 700;
-}
-.categories {
-  display: flex; gap: 9px; overflow-x: auto;
-  padding: 2px 0 20px; scrollbar-width: none;
-}
-.categories::-webkit-scrollbar { display: none; }
-.category {
-  white-space: nowrap; border: 1px solid #e2ebe6;
-  background: white; color: #566a62; border-radius: 30px;
-  padding: 10px 15px; font-size: 12px; cursor: pointer; font-family: inherit;
-}
-.category.active, .category:hover {
-  background: var(--dark); border-color: var(--dark); color: white;
-}
-.product-grid {
-  display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 13px;
-}
-.product-card {
-  background: white; border: 1px solid var(--border);
-  border-radius: 18px; overflow: hidden; min-width: 0;
-  box-shadow: 0 4px 17px rgba(22,60,48,.035);
-  transition: transform .2s, box-shadow .2s;
-}
-.product-card:hover {
-  transform: translateY(-4px); box-shadow: 0 13px 28px rgba(22,60,48,.10);
-}
-.product-image {
-  position: relative; height: 145px; display: grid;
-  place-items: center; padding: 13px;
-  background: linear-gradient(145deg, #f0f8f4, #f9fbfa);
-  border-bottom: 1px solid #edf2ef;
-}
-.product-image img { width: 100%; height: 100%; object-fit: contain; }
-.placeholder { font-size: 43px; opacity: .7; }
-.wholesale {
-  position: absolute; left: 9px; top: 9px; z-index: 1;
-  background: white; color: var(--green); border: 1px solid #e0eee6;
-  border-radius: 7px; padding: 5px 7px; font-size: 10px; font-weight: 700;
-}
-.product-info { padding: 13px 12px 14px; }
-.product-name {
-  min-height: 41px; margin: 0 0 7px; color: var(--dark);
-  font-size: 14px; line-height: 1.5; overflow-wrap: anywhere;
-}
-.company { margin: 0; color: var(--muted); font-size: 12px; line-height: 1.6; }
-.price-area { margin-top: 15px; }
-.price { color: var(--green); font-size: 21px; font-weight: 800; letter-spacing: -.5px; }
-.unit { margin-top: 4px; color: var(--muted); font-size: 11px; }
-.divider { height: 1px; background: #edf1ef; margin: 13px 0 11px; }
-.order-button {
-  width: 100%; padding: 11px 4px; display: block; border: 0;
-  border-radius: 10px; background: var(--green); color: white;
-  font-family: inherit; font-size: 12px; font-weight: 700; cursor: pointer;
-}
-.order-button:hover { background: var(--dark); }
-.empty {
-  grid-column: 1 / -1; padding: 40px 15px; background: white;
-  border: 1px solid var(--border); border-radius: 17px;
-  text-align: center; color: var(--muted);
-}
-.empty strong { display: block; color: var(--dark); margin-bottom: 8px; }
-.feature-grid {
-  display: grid; grid-template-columns: 1fr; gap: 13px; margin-top: 43px;
-}
-.feature {
-  display: flex; gap: 13px; background: white;
-  border: 1px solid var(--border); border-radius: 17px; padding: 17px;
-}
-.feature-icon {
-  flex-shrink: 0; width: 45px; height: 45px; display: grid;
-  place-items: center; border-radius: 13px; background: var(--mint); font-size: 23px;
-}
-.feature h3 { margin: 2px 0 6px; font-size: 15px; }
-.feature p { color: var(--muted); font-size: 12px; line-height: 1.7; margin: 0; }
-footer {
-  background: white; border-top: 1px solid var(--border);
-  padding: 25px 18px; text-align: center; color: var(--muted);
-  font-size: 12px; line-height: 1.8;
-}
-footer strong { color: var(--dark); font-size: 15px; }
-
-@media (min-width: 600px) {
-  .container { padding-left: 26px; padding-right: 26px; }
-  .hero-inner { padding-top: 54px; padding-bottom: 75px; }
-  .product-grid { grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 18px; }
-  .product-image { height: 185px; }
-  .product-info { padding: 16px; }
-  .product-name { font-size: 16px; }
-  .feature-grid { grid-template-columns: repeat(3, minmax(0, 1fr)); }
-  .feature { display: block; }
-  .feature-icon { margin-bottom: 12px; }
-}
-@media (min-width: 900px) {
-  .product-grid { grid-template-columns: repeat(4, minmax(0, 1fr)); }
-  .product-image { height: 200px; }
-}
-@media (max-width: 360px) {
-  .container { padding-left: 12px; padding-right: 12px; }
-  .product-grid { gap: 9px; }
-  .product-info { padding: 10px; }
-  .product-name { font-size: 13px; }
-  .price { font-size: 19px; }
-  .nav-label { font-size: 10px; padding: 8px; }
-}
-</style>
-</head>
-
-<body>
-<header>
-  <div class="container nav">
-    <a class="brand" href="#" aria-label="Medispot BD Home">
-      <div class="brand-mark">✚</div>
-      <div>
-        <h1>Medispot BD</h1>
-        <p>Medicine Wholesale Marketplace</p>
-      </div>
-    </a>
-    <span class="nav-label">B2B MARKETPLACE</span>
-  </div>
-</header>
-
-<section class="hero">
-  <div class="container hero-inner">
-    <span class="eyebrow">✦ ফার্মেসির জন্য ডিজিটাল সমাধান</span>
-    <h2>আপনার প্রয়োজনীয় ওষুধ<br>খুঁজুন সহজেই</h2>
-    <p>
-      ওষুধের নাম, কোম্পানি ও পাইকারি দাম এক জায়গায় দেখুন।
-      ফার্মেসির কেনাকাটাকে আরও সহজ করার পথে Medispot BD।
-    </p>
-    <div class="hero-points">
-      <span>✓ সহজে সার্চ</span>
-      <span>✓ পণ্যের তথ্য</span>
-      <span>✓ ফার্মেসি-কেন্দ্রিক</span>
-    </div>
-  </div>
-</section>
-
-<main class="container">
-  <div class="search-section">
-    <div class="search-box">
-      <span class="search-symbol">⌕</span>
-      <input id="search" type="search"
-        placeholder="ওষুধের নাম বা কোম্পানি লিখুন..."
-        aria-label="ওষুধ খুঁজুন">
-      <span class="search-hint">Search</span>
-    </div>
-  </div>
-
-  <section>
-    <div class="section-head">
-      <div>
-        <h2 id="listTitle">জনপ্রিয় ওষুধ</h2>
-        <p id="listSubtitle">পণ্য দেখুন এবং প্রয়োজনীয় তথ্য খুঁজুন</p>
-      </div>
-      <span class="result-count" id="count">লোড হচ্ছে...</span>
-    </div>
-
-    <div class="categories" id="categories">
-      <button class="category active" data-filter="all">সব পণ্য</button>
-    </div>
-
-    <div class="product-grid" id="products"></div>
-  </section>
-
-  <section class="feature-grid">
-    <div class="feature">
-      <div class="feature-icon">💊</div>
-      <div>
-        <h3>ওষুধ খুঁজুন</h3>
-        <p>পণ্যের নাম ও কোম্পানি দিয়ে দ্রুত তথ্য খুঁজে নিন।</p>
-      </div>
-    </div>
-    <div class="feature">
-      <div class="feature-icon">🏪</div>
-      <div>
-        <h3>বিক্রেতা হিসেবে যোগ দিন</h3>
-        <p>লাইসেন্সধারী বিক্রেতাদের যুক্ত করার ব্যবস্থা উন্নয়নের কাজ চলছে।</p>
-      </div>
-    </div>
-    <div class="feature">
-      <div class="feature-icon">📦</div>
-      <div>
-        <h3>ফার্মেসি অর্ডার</h3>
-        <p>সহজ ও গোছানো অর্ডার ব্যবস্থা তৈরির পরিকল্পনা রয়েছে।</p>
-      </div>
-    </div>
-  </section>
-</main>
-
-<footer>
-  <strong>Medispot BD</strong><br>
-  Medicine Marketplace · Under Development<br>
-  © 2026 Medispot BD
-</footer>
-
-<script type="module">
-import { createClient } from
-  'https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/+esm';
-
-/* SUPABASE SETTINGS */
-const SUPABASE_URL = 'https://pnaaqkuzazjiabnnwxjq.supabase.co';
-const SUPABASE_PUBLISHABLE_KEY = 'sb_publishable_ckj65sbFnET7xOjxPJOwfw_-KrevOkv';
-
-const supabase = createClient(
-  SUPABASE_URL,
-  SUPABASE_PUBLISHABLE_KEY
-);
-
-/* DEMO PRODUCTS: used only if Supabase cannot be reached */
-const demoProducts = [
-  {
-    name: 'Napa 500 mg',
-    image_url: 'napa.jpg.JPG',
-    company: 'Beximco',
-    price: 612,
-    unit: 'প্রতি বক্স'
-  },
-  {
-    name: 'Seclo 20 mg',
-    image_url: 'seclo.JPG',
-    company: 'Square',
-    price: 720,
-    unit: 'প্রতি বক্স'
-  },
-  {
-    name: 'Montene 10 mg',
-    image_url: '',
-    company: 'Square',
-    price: 525,
-    unit: 'প্রতি বক্স'
-  },
-  {
-    name: 'Nexum Mups 20 mg',
-    image_url: 'nexum.jpg.JPG',
-    company: 'Square',
-    price: 1000,
-    unit: 'প্রতি বক্স'
-  }
-];
-
-const search = document.getElementById('search');
-const grid = document.getElementById('products');
-const count = document.getElementById('count');
-const listTitle = document.getElementById('listTitle');
-const listSubtitle = document.getElementById('listSubtitle');
-const categories = document.getElementById('categories');
-
-let products = [];
-let activeFilter = 'all';
-
-function escapeHTML(value) {
-  return String(value ?? '').replace(/[&<>"']/g, character => ({
-    '&': '&amp;',
-    '<': '&lt;',
-    '>': '&gt;',
-    '"': '&quot;',
-    "'": '&#39;'
-  })[character]);
-}
-
-function formatPrice(value) {
-  const number = Number(value);
-  return Number.isFinite(number)
-    ? number.toLocaleString('en-BD')
-    : '0';
-}
-
-function renderCategories() {
-  const companies = [...new Set(
-    products
-      .map(product => product.company)
-      .filter(Boolean)
-  )].sort((a, b) => a.localeCompare(b));
-
-  categories.innerHTML = `
-    <button class="category ${activeFilter === 'all' ? 'active' : ''}"
-      data-filter="all">সব পণ্য</button>
-    ${companies.map(company => `
-      <button class="category ${activeFilter === company ? 'active' : ''}"
-        data-filter="${escapeHTML(company)}">${escapeHTML(company)}</button>
-    `).join('')}
-  `;
-}
-
-function renderProducts() {
-  const query = search.value.trim().toLowerCase();
-
-  const found = products.filter(product => {
-    const searchText = [
-      product.name,
-      product.company,
-      product.strength,
-      product.category
-    ].filter(Boolean).join(' ').toLowerCase();
-
-    const matchesText = searchText.includes(query);
-    const matchesCompany =
-      activeFilter === 'all' || product.company === activeFilter;
-
-    return matchesText && matchesCompany;
-  });
-
-  count.textContent = found.length + 'টি পণ্য';
-  listTitle.textContent = query ? 'সার্চের ফলাফল' : 'জনপ্রিয় ওষুধ';
-  listSubtitle.textContent = query
-    ? 'আপনার সার্চ অনুযায়ী পণ্য'
-    : 'পণ্য দেখুন এবং প্রয়োজনীয় তথ্য খুঁজুন';
-
-  if (!found.length) {
-    grid.innerHTML = `
-      <div class="empty">
-        <strong>কোনো পণ্য পাওয়া যায়নি</strong>
-        অন্য নাম বা কোম্পানি দিয়ে চেষ্টা করুন।
-      </div>`;
-    return;
-  }
-
-  grid.innerHTML = found.map((product, index) => {
-    const name = escapeHTML(product.name);
-    const company = escapeHTML(product.company || 'উল্লেখ নেই');
-    const image = String(product.image_url || product.image || '').trim();
-    const safeImage = escapeHTML(image);
-    const price = formatPrice(product.price);
-    const unit = escapeHTML(product.unit || 'প্রতি বক্স');
-    const productKey = String(index);
-
-    return `
-      <article class="product-card">
-        <div class="product-image">
-          <span class="wholesale">পাইকারি পণ্য</span>
-          ${safeImage ? `
-            <img src="${safeImage}" alt="${name}" loading="lazy"
-              onerror="this.style.display='none';this.nextElementSibling.style.display='block';">
-          ` : ''}
-          <span class="placeholder"
-            style="display:${safeImage ? 'none' : 'block'}">💊</span>
-        </div>
-        <div class="product-info">
-          <h3 class="product-name">${name}</h3>
-          <p class="company">কোম্পানি: ${company}</p>
-          <div class="price-area">
-            <div class="price">৳${price}</div>
-            <div class="unit">${unit}</div>
-          </div>
-          <div class="divider"></div>
-          <button class="order-button" data-product-index="${productKey}">
-            অর্ডার তথ্য →
-          </button>
-        </div>
-      </article>
-    `;
-  }).join('');
-}
-
-async function loadProducts() {
-  count.textContent = 'লোড হচ্ছে...';
-
-  try {
-    const { data, error } = await supabase
-      .from('medicines')
-      .select('id, name, company, strength, price, image_url, stock, category')
-      .order('name', { ascending: true });
-
-    if (error) throw error;
-
-    products = (data || []).map(row => ({
-      ...row,
-      name: [row.name, row.strength]
-        .filter(Boolean)
-        .join(' '),
-      unit: 'প্রতি বক্স'
-    }));
-
-    // A successful query with zero rows means the database is empty.
-    if (products.length === 0) {
-      grid.innerHTML = `
-        <div class="empty">
-          <strong>এখনো কোনো ওষুধ যোগ করা হয়নি</strong>
-          Supabase-এর medicines টেবিলে ওষুধ যোগ করলে এখানে দেখা যাবে।
-        </div>`;
-      count.textContent = '০টি পণ্য';
-      renderCategories();
-      return;
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Medispot BD | Medicine Marketplace</title>
+  <meta name="description" content="Medispot BD — ফার্মেসির জন্য ওষুধ খোঁজা ও পাইকারি দামের তথ্য পাওয়ার সহজ প্ল্যাটফর্ম।">
+  <style>
+    :root {
+      --green: #087f5b;
+      --green-dark: #056044;
+      --green-light: #e8f7f0;
+      --text: #17352b;
+      --muted: #718078;
+      --bg: #f6faf8;
+      --white: #ffffff;
+      --border: #e4eee8;
+      --shadow: 0 8px 30px rgba(16, 65, 45, 0.07);
     }
-
-    renderCategories();
-    renderProducts();
-
-  } catch (error) {
-    console.error('Supabase connection error:', error);
-
-    // Keep the website viewable while the database connection is fixed.
-    products = demoProducts;
-    renderCategories();
-    renderProducts();
-    listSubtitle.textContent =
-      'ডেমো পণ্য দেখানো হচ্ছে — ডেটাবেজ সংযোগ পরীক্ষা করুন';
-  }
-}
-
-search.addEventListener('input', renderProducts);
-
-categories.addEventListener('click', event => {
-  const button = event.target.closest('button[data-filter]');
-  if (!button) return;
-
-  activeFilter = button.dataset.filter;
-  renderCategories();
-  renderProducts();
-});
-
-grid.addEventListener('click', event => {
-  const button = event.target.closest('.order-button');
-  if (!button) return;
-
-  const index = Number(button.dataset.productIndex);
-  const product = products[index];
-  if (!product) return;
-
-  alert(
-    product.name + '\n' +
-    'কোম্পানি: ' + (product.company || 'উল্লেখ নেই') + '\n' +
-    'দাম: ৳' + formatPrice(product.price) + ' ' +
-    (product.unit || 'প্রতি বক্স') +
-    '\n\nঅনলাইন অর্ডার ব্যবস্থা এখনো চালু হয়নি।'
-  );
-});
-
-loadProducts();
-</script>
-
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+    html {
+      scroll-behavior: smooth;
+    }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI",
+        "Noto Sans Bengali", Arial, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      line-height: 1.6;
+    }
+    button, input {
+      font: inherit;
+    }
+    button {
+      cursor: pointer;
+    }
+    .container {
+      width: min(1160px, 92%);
+      margin: auto;
+    }
+    /* HEADER */
+    header {
+      position: sticky;
+      top: 0;
+      z-index: 20;
+      background: rgba(255, 255, 255, 0.96);
+      border-bottom: 1px solid var(--border);
+      backdrop-filter: blur(12px);
+    }
+    .navbar {
+      min-height: 76px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+    }
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 11px;
+      text-decoration: none;
+      color: var(--text);
+    }
+    .brand-mark {
+      width: 46px;
+      height: 46px;
+      border-radius: 15px;
+      background: linear-gradient(145deg, #0aa878, #056044);
+      color: white;
+      display: grid;
+      place-items: center;
+      font-size: 20px;
+      font-weight: 900;
+      box-shadow: 0 5px 14px #087f5b30;
+    }
+    .brand-name {
+      font-size: 21px;
+      font-weight: 850;
+      letter-spacing: -0.6px;
+    }
+    .brand-name span {
+      color: var(--green);
+    }
+    .brand-subtitle {
+      color: var(--muted);
+      font-size: 11px;
+      margin-top: -4px;
+    }
+    .nav-link {
+      text-decoration: none;
+      color: var(--green);
+      font-weight: 750;
+      border: 1px solid #bfe8d5;
+      background: var(--green-light);
+      padding: 10px 17px;
+      border-radius: 12px;
+      font-size: 14px;
+    }
+    /* HERO */
+    .hero {
+      padding: 58px 0 42px;
+      background:
+        radial-gradient(circle at 90% 10%, #c7f2dc 0, transparent 30%),
+        linear-gradient(135deg, #effbf4, #ffffff 70%);
+      border-bottom: 1px solid var(--border);
+    }
+    .hero-grid {
+      display: grid;
+      grid-template-columns: 1.25fr 0.75fr;
+      gap: 32px;
+      align-items: center;
+    }
+    .eyebrow {
+      display: inline-flex;
+      align-items: center;
+      gap: 7px;
+      padding: 7px 12px;
+      border-radius: 30px;
+      color: var(--green);
+      background: #dff7e9;
+      font-size: 12px;
+      font-weight: 800;
+      margin-bottom: 18px;
+    }
+    .hero h1 {
+      font-size: clamp(32px, 5vw, 51px);
+      line-height: 1.25;
+      letter-spacing: -1.4px;
+      max-width: 660px;
+      margin-bottom: 16px;
+    }
+    .hero h1 span {
+      color: var(--green);
+    }
+    .hero p {
+      max-width: 580px;
+      color: #60736a;
+      font-size: 16px;
+      line-height: 1.9;
+    }
+    .hero-card {
+      background: white;
+      border: 1px solid #dcefe4;
+      border-radius: 25px;
+      padding: 25px;
+      box-shadow: var(--shadow);
+    }
+    .hero-card-icon {
+      width: 56px;
+      height: 56px;
+      border-radius: 18px;
+      display: grid;
+      place-items: center;
+      font-size: 28px;
+      background: var(--green-light);
+      margin-bottom: 15px;
+    }
+    .hero-card h3 {
+      font-size: 19px;
+      margin-bottom: 7px;
+    }
+    .hero-card p {
+      font-size: 14px;
+    }
+    .hero-points {
+      display: grid;
+      gap: 12px;
+      margin-top: 18px;
+    }
+    .hero-point {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-size: 13px;
+      font-weight: 650;
+    }
+    .check {
+      color: var(--green);
+      background: var(--green-light);
+      border-radius: 50%;
+      width: 25px;
+      height: 25px;
+      display: grid;
+      place-items: center;
+      flex-shrink: 0;
+    }
+    /* PRODUCTS */
+    .products-section {
+      padding: 42px 0 65px;
+    }
+    .section-heading {
+      display: flex;
+      justify-content: space-between;
+      align-items: end;
+      gap: 18px;
+      margin-bottom: 24px;
+    }
+    .section-heading h2 {
+      font-size: clamp(24px, 3vw, 31px);
+      letter-spacing: -0.6px;
+    }
+    .section-heading p {
+      font-size: 14px;
+      color: var(--muted);
+      margin-top: 5px;
+    }
+    .result-count {
+      font-size: 12px;
+      color: var(--green);
+      background: var(--green-light);
+      border-radius: 30px;
+      padding: 8px 12px;
+      white-space: nowrap;
+      font-weight: 750;
+    }
+    .search-box {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      background: white;
+      border: 1px solid var(--border);
+      border-radius: 17px;
+      padding: 5px 16px;
+      box-shadow: 0 4px 15px #164d3510;
+      margin-bottom: 16px;
+    }
+    .search-icon {
+      font-size: 21px;
+      color: var(--green);
+    }
+    .search-box input {
+      width: 100%;
+      border: none;
+      outline: none;
+      background: transparent;
+      padding: 14px 0;
+      font-size: 15px;
+      color: var(--text);
+    }
+    .search-box input::placeholder {
+      color: #9aa8a0;
+    }
+    .filters {
+      display: flex;
+      gap: 9px;
+      flex-wrap: wrap;
+      margin-bottom: 25px;
+    }
+    .filter-btn {
+      border: 1px solid var(--border);
+      color: #60736a;
+      background: white;
+      padding: 9px 16px;
+      border-radius: 30px;
+      font-size: 13px;
+      font-weight: 700;
+      transition: 0.2s;
+    }
+    .filter-btn:hover,
+    .filter-btn.active {
+      color: white;
+      background: var(--green);
+      border-color: var(--green);
+    }
+    .product-grid {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 20px;
+    }
+    .product-card {
+      overflow: hidden;
+      background: white;
+      border: 1px solid var(--border);
+      border-radius: 20px;
+      box-shadow: 0 3px 12px #174c3510;
+      transition: transform 0.22s, box-shadow 0.22s;
+      display: flex;
+      flex-direction: column;
+      min-width: 0;
+    }
+    .product-card:hover {
+      transform: translateY(-5px);
+      box-shadow: var(--shadow);
+    }
+    .product-image {
+      height: 180px;
+      background: #f1f8f4;
+      display: grid;
+      place-items: center;
+      padding: 15px;
+      position: relative;
+      border-bottom: 1px solid #edf3ef;
+    }
+    .product-image img {
+      max-width: 100%;
+      max-height: 100%;
+      width: 100%;
+      height: 100%;
+      object-fit: contain;
+    }
+    .image-placeholder {
+      display: none;
+      text-align: center;
+      color: #7b9a89;
+    }
+    .image-placeholder .medical-icon {
+      font-size: 42px;
+      display: block;
+    }
+    .image-placeholder small {
+      display: block;
+      font-size: 11px;
+      margin-top: 5px;
+    }
+    .product-info {
+      padding: 17px;
+      display: flex;
+      flex-direction: column;
+      flex: 1;
+    }
+    .company-label {
+      display: inline-block;
+      align-self: flex-start;
+      font-size: 10px;
+      font-weight: 800;
+      color: var(--green);
+      background: var(--green-light);
+      border-radius: 6px;
+      padding: 5px 8px;
+      margin-bottom: 10px;
+      text-transform: uppercase;
+      letter-spacing: 0.3px;
+    }
+    .product-name {
+      font-size: 17px;
+      font-weight: 800;
+      line-height: 1.45;
+      overflow-wrap: anywhere;
+    }
+    .product-category {
+      color: var(--muted);
+      font-size: 12px;
+      margin-top: 5px;
+      min-height: 19px;
+    }
+    .product-bottom {
+      margin-top: auto;
+      padding-top: 18px;
+    }
+    .price-label {
+      color: var(--muted);
+      font-size: 11px;
+    }
+    .product-price {
+      color: var(--green-dark);
+      font-size: 23px;
+      font-weight: 900;
+      letter-spacing: -0.4px;
+      margin: 2px 0 12px;
+    }
+    .order-btn {
+      width: 100%;
+      border: none;
+      border-radius: 11px;
+      padding: 12px 10px;
+      background: var(--green);
+      color: white;
+      font-size: 13px;
+      font-weight: 800;
+      transition: background 0.2s;
+    }
+    .order-btn:hover {
+      background: var(--green-dark);
+    }
+    .empty-state {
+      grid-column: 1 / -1;
+      padding: 48px 20px;
+      background: white;
+      border: 1px dashed #cbded2;
+      border-radius: 18px;
+      text-align: center;
+      color: var(--muted);
+    }
+    .empty-state strong {
+      display: block;
+      color: var(--text);
+      font-size: 17px;
+      margin-bottom: 5px;
+    }
+    .empty-icon {
+      font-size: 35px;
+      margin-bottom: 10px;
+    }
+    .status-message {
+      font-size: 12px;
+      color: var(--muted);
+      margin-top: 18px;
+      text-align: center;
+    }
+    /* TRUST STRIP */
+    .trust-section {
+      background: white;
+      border-top: 1px solid var(--border);
+      border-bottom: 1px solid var(--border);
+      padding: 30px 0;
+    }
+    .trust-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 25px;
+    }
+    .trust-item {
+      display: flex;
+      gap: 13px;
+      align-items: center;
+    }
+    .trust-icon {
+      width: 44px;
+      height: 44px;
+      flex-shrink: 0;
+      border-radius: 14px;
+      background: var(--green-light);
+      display: grid;
+      place-items: center;
+      font-size: 21px;
+    }
+    .trust-item strong {
+      display: block;
+      font-size: 14px;
+    }
+    .trust-item span {
+      display: block;
+      color: var(--muted);
+      font-size: 12px;
+      margin-top: 2px;
+    }
+    /* FOOTER */
+    footer {
+      background: #103d2d;
+      color: white;
+      padding: 35px 0 22px;
+    }
+    .footer-top {
+      display: flex;
+      justify-content: space-between;
+      align-items: start;
+      gap: 25px;
+      padding-bottom: 25px;
+    }
+    .footer-brand {
+      font-size: 22px;
+      font-weight: 850;
+    }
+    .footer-brand span {
+      color: #6de2ad;
+    }
+    .footer-description {
+      color: #c0d6ca;
+      font-size: 13px;
+      max-width: 440px;
+      margin-top: 8px;
+      line-height: 1.8;
+    }
+    .footer-note {
+      color: #c0d6ca;
+      font-size: 12px;
+      max-width: 310px;
+      line-height: 1.8;
+    }
+    .copyright {
+      border-top: 1px solid #ffffff25;
+      padding-top: 18px;
+      color: #b6cfc1;
+      font-size: 11px;
+      text-align: center;
+    }
+    @media (max-width: 950px) {
+      .product-grid {
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+      }
+      .hero-grid {
+        grid-template-columns: 1fr 0.8fr;
+        gap: 20px;
+      }
+    }
+    @media (max-width: 650px) {
+      .navbar {
+        min-height: 68px;
+      }
+      .brand-mark {
+        width: 40px;
+        height: 40px;
+        border-radius: 12px;
+      }
+      .brand-name {
+        font-size: 18px;
+      }
+      .brand-subtitle {
+        font-size: 10px;
+      }
+      .nav-link {
+        padding: 9px 11px;
+        font-size: 12px;
+      }
+      .hero {
+        padding: 37px 0 30px;
+      }
+      .hero-grid {
+        grid-template-columns: 1fr;
+      }
+      .hero h1 {
+        font-size: 34px;
+      }
+      .hero p {
+        font-size: 14px;
+      }
+      .hero-card {
+        padding: 20px;
+      }
+      .products-section {
+        padding: 32px 0 45px;
+      }
+      .section-heading {
+        align-items: start;
+      }
+      .section-heading h2 {
+        font-size: 24px;
+      }
+      .section-heading p {
+        font-size: 12px;
+      }
+      .result-count {
+        font-size: 10px;
+        padding: 7px 9px;
+      }
+      .product-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 12px;
+      }
+      .product-image {
+        height: 145px;
+        padding: 10px;
+      }
+      .product-info {
+        padding: 12px;
+      }
+      .product-name {
+        font-size: 14px;
+      }
+      .product-price {
+        font-size: 20px;
+      }
+      .order-btn {
+        padding: 10px 5px;
+        font-size: 12px;
+      }
+      .company-label {
+        font-size: 9px;
+      }
+      .trust-grid {
+        grid-template-columns: 1fr;
+        gap: 18px;
+      }
+      .footer-top {
+        flex-direction: column;
+      }
+    }
+    @media (max-width: 360px) {
+      .container {
+        width: 94%;
+      }
+      .product-grid {
+        gap: 8px;
+      }
+      .product-info {
+        padding: 9px;
+      }
+      .product-image {
+        height: 125px;
+      }
+      .product-name {
+        font-size: 13px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <div class="container navbar">
+      <a class="brand" href="#">
+        <div class="brand-mark">MS</div>
+        <div>
+          <div class="brand-name">Medi<span>spot</span> BD</div>
+          <div class="brand-subtitle">Medicine Marketplace</div>
+        </div>
+      </a>
+      <a class="nav-link" href="#products">ওষুধ খুঁজুন ↗</a>
+    </div>
+  </header>
+  <main>
+    <section class="hero">
+      <div class="container hero-grid">
+        <div>
+          <div class="eyebrow">✦ ফার্মেসির জন্য স্মার্ট প্ল্যাটফর্ম</div>
+          <h1>
+            আপনার ফার্মেসির জন্য
+            <span>ওষুধ খুঁজুন</span> সহজেই
+          </h1>
+          <p>
+            Medispot BD-তে ওষুধের নাম, কোম্পানি ও দাম খুঁজে দেখুন।
+            ফার্মেসির ওষুধ সংগ্রহের প্রক্রিয়াকে আরও সহজ করার আমাদের প্রচেষ্টা।
+          </p>
+        </div>
+        <div class="hero-card">
+          <div class="hero-card-icon">💊</div>
+          <h3>আপনার প্রয়োজনীয় ওষুধ এক জায়গায়</h3>
+          <p>ওষুধের তালিকা দেখুন এবং সহজে প্রয়োজনীয় পণ্য খুঁজে নিন।</p>
+          <div class="hero-points">
+            <div class="hero-point">
+              <span class="check">✓</span>
+              ওষুধের নাম দিয়ে সার্চ
+            </div>
+            <div class="hero-point">
+              <span class="check">✓</span>
+              কোম্পানি অনুযায়ী ফিল্টার
+            </div>
+            <div class="hero-point">
+              <span class="check">✓</span>
+              এক নজরে পণ্যের দাম
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+    <section class="products-section" id="products">
+      <div class="container">
+        <div class="section-heading">
+          <div>
+            <h2>ওষুধের তালিকা</h2>
+            <p>আপনার প্রয়োজনীয় ওষুধটি খুঁজে নিন</p>
+          </div>
+          <div class="result-count" id="resultCount">লোড হচ্ছে...</div>
+        </div>
+        <div class="search-box">
+          <span class="search-icon">⌕</span>
+          <input
+            type="search"
+            id="searchInput"
+            placeholder="ওষুধের নাম বা কোম্পানি লিখুন..."
+            aria-label="ওষুধ সার্চ করুন"
+          >
+        </div>
+        <div class="filters" id="companyFilters">
+          <button class="filter-btn active" data-company="all">সব ওষুধ</button>
+        </div>
+        <div class="product-grid" id="productGrid">
+          <div class="empty-state">
+            <div class="empty-icon">💊</div>
+            <strong>ওষুধের তালিকা লোড হচ্ছে</strong>
+            একটু অপেক্ষা করুন...
+          </div>
+        </div>
+        <p class="status-message" id="statusMessage">
+          ওষুধের তথ্য লোড হচ্ছে...
+        </p>
+      </div>
+    </section>
+    <section class="trust-section">
+      <div class="container trust-grid">
+        <div class="trust-item">
+          <div class="trust-icon">🔎</div>
+          <div>
+            <strong>সহজে খুঁজুন</strong>
+            <span>নাম ও কোম্পানি দিয়ে সার্চ</span>
+          </div>
+        </div>
+        <div class="trust-item">
+          <div class="trust-icon">📋</div>
+          <div>
+            <strong>পণ্যের তথ্য</strong>
+            <span>দাম ও পণ্যের তালিকা দেখুন</span>
+          </div>
+        </div>
+        <div class="trust-item">
+          <div class="trust-icon">🏪</div>
+          <div>
+            <strong>ফার্মেসিকে গুরুত্ব</strong>
+            <span>ফার্মেসির কাজ সহজ করার উদ্যোগ</span>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+  <footer>
+    <div class="container">
+      <div class="footer-top">
+        <div>
+          <div class="footer-brand">Medispot <span>BD</span></div>
+          <p class="footer-description">
+            ফার্মেসির জন্য ওষুধ খোঁজা ও পণ্যের তথ্য দেখার একটি সহজ
+            ডিজিটাল প্ল্যাটফর্ম।
+          </p>
+        </div>
+        <p class="footer-note">
+          মূল্য ও প্রাপ্যতা অর্ডারের আগে যাচাই করুন।
+          ওষুধ কেনাবেচা প্রযোজ্য আইন ও লাইসেন্সের শর্ত মেনে করতে হবে।
+        </p>
+      </div>
+      <div class="copyright">
+        © <span id="currentYear"></span> Medispot BD. All rights reserved.
+      </div>
+    </div>
+  </footer>
+  <script type="module">
+    /*
+      Medispot BD
+      Supabase-এ ওষুধ থাকলে সেখানকার তালিকা দেখাবে।
+      ডেটা না থাকলে নিচের LOCAL_PRODUCTS দেখাবে।
+    */
+    const SUPABASE_URL =
+      "https://pnaaqkuzazjiabnnwxjq.supabase.co";
+    const SUPABASE_PUBLISHABLE_KEY =
+      "sb_publishable_ckj65sbFnET7xOjxPJOwfw_-KrevOkv";
+    /*
+      ছবির ফাইলের নাম GitHub repository-র নামের সঙ্গে
+      হুবহু মিলিয়ে নিতে হবে।
+    */
+    const LOCAL_PRODUCTS = [
+      {
+        id: "local-1",
+        name: "Napa 500 mg",
+        company: "Beximco",
+        strength: "500 mg",
+        price: 612,
+        unit: "প্রতি বক্স",
+        image_url: "./napa.jpg.JPG",
+        category: "Tablet"
+      },
+      {
+        id: "local-2",
+        name: "Seclo 20 mg",
+        company: "Square",
+        strength: "20 mg",
+        price: 720,
+        unit: "প্রতি বক্স",
+        image_url: "./seclo.JPG",
+        category: "Capsule"
+      },
+      {
+        id: "local-3",
+        name: "Montene 10 mg",
+        company: "Square",
+        strength: "10 mg",
+        price: 525,
+        unit: "প্রতি বক্স",
+        image_url: "",
+        category: "Tablet"
+      },
+      {
+        id: "local-4",
+        name: "Nexum Mups 20 mg",
+        company: "Square",
+        strength: "20 mg",
+        price: 1000,
+        unit: "প্রতি বক্স",
+        image_url: "./nexum.jpg.JPG",
+        category: "Tablet"
+      }
+    ];
+    const grid = document.getElementById("productGrid");
+    const searchInput = document.getElementById("searchInput");
+    const filters = document.getElementById("companyFilters");
+    const resultCount = document.getElementById("resultCount");
+    const statusMessage = document.getElementById("statusMessage");
+    let allProducts = [...LOCAL_PRODUCTS];
+    let selectedCompany = "all";
+    document.getElementById("currentYear").textContent =
+      new Date().getFullYear();
+    function escapeHTML(value) {
+      return String(value ?? "").replace(/[&<>"']/g, function (char) {
+        return {
+          "&": "&amp;",
+          "<": "&lt;",
+          ">": "&gt;",
+          '"': "&quot;",
+          "'": "&#039;"
+        }[char];
+      });
+    }
+    function safeImagePath(value) {
+      const path = String(value ?? "").trim();
+      if (!path) return "";
+      // শুধু local filename বা HTTP/HTTPS image URL অনুমোদিত।
+      if (/^https?:\/\//i.test(path)) return path;
+      if (
+        path.startsWith("/") ||
+        path.startsWith("./") ||
+        path.startsWith("../")
+      ) {
+        return path;
+      }
+      // Supabase-এ শুধু ফাইলের নাম থাকলেও কাজ করবে।
+      return "./" + path;
+    }
+    function formatPrice(price) {
+      const number = Number(price);
+      if (!Number.isFinite(number)) return "দাম জানতে যোগাযোগ করুন";
+      return "৳" + number.toLocaleString("en-US", {
+        maximumFractionDigits: 2
+      });
+    }
+    function renderCompanyFilters() {
+      const companies = [
+        ...new Set(
+          allProducts
+            .map(product => String(product.company || "").trim())
+            .filter(Boolean)
+        )
+      ].sort((a, b) => a.localeCompare(b));
+      filters.innerHTML = `
+        <button class="filter-btn ${selectedCompany === "all" ? "active" : ""}"
+          data-company="all">সব ওষুধ</button>
+        ${companies.map(company => `
+          <button class="filter-btn ${selectedCompany === company ? "active" : ""}"
+            data-company="${escapeHTML(company)}">${escapeHTML(company)}</button>
+        `).join("")}
+      `;
+    }
+    function renderProducts() {
+      const searchTerm = searchInput.value.trim().toLowerCase();
+      const filtered = allProducts.filter(product => {
+        const searchable = [
+          product.name,
+          product.company,
+          product.strength,
+          product.category
+        ].join(" ").toLowerCase();
+        const matchesSearch = searchable.includes(searchTerm);
+        const matchesCompany =
+          selectedCompany === "all" ||
+          product.company === selectedCompany;
+        return matchesSearch && matchesCompany;
+      });
+      resultCount.textContent = `${filtered.length}টি পণ্য`;
+      if (filtered.length === 0) {
+        grid.innerHTML = `
+          <div class="empty-state">
+            <div class="empty-icon">🔎</div>
+            <strong>কোনো ওষুধ পাওয়া যায়নি</strong>
+            অন্য নাম দিয়ে সার্চ করুন অথবা অন্য কোম্পানি নির্বাচন করুন।
+          </div>
+        `;
+        return;
+      }
+      grid.innerHTML = filtered.map(product => {
+        const name = escapeHTML(product.name || "ওষুধ");
+        const company = escapeHTML(product.company || "অনির্দিষ্ট কোম্পানি");
+        const category = escapeHTML(product.category || "");
+        const unit = escapeHTML(product.unit || "প্রতি বক্স");
+        const image = safeImagePath(product.image_url);
+        const price = formatPrice(product.price);
+        const imageHTML = image
+          ? `<img
+               src="${escapeHTML(image)}"
+               alt="${name}"
+               loading="lazy"
+               onerror="this.style.display='none'; this.nextElementSibling.style.display='block';"
+             >
+             <div class="image-placeholder">
+               <span class="medical-icon">💊</span>
+               <small>ছবি পাওয়া যায়নি</small>
+             </div>`
+          : `<div class="image-placeholder" style="display:block">
+               <span class="medical-icon">💊</span>
+               <small>ওষুধের ছবি</small>
+             </div>`;
+        return `
+          <article class="product-card">
+            <div class="product-image">
+              ${imageHTML}
+            </div>
+            <div class="product-info">
+              <span class="company-label">${company}</span>
+              <h3 class="product-name">${name}</h3>
+              <div class="product-category">${category}</div>
+              <div class="product-bottom">
+                <div class="price-label">${unit}</div>
+                <div class="product-price">${price}</div>
+                <button
+                  class="order-btn"
+                  type="button"
+                  data-product="${escapeHTML(product.id)}"
+                >
+                  অর্ডারের বিষয়ে জানুন
+                </button>
+              </div>
+            </div>
+          </article>
+        `;
+      }).join("");
+    }
+    filters.addEventListener("click", event => {
+      const button = event.target.closest("button[data-company]");
+      if (!button) return;
+      selectedCompany = button.dataset.company;
+      renderCompanyFilters();
+      renderProducts();
+    });
+    searchInput.addEventListener("input", renderProducts);
+    grid.addEventListener("click", event => {
+      const button = event.target.closest("button[data-product]");
+      if (!button) return;
+      const product = allProducts.find(
+        item => String(item.id) === button.dataset.product
+      );
+      if (!product) return;
+      alert(
+        "পণ্য: " + (product.name || "ওষুধ") +
+        "\nকোম্পানি: " + (product.company || "উল্লেখ নেই") +
+        "\nদাম: " + formatPrice(product.price) +
+        "\n\nএই ওয়েবসাইটে অনলাইন অর্ডার এখনো চালু করা হয়নি।"
+      );
+    });
+    async function loadProducts() {
+      try {
+        const response = await fetch(
+          SUPABASE_URL + "/rest/v1/medicines" +
+          "?select=id,name,company,strength,price,image_url,stock,category",
+          {
+            headers: {
+              "apikey": SUPABASE_PUBLISHABLE_KEY,
+              "Authorization": "Bearer " + SUPABASE_PUBLISHABLE_KEY
+            }
+          }
+        );
+        if (!response.ok) {
+          throw new Error("Supabase request failed: " + response.status);
+        }
+        const rows = await response.json();
+        if (Array.isArray(rows) && rows.length > 0) {
+          allProducts = rows
+            .filter(row => row.stock === undefined ||
+              row.stock === null || Number(row.stock) > 0)
+            .map(row => {
+              const name = String(row.name || "").trim();
+              const strength = String(row.strength || "").trim();
+              return {
+                id: row.id,
+                name: name.toLowerCase().includes(strength.toLowerCase()) &&
+                  strength ? name : [name, strength].filter(Boolean).join(" "),
+                company: row.company || "",
+                strength: strength,
+                price: row.price,
+                unit: "প্রতি বক্স",
+                image_url: row.image_url || "",
+                category: row.category || ""
+              };
+            });
+          statusMessage.textContent =
+            "ডেটাবেজ থেকে পণ্যের তথ্য দেখানো হচ্ছে।";
+        } else {
+          allProducts = [...LOCAL_PRODUCTS];
+          statusMessage.textContent =
+            "প্রাথমিক পণ্যের তালিকা দেখানো হচ্ছে।";
+        }
+      } catch (error) {
+        console.error("Medicine loading error:", error);
+        allProducts = [...LOCAL_PRODUCTS];
+        statusMessage.textContent =
+          "প্রাথমিক পণ্যের তালিকা দেখানো হচ্ছে। ডেটাবেজ সংযোগ এখনো যাচাই করা যায়নি।";
+      }
+      renderCompanyFilters();
+      renderProducts();
+    }
+    loadProducts();
+  </script>
 </body>
 </html>
