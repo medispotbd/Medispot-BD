@@ -153,9 +153,9 @@ async function uploadPhoto(file){
   if(file.size > 5*1024*1024) throw new Error("ছবি 5 MB-এর কম হতে হবে।");
   const ext=(file.name.split(".").pop() || "jpg").toLowerCase().replace(/[^a-z0-9]/g,"");
   const path=Date.now()+"-"+Math.random().toString(36).slice(2)+"."+ext;
-  const {error}=await db.storage.from("medicine-image").upload(path,file,{upsert:false,contentType:file.type});
+  const {error}=await db.storage.from("Medicine-image").upload(path,file,{upsert:false,contentType:file.type});
   if(error) throw error;
-  const {data}=db.storage.from("medicine-image").getPublicUrl(path);
+  const {data}=db.storage.from("Medicine-image").getPublicUrl(path);
   return data.publicUrl;
 }
 
