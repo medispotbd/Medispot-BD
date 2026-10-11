@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="bn">
 <head>
@@ -7,584 +8,266 @@
   <meta name="description" content="Medispot BD — ফার্মেসির জন্য ওষুধ খোঁজা ও পাইকারি দামের তথ্য পাওয়ার সহজ প্ল্যাটফর্ম।">
   <style>
     :root {
-      --green: #087f5b;
-      --green-dark: #056044;
-      --green-light: #e8f7f0;
-      --text: #17352b;
-      --muted: #718078;
-      --bg: #f6faf8;
-      --white: #ffffff;
-      --border: #e4eee8;
-      --shadow: 0 8px 30px rgba(16, 65, 45, 0.07);
+      --green:#087f5b;
+      --green-dark:#056044;
+      --green-light:#e8f7f0;
+      --text:#17352b;
+      --muted:#718078;
+      --bg:#f6faf8;
+      --white:#ffffff;
+      --border:#e4eee8;
+      --shadow:0 8px 30px rgba(16,65,45,.07);
     }
-    * {
-      box-sizing: border-box;
-      margin: 0;
-      padding: 0;
-    }
-    html {
-      scroll-behavior: smooth;
-    }
+    * { box-sizing:border-box; margin:0; padding:0; }
+    html { scroll-behavior:smooth; }
     body {
-      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI",
-        "Noto Sans Bengali", Arial, sans-serif;
-      background: var(--bg);
-      color: var(--text);
-      line-height: 1.6;
+      font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","Noto Sans Bengali",Arial,sans-serif;
+      background:var(--bg); color:var(--text); line-height:1.6;
     }
-    button, input {
-      font: inherit;
-    }
-    button {
-      cursor: pointer;
-    }
-    .container {
-      width: min(1160px, 92%);
-      margin: auto;
-    }
-    /* HEADER */
+    button,input { font:inherit; }
+    button { cursor:pointer; }
+    .container { width:min(1160px,92%); margin:auto; }
     header {
-      position: sticky;
-      top: 0;
-      z-index: 20;
-      background: rgba(255, 255, 255, 0.96);
-      border-bottom: 1px solid var(--border);
-      backdrop-filter: blur(12px);
+      position:sticky; top:0; z-index:20;
+      background:rgba(255,255,255,.96);
+      border-bottom:1px solid var(--border);
+      backdrop-filter:blur(12px);
     }
     .navbar {
-      min-height: 76px;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      gap: 16px;
+      min-height:76px; display:flex; align-items:center;
+      justify-content:space-between; gap:16px;
     }
     .brand {
-      display: flex;
-      align-items: center;
-      gap: 11px;
-      text-decoration: none;
-      color: var(--text);
+      display:flex; align-items:center; gap:11px;
+      text-decoration:none; color:var(--text);
     }
     .brand-mark {
-      width: 46px;
-      height: 46px;
-      border-radius: 15px;
-      background: linear-gradient(145deg, #0aa878, #056044);
-      color: white;
-      display: grid;
-      place-items: center;
-      font-size: 20px;
-      font-weight: 900;
-      box-shadow: 0 5px 14px #087f5b30;
+      width:46px; height:46px; border-radius:15px;
+      background:linear-gradient(145deg,#0aa878,#056044);
+      color:white; display:grid; place-items:center;
+      font-size:20px; font-weight:900;
+      box-shadow:0 5px 14px #087f5b30;
     }
-    .brand-name {
-      font-size: 21px;
-      font-weight: 850;
-      letter-spacing: -0.6px;
-    }
-    .brand-name span {
-      color: var(--green);
-    }
-    .brand-subtitle {
-      color: var(--muted);
-      font-size: 11px;
-      margin-top: -4px;
-    }
+    .brand-name { font-size:21px; font-weight:850; letter-spacing:-.6px; }
+    .brand-name span { color:var(--green); }
+    .brand-subtitle { color:var(--muted); font-size:11px; margin-top:-4px; }
     .nav-link {
-      text-decoration: none;
-      color: var(--green);
-      font-weight: 750;
-      border: 1px solid #bfe8d5;
-      background: var(--green-light);
-      padding: 10px 17px;
-      border-radius: 12px;
-      font-size: 14px;
+      text-decoration:none; color:var(--green); font-weight:750;
+      border:1px solid #bfe8d5; background:var(--green-light);
+      padding:10px 17px; border-radius:12px; font-size:14px;
     }
-    /* HERO */
     .hero {
-      padding: 58px 0 42px;
-      background:
-        radial-gradient(circle at 90% 10%, #c7f2dc 0, transparent 30%),
-        linear-gradient(135deg, #effbf4, #ffffff 70%);
-      border-bottom: 1px solid var(--border);
+      padding:58px 0 42px;
+      background:radial-gradient(circle at 90% 10%,#c7f2dc 0,transparent 30%),
+      linear-gradient(135deg,#effbf4,#ffffff 70%);
+      border-bottom:1px solid var(--border);
     }
     .hero-grid {
-      display: grid;
-      grid-template-columns: 1.25fr 0.75fr;
-      gap: 32px;
-      align-items: center;
+      display:grid; grid-template-columns:1.25fr .75fr;
+      gap:32px; align-items:center;
     }
     .eyebrow {
-      display: inline-flex;
-      align-items: center;
-      gap: 7px;
-      padding: 7px 12px;
-      border-radius: 30px;
-      color: var(--green);
-      background: #dff7e9;
-      font-size: 12px;
-      font-weight: 800;
-      margin-bottom: 18px;
+      display:inline-flex; align-items:center; gap:7px;
+      padding:7px 12px; border-radius:30px;
+      color:var(--green); background:#dff7e9;
+      font-size:12px; font-weight:800; margin-bottom:18px;
     }
     .hero h1 {
-      font-size: clamp(32px, 5vw, 51px);
-      line-height: 1.25;
-      letter-spacing: -1.4px;
-      max-width: 660px;
-      margin-bottom: 16px;
+      font-size:clamp(32px,5vw,51px); line-height:1.25;
+      letter-spacing:-1.4px; max-width:660px; margin-bottom:16px;
     }
-    .hero h1 span {
-      color: var(--green);
-    }
+    .hero h1 span { color:var(--green); }
     .hero p {
-      max-width: 580px;
-      color: #60736a;
-      font-size: 16px;
-      line-height: 1.9;
+      max-width:580px; color:#60736a; font-size:16px; line-height:1.9;
     }
     .hero-card {
-      background: white;
-      border: 1px solid #dcefe4;
-      border-radius: 25px;
-      padding: 25px;
-      box-shadow: var(--shadow);
+      background:white; border:1px solid #dcefe4;
+      border-radius:25px; padding:25px; box-shadow:var(--shadow);
     }
     .hero-card-icon {
-      width: 56px;
-      height: 56px;
-      border-radius: 18px;
-      display: grid;
-      place-items: center;
-      font-size: 28px;
-      background: var(--green-light);
-      margin-bottom: 15px;
+      width:56px; height:56px; border-radius:18px;
+      display:grid; place-items:center; font-size:28px;
+      background:var(--green-light); margin-bottom:15px;
     }
-    .hero-card h3 {
-      font-size: 19px;
-      margin-bottom: 7px;
-    }
-    .hero-card p {
-      font-size: 14px;
-    }
-    .hero-points {
-      display: grid;
-      gap: 12px;
-      margin-top: 18px;
-    }
+    .hero-card h3 { font-size:19px; margin-bottom:7px; }
+    .hero-card p { font-size:14px; }
+    .hero-points { display:grid; gap:12px; margin-top:18px; }
     .hero-point {
-      display: flex;
-      align-items: center;
-      gap: 10px;
-      font-size: 13px;
-      font-weight: 650;
+      display:flex; align-items:center; gap:10px;
+      font-size:13px; font-weight:650;
     }
     .check {
-      color: var(--green);
-      background: var(--green-light);
-      border-radius: 50%;
-      width: 25px;
-      height: 25px;
-      display: grid;
-      place-items: center;
-      flex-shrink: 0;
+      color:var(--green); background:var(--green-light);
+      border-radius:50%; width:25px; height:25px;
+      display:grid; place-items:center; flex-shrink:0;
     }
-    /* PRODUCTS */
-    .products-section {
-      padding: 42px 0 65px;
-    }
+    .products-section { padding:42px 0 65px; }
     .section-heading {
-      display: flex;
-      justify-content: space-between;
-      align-items: end;
-      gap: 18px;
-      margin-bottom: 24px;
+      display:flex; justify-content:space-between;
+      align-items:end; gap:18px; margin-bottom:24px;
     }
     .section-heading h2 {
-      font-size: clamp(24px, 3vw, 31px);
-      letter-spacing: -0.6px;
+      font-size:clamp(24px,3vw,31px); letter-spacing:-.6px;
     }
-    .section-heading p {
-      font-size: 14px;
-      color: var(--muted);
-      margin-top: 5px;
-    }
+    .section-heading p { font-size:14px; color:var(--muted); margin-top:5px; }
     .result-count {
-      font-size: 12px;
-      color: var(--green);
-      background: var(--green-light);
-      border-radius: 30px;
-      padding: 8px 12px;
-      white-space: nowrap;
-      font-weight: 750;
+      font-size:12px; color:var(--green); background:var(--green-light);
+      border-radius:30px; padding:8px 12px;
+      white-space:nowrap; font-weight:750;
     }
     .search-box {
-      display: flex;
-      align-items: center;
-      gap: 12px;
-      background: white;
-      border: 1px solid var(--border);
-      border-radius: 17px;
-      padding: 5px 16px;
-      box-shadow: 0 4px 15px #164d3510;
-      margin-bottom: 16px;
+      display:flex; align-items:center; gap:12px;
+      background:white; border:1px solid var(--border);
+      border-radius:17px; padding:5px 16px;
+      box-shadow:0 4px 15px #164d3510; margin-bottom:16px;
     }
-    .search-icon {
-      font-size: 21px;
-      color: var(--green);
-    }
+    .search-icon { font-size:21px; color:var(--green); }
     .search-box input {
-      width: 100%;
-      border: none;
-      outline: none;
-      background: transparent;
-      padding: 14px 0;
-      font-size: 15px;
-      color: var(--text);
+      width:100%; border:none; outline:none;
+      background:transparent; padding:14px 0;
+      font-size:15px; color:var(--text);
     }
-    .search-box input::placeholder {
-      color: #9aa8a0;
-    }
-    .filters {
-      display: flex;
-      gap: 9px;
-      flex-wrap: wrap;
-      margin-bottom: 25px;
-    }
+    .search-box input::placeholder { color:#9aa8a0; }
+    .filters { display:flex; gap:9px; flex-wrap:wrap; margin-bottom:25px; }
     .filter-btn {
-      border: 1px solid var(--border);
-      color: #60736a;
-      background: white;
-      padding: 9px 16px;
-      border-radius: 30px;
-      font-size: 13px;
-      font-weight: 700;
-      transition: 0.2s;
+      border:1px solid var(--border); color:#60736a; background:white;
+      padding:9px 16px; border-radius:30px;
+      font-size:13px; font-weight:700; transition:.2s;
     }
-    .filter-btn:hover,
-    .filter-btn.active {
-      color: white;
-      background: var(--green);
-      border-color: var(--green);
+    .filter-btn:hover,.filter-btn.active {
+      color:white; background:var(--green); border-color:var(--green);
     }
     .product-grid {
-      display: grid;
-      grid-template-columns: repeat(4, minmax(0, 1fr));
-      gap: 20px;
+      display:grid; grid-template-columns:repeat(4,minmax(0,1fr)); gap:20px;
     }
     .product-card {
-      overflow: hidden;
-      background: white;
-      border: 1px solid var(--border);
-      border-radius: 20px;
-      box-shadow: 0 3px 12px #174c3510;
-      transition: transform 0.22s, box-shadow 0.22s;
-      display: flex;
-      flex-direction: column;
-      min-width: 0;
+      overflow:hidden; background:white; border:1px solid var(--border);
+      border-radius:20px; box-shadow:0 3px 12px #174c3510;
+      transition:transform .22s,box-shadow .22s;
+      display:flex; flex-direction:column; min-width:0;
     }
-    .product-card:hover {
-      transform: translateY(-5px);
-      box-shadow: var(--shadow);
-    }
+    .product-card:hover { transform:translateY(-5px); box-shadow:var(--shadow); }
     .product-image {
-      height: 180px;
-      background: #f1f8f4;
-      display: grid;
-      place-items: center;
-      padding: 15px;
-      position: relative;
-      border-bottom: 1px solid #edf3ef;
+      height:180px; background:#f1f8f4; display:grid;
+      place-items:center; padding:15px; position:relative;
+      border-bottom:1px solid #edf3ef;
     }
     .product-image img {
-      max-width: 100%;
-      max-height: 100%;
-      width: 100%;
-      height: 100%;
-      object-fit: contain;
+      max-width:100%; max-height:100%; width:100%;
+      height:100%; object-fit:contain;
     }
-    .image-placeholder {
-      display: none;
-      text-align: center;
-      color: #7b9a89;
-    }
-    .image-placeholder .medical-icon {
-      font-size: 42px;
-      display: block;
-    }
-    .image-placeholder small {
-      display: block;
-      font-size: 11px;
-      margin-top: 5px;
-    }
+    .image-placeholder { display:none; text-align:center; color:#7b9a89; }
+    .image-placeholder .medical-icon { font-size:42px; display:block; }
+    .image-placeholder small { display:block; font-size:11px; margin-top:5px; }
     .product-info {
-      padding: 17px;
-      display: flex;
-      flex-direction: column;
-      flex: 1;
+      padding:17px; display:flex; flex-direction:column; flex:1;
     }
     .company-label {
-      display: inline-block;
-      align-self: flex-start;
-      font-size: 10px;
-      font-weight: 800;
-      color: var(--green);
-      background: var(--green-light);
-      border-radius: 6px;
-      padding: 5px 8px;
-      margin-bottom: 10px;
-      text-transform: uppercase;
-      letter-spacing: 0.3px;
+      display:inline-block; align-self:flex-start;
+      font-size:10px; font-weight:800; color:var(--green);
+      background:var(--green-light); border-radius:6px;
+      padding:5px 8px; margin-bottom:10px;
+      text-transform:uppercase; letter-spacing:.3px;
     }
     .product-name {
-      font-size: 17px;
-      font-weight: 800;
-      line-height: 1.45;
-      overflow-wrap: anywhere;
+      font-size:17px; font-weight:800; line-height:1.45;
+      overflow-wrap:anywhere;
     }
     .product-category {
-      color: var(--muted);
-      font-size: 12px;
-      margin-top: 5px;
-      min-height: 19px;
+      color:var(--muted); font-size:12px; margin-top:5px; min-height:19px;
     }
-    .product-bottom {
-      margin-top: auto;
-      padding-top: 18px;
-    }
-    .price-label {
-      color: var(--muted);
-      font-size: 11px;
-    }
+    .product-bottom { margin-top:auto; padding-top:18px; }
+    .price-label { color:var(--muted); font-size:11px; }
     .product-price {
-      color: var(--green-dark);
-      font-size: 23px;
-      font-weight: 900;
-      letter-spacing: -0.4px;
-      margin: 2px 0 12px;
+      color:var(--green-dark); font-size:23px; font-weight:900;
+      letter-spacing:-.4px; margin:2px 0 12px;
     }
     .order-btn {
-      width: 100%;
-      border: none;
-      border-radius: 11px;
-      padding: 12px 10px;
-      background: var(--green);
-      color: white;
-      font-size: 13px;
-      font-weight: 800;
-      transition: background 0.2s;
+      width:100%; border:none; border-radius:11px;
+      padding:12px 10px; background:var(--green); color:white;
+      font-size:13px; font-weight:800; transition:background .2s;
     }
-    .order-btn:hover {
-      background: var(--green-dark);
-    }
+    .order-btn:hover { background:var(--green-dark); }
     .empty-state {
-      grid-column: 1 / -1;
-      padding: 48px 20px;
-      background: white;
-      border: 1px dashed #cbded2;
-      border-radius: 18px;
-      text-align: center;
-      color: var(--muted);
+      grid-column:1/-1; padding:48px 20px; background:white;
+      border:1px dashed #cbded2; border-radius:18px;
+      text-align:center; color:var(--muted);
     }
     .empty-state strong {
-      display: block;
-      color: var(--text);
-      font-size: 17px;
-      margin-bottom: 5px;
+      display:block; color:var(--text); font-size:17px; margin-bottom:5px;
     }
-    .empty-icon {
-      font-size: 35px;
-      margin-bottom: 10px;
-    }
+    .empty-icon { font-size:35px; margin-bottom:10px; }
     .status-message {
-      font-size: 12px;
-      color: var(--muted);
-      margin-top: 18px;
-      text-align: center;
+      font-size:12px; color:var(--muted); margin-top:18px; text-align:center;
     }
-    /* TRUST STRIP */
     .trust-section {
-      background: white;
-      border-top: 1px solid var(--border);
-      border-bottom: 1px solid var(--border);
-      padding: 30px 0;
+      background:white; border-top:1px solid var(--border);
+      border-bottom:1px solid var(--border); padding:30px 0;
     }
-    .trust-grid {
-      display: grid;
-      grid-template-columns: repeat(3, 1fr);
-      gap: 25px;
-    }
-    .trust-item {
-      display: flex;
-      gap: 13px;
-      align-items: center;
-    }
+    .trust-grid { display:grid; grid-template-columns:repeat(3,1fr); gap:25px; }
+    .trust-item { display:flex; gap:13px; align-items:center; }
     .trust-icon {
-      width: 44px;
-      height: 44px;
-      flex-shrink: 0;
-      border-radius: 14px;
-      background: var(--green-light);
-      display: grid;
-      place-items: center;
-      font-size: 21px;
+      width:44px; height:44px; flex-shrink:0; border-radius:14px;
+      background:var(--green-light); display:grid; place-items:center; font-size:21px;
     }
-    .trust-item strong {
-      display: block;
-      font-size: 14px;
-    }
+    .trust-item strong { display:block; font-size:14px; }
     .trust-item span {
-      display: block;
-      color: var(--muted);
-      font-size: 12px;
-      margin-top: 2px;
+      display:block; color:var(--muted); font-size:12px; margin-top:2px;
     }
-    /* FOOTER */
-    footer {
-      background: #103d2d;
-      color: white;
-      padding: 35px 0 22px;
-    }
+    footer { background:#103d2d; color:white; padding:35px 0 22px; }
     .footer-top {
-      display: flex;
-      justify-content: space-between;
-      align-items: start;
-      gap: 25px;
-      padding-bottom: 25px;
+      display:flex; justify-content:space-between; align-items:start;
+      gap:25px; padding-bottom:25px;
     }
-    .footer-brand {
-      font-size: 22px;
-      font-weight: 850;
-    }
-    .footer-brand span {
-      color: #6de2ad;
-    }
+    .footer-brand { font-size:22px; font-weight:850; }
+    .footer-brand span { color:#6de2ad; }
     .footer-description {
-      color: #c0d6ca;
-      font-size: 13px;
-      max-width: 440px;
-      margin-top: 8px;
-      line-height: 1.8;
+      color:#c0d6ca; font-size:13px; max-width:440px;
+      margin-top:8px; line-height:1.8;
     }
     .footer-note {
-      color: #c0d6ca;
-      font-size: 12px;
-      max-width: 310px;
-      line-height: 1.8;
+      color:#c0d6ca; font-size:12px; max-width:310px; line-height:1.8;
     }
     .copyright {
-      border-top: 1px solid #ffffff25;
-      padding-top: 18px;
-      color: #b6cfc1;
-      font-size: 11px;
-      text-align: center;
+      border-top:1px solid #ffffff25; padding-top:18px;
+      color:#b6cfc1; font-size:11px; text-align:center;
     }
-    @media (max-width: 950px) {
-      .product-grid {
-        grid-template-columns: repeat(3, minmax(0, 1fr));
-      }
-      .hero-grid {
-        grid-template-columns: 1fr 0.8fr;
-        gap: 20px;
-      }
+    @media(max-width:950px) {
+      .product-grid { grid-template-columns:repeat(3,minmax(0,1fr)); }
+      .hero-grid { grid-template-columns:1fr .8fr; gap:20px; }
     }
-    @media (max-width: 650px) {
-      .navbar {
-        min-height: 68px;
-      }
-      .brand-mark {
-        width: 40px;
-        height: 40px;
-        border-radius: 12px;
-      }
-      .brand-name {
-        font-size: 18px;
-      }
-      .brand-subtitle {
-        font-size: 10px;
-      }
-      .nav-link {
-        padding: 9px 11px;
-        font-size: 12px;
-      }
-      .hero {
-        padding: 37px 0 30px;
-      }
-      .hero-grid {
-        grid-template-columns: 1fr;
-      }
-      .hero h1 {
-        font-size: 34px;
-      }
-      .hero p {
-        font-size: 14px;
-      }
-      .hero-card {
-        padding: 20px;
-      }
-      .products-section {
-        padding: 32px 0 45px;
-      }
-      .section-heading {
-        align-items: start;
-      }
-      .section-heading h2 {
-        font-size: 24px;
-      }
-      .section-heading p {
-        font-size: 12px;
-      }
-      .result-count {
-        font-size: 10px;
-        padding: 7px 9px;
-      }
-      .product-grid {
-        grid-template-columns: repeat(2, minmax(0, 1fr));
-        gap: 12px;
-      }
-      .product-image {
-        height: 145px;
-        padding: 10px;
-      }
-      .product-info {
-        padding: 12px;
-      }
-      .product-name {
-        font-size: 14px;
-      }
-      .product-price {
-        font-size: 20px;
-      }
-      .order-btn {
-        padding: 10px 5px;
-        font-size: 12px;
-      }
-      .company-label {
-        font-size: 9px;
-      }
-      .trust-grid {
-        grid-template-columns: 1fr;
-        gap: 18px;
-      }
-      .footer-top {
-        flex-direction: column;
-      }
+    @media(max-width:650px) {
+      .navbar { min-height:68px; }
+      .brand-mark { width:40px; height:40px; border-radius:12px; }
+      .brand-name { font-size:18px; }
+      .brand-subtitle { font-size:10px; }
+      .nav-link { padding:9px 11px; font-size:12px; }
+      .hero { padding:37px 0 30px; }
+      .hero-grid { grid-template-columns:1fr; }
+      .hero h1 { font-size:34px; }
+      .hero p { font-size:14px; }
+      .hero-card { padding:20px; }
+      .products-section { padding:32px 0 45px; }
+      .section-heading { align-items:start; }
+      .section-heading h2 { font-size:24px; }
+      .section-heading p { font-size:12px; }
+      .result-count { font-size:10px; padding:7px 9px; }
+      .product-grid { grid-template-columns:repeat(2,minmax(0,1fr)); gap:12px; }
+      .product-image { height:145px; padding:10px; }
+      .product-info { padding:12px; }
+      .product-name { font-size:14px; }
+      .product-price { font-size:20px; }
+      .order-btn { padding:10px 5px; font-size:12px; }
+      .company-label { font-size:9px; }
+      .trust-grid { grid-template-columns:1fr; gap:18px; }
+      .footer-top { flex-direction:column; }
     }
-    @media (max-width: 360px) {
-      .container {
-        width: 94%;
-      }
-      .product-grid {
-        gap: 8px;
-      }
-      .product-info {
-        padding: 9px;
-      }
-      .product-image {
-        height: 125px;
-      }
-      .product-name {
-        font-size: 13px;
-      }
+    @media(max-width:360px) {
+      .container { width:94%; }
+      .product-grid { gap:8px; }
+      .product-info { padding:9px; }
+      .product-image { height:125px; }
+      .product-name { font-size:13px; }
     }
   </style>
 </head>
@@ -601,15 +284,13 @@
       <a class="nav-link" href="#products">ওষুধ খুঁজুন ↗</a>
     </div>
   </header>
+
   <main>
     <section class="hero">
       <div class="container hero-grid">
         <div>
           <div class="eyebrow">✦ ফার্মেসির জন্য স্মার্ট প্ল্যাটফর্ম</div>
-          <h1>
-            আপনার ফার্মেসির জন্য
-            <span>ওষুধ খুঁজুন</span> সহজেই
-          </h1>
+          <h1>আপনার ফার্মেসির জন্য <span>ওষুধ খুঁজুন</span> সহজেই</h1>
           <p>
             Medispot BD-তে ওষুধের নাম, কোম্পানি ও দাম খুঁজে দেখুন।
             ফার্মেসির ওষুধ সংগ্রহের প্রক্রিয়াকে আরও সহজ করার আমাদের প্রচেষ্টা।
@@ -620,22 +301,14 @@
           <h3>আপনার প্রয়োজনীয় ওষুধ এক জায়গায়</h3>
           <p>ওষুধের তালিকা দেখুন এবং সহজে প্রয়োজনীয় পণ্য খুঁজে নিন।</p>
           <div class="hero-points">
-            <div class="hero-point">
-              <span class="check">✓</span>
-              ওষুধের নাম দিয়ে সার্চ
-            </div>
-            <div class="hero-point">
-              <span class="check">✓</span>
-              কোম্পানি অনুযায়ী ফিল্টার
-            </div>
-            <div class="hero-point">
-              <span class="check">✓</span>
-              এক নজরে পণ্যের দাম
-            </div>
+            <div class="hero-point"><span class="check">✓</span>ওষুধের নাম দিয়ে সার্চ</div>
+            <div class="hero-point"><span class="check">✓</span>কোম্পানি অনুযায়ী ফিল্টার</div>
+            <div class="hero-point"><span class="check">✓</span>এক নজরে পণ্যের দাম</div>
           </div>
         </div>
       </div>
     </section>
+
     <section class="products-section" id="products">
       <div class="container">
         <div class="section-heading">
@@ -647,12 +320,9 @@
         </div>
         <div class="search-box">
           <span class="search-icon">⌕</span>
-          <input
-            type="search"
-            id="searchInput"
+          <input type="search" id="searchInput"
             placeholder="ওষুধের নাম বা কোম্পানি লিখুন..."
-            aria-label="ওষুধ সার্চ করুন"
-          >
+            aria-label="ওষুধ সার্চ করুন">
         </div>
         <div class="filters" id="companyFilters">
           <button class="filter-btn active" data-company="all">সব ওষুধ</button>
@@ -664,37 +334,28 @@
             একটু অপেক্ষা করুন...
           </div>
         </div>
-        <p class="status-message" id="statusMessage">
-          ওষুধের তথ্য লোড হচ্ছে...
-        </p>
+        <p class="status-message" id="statusMessage">ওষুধের তথ্য লোড হচ্ছে...</p>
       </div>
     </section>
+
     <section class="trust-section">
       <div class="container trust-grid">
         <div class="trust-item">
           <div class="trust-icon">🔎</div>
-          <div>
-            <strong>সহজে খুঁজুন</strong>
-            <span>নাম ও কোম্পানি দিয়ে সার্চ</span>
-          </div>
+          <div><strong>সহজে খুঁজুন</strong><span>নাম ও কোম্পানি দিয়ে সার্চ</span></div>
         </div>
         <div class="trust-item">
           <div class="trust-icon">📋</div>
-          <div>
-            <strong>পণ্যের তথ্য</strong>
-            <span>দাম ও পণ্যের তালিকা দেখুন</span>
-          </div>
+          <div><strong>পণ্যের তথ্য</strong><span>দাম ও পণ্যের তালিকা দেখুন</span></div>
         </div>
         <div class="trust-item">
           <div class="trust-icon">🏪</div>
-          <div>
-            <strong>ফার্মেসিকে গুরুত্ব</strong>
-            <span>ফার্মেসির কাজ সহজ করার উদ্যোগ</span>
-          </div>
+          <div><strong>ফার্মেসিকে গুরুত্ব</strong><span>ফার্মেসির কাজ সহজ করার উদ্যোগ</span></div>
         </div>
       </div>
     </section>
   </main>
+
   <footer>
     <div class="container">
       <div class="footer-top">
@@ -715,112 +376,109 @@
       </div>
     </div>
   </footer>
+
   <script type="module">
-    /*
-      Medispot BD
-      Supabase-এ ওষুধ থাকলে সেখানকার তালিকা দেখাবে।
-      ডেটা না থাকলে নিচের LOCAL_PRODUCTS দেখাবে।
-    */
     const SUPABASE_URL =
       "https://pnaaqkuzazjiabnnwxjq.supabase.co";
     const SUPABASE_PUBLISHABLE_KEY =
       "sb_publishable_ckj65sbFnET7xOjxPJOwfw_-KrevOkv";
-    /*
-      ছবির ফাইলের নাম GitHub repository-র নামের সঙ্গে
-      হুবহু মিলিয়ে নিতে হবে।
-    */
+
     const LOCAL_PRODUCTS = [
       {
-        id: "local-1",
-        name: "Napa 500 mg",
-        company: "Beximco",
-        strength: "500 mg",
-        price: 612,
-        unit: "প্রতি বক্স",
-        image_url: "./napa.jpg.JPG",
-        category: "Tablet"
+        id:"local-1", name:"Napa 500 mg", company:"Beximco",
+        strength:"500 mg", price:612, discount_percent:0,
+        unit:"প্রতি বক্স", image_url:"./napa.jpg.JPG", category:"Tablet"
       },
       {
-        id: "local-2",
-        name: "Seclo 20 mg",
-        company: "Square",
-        strength: "20 mg",
-        price: 720,
-        unit: "প্রতি বক্স",
-        image_url: "./seclo.JPG",
-        category: "Capsule"
+        id:"local-2", name:"Seclo 20 mg", company:"Square",
+        strength:"20 mg", price:720, discount_percent:0,
+        unit:"প্রতি বক্স", image_url:"./seclo.JPG", category:"Capsule"
       },
       {
-        id: "local-3",
-        name: "Montene 10 mg",
-        company: "Square",
-        strength: "10 mg",
-        price: 525,
-        unit: "প্রতি বক্স",
-        image_url: "",
-        category: "Tablet"
+        id:"local-3", name:"Montene 10 mg", company:"Square",
+        strength:"10 mg", price:525, discount_percent:0,
+        unit:"প্রতি বক্স", image_url:"", category:"Tablet"
       },
       {
-        id: "local-4",
-        name: "Nexum Mups 20 mg",
-        company: "Square",
-        strength: "20 mg",
-        price: 1000,
-        unit: "প্রতি বক্স",
-        image_url: "./nexum.jpg.JPG",
-        category: "Tablet"
+        id:"local-4", name:"Nexum Mups 20 mg", company:"Square",
+        strength:"20 mg", price:1000, discount_percent:0,
+        unit:"প্রতি বক্স", image_url:"./nexum.jpg.JPG", category:"Tablet"
       }
     ];
+
     const grid = document.getElementById("productGrid");
     const searchInput = document.getElementById("searchInput");
     const filters = document.getElementById("companyFilters");
     const resultCount = document.getElementById("resultCount");
     const statusMessage = document.getElementById("statusMessage");
+
     let allProducts = [...LOCAL_PRODUCTS];
     let selectedCompany = "all";
+
     document.getElementById("currentYear").textContent =
       new Date().getFullYear();
+
     function escapeHTML(value) {
-      return String(value ?? "").replace(/[&<>"']/g, function (char) {
-        return {
-          "&": "&amp;",
-          "<": "&lt;",
-          ">": "&gt;",
-          '"': "&quot;",
-          "'": "&#039;"
-        }[char];
-      });
+      return String(value ?? "").replace(/[&<>"']/g, char => ({
+        "&":"&amp;",
+        "<":"&lt;",
+        ">":"&gt;",
+        '"':"&quot;",
+        "'":"&#039;"
+      }[char]));
     }
+
     function safeImagePath(value) {
       const path = String(value ?? "").trim();
       if (!path) return "";
-      // শুধু local filename বা HTTP/HTTPS image URL অনুমোদিত।
       if (/^https?:\/\//i.test(path)) return path;
-      if (
-        path.startsWith("/") ||
-        path.startsWith("./") ||
-        path.startsWith("../")
-      ) {
-        return path;
-      }
-      // Supabase-এ শুধু ফাইলের নাম থাকলেও কাজ করবে।
+      if (path.startsWith("/") || path.startsWith("./") ||
+          path.startsWith("../")) return path;
       return "./" + path;
     }
-    function formatPrice(price) {
-      const number = Number(price);
-      if (!Number.isFinite(number)) return "দাম জানতে যোগাযোগ করুন";
+
+    function formatPrice(value) {
+      if (value === null || value === undefined || value === "") {
+        return "দাম জানতে যোগাযোগ করুন";
+      }
+
+      const number = Number(value);
+      if (!Number.isFinite(number) || number < 0) {
+        return "দাম জানতে যোগাযোগ করুন";
+      }
+
       return "৳" + number.toLocaleString("en-US", {
-        maximumFractionDigits: 2
+        maximumFractionDigits:2
       });
     }
+
+    function getPrices(product) {
+      const hasPrice = product.price !== null &&
+        product.price !== undefined &&
+        product.price !== "" &&
+        Number.isFinite(Number(product.price)) &&
+        Number(product.price) >= 0;
+
+      const mrp = hasPrice ? Number(product.price) : null;
+      const discount = Math.min(
+        100, Math.max(0, Number(product.discount_percent) || 0)
+      );
+
+      const finalPrice = mrp === null ? null :
+        Math.round((mrp * (1 - discount / 100) + Number.EPSILON) * 100) / 100;
+
+      return { mrp, discount, finalPrice };
+    }
+
     function renderCompanyFilters() {
       const companies = [
         ...new Set(
-          allProducts
-            .map(product => String(product.company || "").trim())
-            .filter(Boolean)
+          allProducts.map(product =>
+            String(product.company || "").trim()
+          ).filter(Boolean)
         )
       ].sort((a, b) => a.localeCompare(b));
+
       filters.innerHTML = `
         <button class="filter-btn ${selectedCompany === "all" ? "active" : ""}"
           data-company="all">সব ওষুধ</button>
@@ -830,22 +488,22 @@
         `).join("")}
       `;
     }
+
     function renderProducts() {
       const searchTerm = searchInput.value.trim().toLowerCase();
+
       const filtered = allProducts.filter(product => {
         const searchable = [
-          product.name,
-          product.company,
-          product.strength,
-          product.category
+          product.name, product.company, product.strength, product.category
         ].join(" ").toLowerCase();
-        const matchesSearch = searchable.includes(searchTerm);
-        const matchesCompany =
-          selectedCompany === "all" ||
-          product.company === selectedCompany;
-        return matchesSearch && matchesCompany;
+
+        return searchable.includes(searchTerm) &&
+          (selectedCompany === "all" ||
+           product.company === selectedCompany);
       });
+
       resultCount.textContent = `${filtered.length}টি পণ্য`;
+
       if (filtered.length === 0) {
         grid.innerHTML = `
           <div class="empty-state">
@@ -856,45 +514,61 @@
         `;
         return;
       }
+
       grid.innerHTML = filtered.map(product => {
         const name = escapeHTML(product.name || "ওষুধ");
         const company = escapeHTML(product.company || "অনির্দিষ্ট কোম্পানি");
         const category = escapeHTML(product.category || "");
         const unit = escapeHTML(product.unit || "প্রতি বক্স");
         const image = safeImagePath(product.image_url);
-        const price = formatPrice(product.price);
+        const { mrp, discount, finalPrice } = getPrices(product);
+
+        let priceHTML;
+
+        if (mrp === null) {
+          priceHTML = `<div class="product-price">দাম জানতে যোগাযোগ করুন</div>`;
+        } else if (discount > 0) {
+          priceHTML = `
+            <div style="font-size:12px;color:#718078;">
+              MRP: <span style="text-decoration:line-through;">${formatPrice(mrp)}</span>
+            </div>
+            <div style="font-size:11px;color:#087f5b;font-weight:800;margin-top:3px;">
+              ${Number(discount.toFixed(2))}% OFF
+            </div>
+            <div class="product-price">${formatPrice(finalPrice)}</div>
+          `;
+        } else {
+          priceHTML = `<div class="product-price">${formatPrice(mrp)}</div>`;
+        }
+
         const imageHTML = image
-          ? `<img
-               src="${escapeHTML(image)}"
-               alt="${name}"
-               loading="lazy"
-               onerror="this.style.display='none'; this.nextElementSibling.style.display='block';"
-             >
-             <div class="image-placeholder">
-               <span class="medical-icon">💊</span>
-               <small>ছবি পাওয়া যায়নি</small>
-             </div>`
-          : `<div class="image-placeholder" style="display:block">
-               <span class="medical-icon">💊</span>
-               <small>ওষুধের ছবি</small>
-             </div>`;
+          ? `
+            <img src="${escapeHTML(image)}" alt="${name}" loading="lazy"
+              onerror="this.style.display='none';this.nextElementSibling.style.display='block';">
+            <div class="image-placeholder">
+              <span class="medical-icon">💊</span>
+              <small>ছবি পাওয়া যায়নি</small>
+            </div>
+          `
+          : `
+            <div class="image-placeholder" style="display:block">
+              <span class="medical-icon">💊</span>
+              <small>ওষুধের ছবি</small>
+            </div>
+          `;
+
         return `
           <article class="product-card">
-            <div class="product-image">
-              ${imageHTML}
-            </div>
+            <div class="product-image">${imageHTML}</div>
             <div class="product-info">
               <span class="company-label">${company}</span>
               <h3 class="product-name">${name}</h3>
               <div class="product-category">${category}</div>
               <div class="product-bottom">
                 <div class="price-label">${unit}</div>
-                <div class="product-price">${price}</div>
-                <button
-                  class="order-btn"
-                  type="button"
-                  data-product="${escapeHTML(product.id)}"
-                >
+                ${priceHTML}
+                <button class="order-btn" type="button"
+                  data-product="${escapeHTML(product.id)}">
                   অর্ডারের বিষয়ে জানুন
                 </button>
               </div>
@@ -903,94 +577,120 @@
         `;
       }).join("");
     }
+
     filters.addEventListener("click", event => {
       const button = event.target.closest("button[data-company]");
       if (!button) return;
+
       selectedCompany = button.dataset.company;
       renderCompanyFilters();
       renderProducts();
     });
+
     searchInput.addEventListener("input", renderProducts);
+
     grid.addEventListener("click", event => {
       const button = event.target.closest("button[data-product]");
       if (!button) return;
+
       const product = allProducts.find(
         item => String(item.id) === button.dataset.product
       );
       if (!product) return;
+
+      const { mrp, discount, finalPrice } = getPrices(product);
+
+      let priceMessage = "\nদাম: " + formatPrice(mrp);
+
+      if (discount > 0 && finalPrice !== null) {
+        priceMessage =
+          "\nMRP: " + formatPrice(mrp) +
+          "\nছাড়: " + Number(discount.toFixed(2)) + "%" +
+          "\nছাড়ের পর দাম: " + formatPrice(finalPrice);
+      }
+
       alert(
         "পণ্য: " + (product.name || "ওষুধ") +
         "\nকোম্পানি: " + (product.company || "উল্লেখ নেই") +
-        "\nদাম: " + formatPrice(product.price) +
+        priceMessage +
         "\n\nএই ওয়েবসাইটে অনলাইন অর্ডার এখনো চালু করা হয়নি।"
       );
     });
+
     async function loadProducts() {
-  try {
-    const response = await fetch(
-      SUPABASE_URL + "/rest/v1/medicines" +
-      "?select=id,name,company,strength,price,discount_percent,image_url,stock,category",
-      {
-        headers: {
-          apikey: SUPABASE_PUBLISHABLE_KEY,
-          Authorization: "Bearer " + SUPABASE_PUBLISHABLE_KEY
+      try {
+        const response = await fetch(
+          SUPABASE_URL +
+          "/rest/v1/medicines" +
+          "?select=id,name,company,strength,price,discount_percent,image_url,stock,category",
+          {
+            headers: {
+              apikey: SUPABASE_PUBLISHABLE_KEY,
+              Authorization: "Bearer " + SUPABASE_PUBLISHABLE_KEY
+            }
+          }
+        );
+
+        if (!response.ok) {
+          throw new Error("Supabase request failed: " + response.status);
         }
+
+        const rows = await response.json();
+
+        const databaseProducts = rows
+          .filter(row =>
+            row.stock === null ||
+            row.stock === undefined ||
+            Number(row.stock) > 0
+          )
+          .map(row => {
+            const name = String(row.name || "").trim();
+            const strength = String(row.strength || "").trim();
+
+            return {
+              id: "db-" + row.id,
+              name: strength &&
+                !name.toLowerCase().includes(strength.toLowerCase())
+                  ? name + " " + strength
+                  : name,
+              company: row.company || "",
+              strength: strength,
+              price: row.price,
+              discount_percent: Number(row.discount_percent) || 0,
+              unit: "প্রতি বক্স",
+              image_url: row.image_url || "",
+              category: row.category || ""
+            };
+          });
+
+        const combinedProducts = [...LOCAL_PRODUCTS];
+
+        for (const product of databaseProducts) {
+          const duplicate = combinedProducts.some(existing =>
+            String(existing.name).trim().toLowerCase() ===
+              String(product.name).trim().toLowerCase() &&
+            String(existing.company).trim().toLowerCase() ===
+              String(product.company).trim().toLowerCase()
+          );
+
+          if (!duplicate) combinedProducts.push(product);
+        }
+
+        allProducts = combinedProducts;
+        statusMessage.textContent =
+          "GitHub ও Supabase-এর পণ্যের তালিকা দেখানো হচ্ছে।";
+
+      } catch (error) {
+        console.error("Medicine loading error:", error);
+        allProducts = [...LOCAL_PRODUCTS];
+        statusMessage.textContent =
+          "প্রাথমিক পণ্যের তালিকা দেখানো হচ্ছে। ডেটাবেজ সংযোগ যাচাই করুন।";
       }
-    );
-    if (!response.ok) {
-      throw new Error("Supabase request failed: " + response.status);
+
+      renderCompanyFilters();
+      renderProducts();
     }
-    const rows = await response.json();
-    // GitHub-এর আগের ওষুধগুলো সবসময় থাকবে
-    const databaseProducts = rows
-      .filter(row =>
-        row.stock === undefined ||
-        row.stock === null ||
-        Number(row.stock) > 0
-      )
-      .map(row => {
-        const name = String(row.name || "").trim();
-        const strength = String(row.strength || "").trim();
-        return {
-          id: "db-" + row.id,
-          name:
-            strength && !name.toLowerCase().includes(strength.toLowerCase())
-              ? name + " " + strength
-              : name,
-          company: row.company || "",
-          strength: strength,
-          discount_percent: Number(row.discount_percent) || 0,
-          unit: "প্রতি বক্স",
-          image_url: row.image_url || "",
-          category: row.category || ""
-        };
-      });
-    // একই নাম ও কোম্পানির পণ্য দুবার দেখাবে না
-    const combinedProducts = [...LOCAL_PRODUCTS];
-    for (const product of databaseProducts) {
-      const duplicate = combinedProducts.some(existing =>
-        String(existing.name).trim().toLowerCase() ===
-          String(product.name).trim().toLowerCase() &&
-        String(existing.company).trim().toLowerCase() ===
-          String(product.company).trim().toLowerCase()
-      );
-      if (!duplicate) {
-        combinedProducts.push(product);
-      }
-    }
-    allProducts = combinedProducts;
-    statusMessage.textContent =
-      "GitHub ও Supabase-এর পণ্যের তালিকা দেখানো হচ্ছে।";
-  } catch (error) {
-    console.error("Medicine loading error:", error);
-    // Supabase কাজ না করলেও পুরোনো ওষুধ থাকবে
-    allProducts = [...LOCAL_PRODUCTS];
-    statusMessage.textContent =
-      "প্রাথমিক পণ্যের তালিকা দেখানো হচ্ছে। ডেটাবেজ সংযোগ যাচাই করুন।";
-  }
-  renderCompanyFilters();
-  renderProducts();
-}
+
     loadProducts();
   </script>
 </body>
