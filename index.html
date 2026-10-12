@@ -84,7 +84,47 @@ header{position:sticky;top:0;z-index:20;background:rgba(255,255,255,.96);border-
 .flash-sale-heading h2{font-size:clamp(23px,3vw,30px);color:var(--dark)}
 .flash-sale-heading p{color:var(--muted);font-size:13px;margin-top:4px}
 .flash-sale-label{display:inline-block;padding:7px 11px;border-radius:20px;background:#fff0cc;color:#8a5100;font-size:12px;font-weight:800;white-space:nowrap}
-#flashSaleGrid .product-card{border-color:#ccebd9}
+
+#flashSaleGrid {
+  display: grid;
+  grid-auto-flow: column;
+  grid-auto-columns: 220px;
+  grid-template-columns: none;
+  gap: 14px;
+  overflow-x: auto;
+  overflow-y: hidden;
+  padding: 4px 3px 14px;
+  scroll-snap-type: x mandatory;
+  -webkit-overflow-scrolling: touch;
+  scrollbar-width: thin;
+  scrollbar-color: #a8d9c1 transparent;
+}
+
+#flashSaleGrid .product-card {
+  border-color: #ccebd9;
+  width: 100%;
+  min-width: 0;
+  scroll-snap-align: start;
+}
+
+#flashSaleGrid .empty-state {
+  width: 100%;
+  min-width: 0;
+}
+
+@media (max-width: 650px) {
+  #flashSaleGrid {
+    grid-auto-columns: 160px;
+    gap: 10px;
+  }
+}
+
+@media (max-width: 360px) {
+  #flashSaleGrid {
+    grid-auto-columns: 145px;
+  }
+}
+
 .flash-sale-note{font-size:12px;color:var(--muted);margin-top:14px;text-align:center}
 
 .trust-section{background:white;border-block:1px solid var(--border);padding:28px 0}
