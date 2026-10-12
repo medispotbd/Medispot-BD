@@ -1071,6 +1071,53 @@
     }).join("");
   }
 
+  /* Flash Sale ও সাধারণ পণ্যের কার্ড তৈরির ফাংশন */
+  function productCardHTML(product) {
+    const name = escapeHTML(product.name || "ওষুধ");
+    const company = escapeHTML(product.company || "অনির্দিষ্ট কোম্পানি");
+    const category = escapeHTML(product.category || "");
+    const unit = escapeHTML(product.unit || "প্রতি বক্স");
+    const image = safeImagePath(product.image_url);
+    const {mrp, discount, finalPrice} = getPrices(product);
+
+    const badgeHTML = discount > 0
+      ? `<span class="discount-badge">${Number(discount.toFixed(2))}% OFF</span>`
+      : "";
+
+    let priceHTML;
+    if (mrp === null) {
+      priceHTML = '<div class="product-price">দাম জানতে যোগাযোগ করুন</div>';
+    } else if (discount > 0) {
+      priceHTML = `
+        <div style="font-size:12px;color:#718078;">MRP: <span style="text-decoration:line-through;">${formatPrice(mrp)}</span></div>
+        <div class="product-price">${formatPrice(finalPrice)}</div>`;
+    } else {
+      priceHTML = `<div class="product-price">${formatPrice(mrp)}</div>`;
+    }
+
+    const imageHTML = image ? `
+      ${badgeHTML}
+      <img src="${escapeHTML(image)}" alt="${name}" loading="lazy"
+        onerror="this.style.display='none';this.nextElementSibling.style.display='block';">
+      <div class="image-placeholder"><span class="medical-icon">💊</span><small>ছবি পাওয়া যায়নি</small></div>
+    ` : `${badgeHTML}<div class="image-placeholder" style="display:block"><span class="medical-icon">💊</span><small>ওষুধের ছবি</small></div>`;
+
+    return `
+      <article class="product-card">
+        <div class="product-image">${imageHTML}</div>
+        <div class="product-info">
+          <span class="company-label">${company}</span>
+          <h3 class="product-name">${name}</h3>
+          <div class="product-category">${category}</div>
+          <div class="product-bottom">
+            <div class="price-label">${unit}</div>
+            ${priceHTML}
+            <button class="order-btn" type="button" data-product="${escapeHTML(product.id)}">কার্টে যোগ করুন 🛒</button>
+          </div>
+        </div>
+      </article>`;
+  }
+
   /* Admin Panel-এ Flash Sale চালু থাকা ও স্টকে থাকা পণ্যগুলোই দেখাবে */
   function renderFlashSale() {
     const saleProducts = allProducts.filter(product =>
@@ -1084,7 +1131,7 @@
       return;
     }
 
-    flashSaleSection.style.display = "";
+    flashSaleSection.style.display = "block";
     flashSaleGrid.innerHTML = saleProducts.map(productCardHTML).join("");
   }
 
