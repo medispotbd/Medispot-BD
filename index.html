@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="bn">
 <head>
@@ -236,6 +235,37 @@
       padding:15px;
       position:relative;
       border-bottom:1px solid #edf3ef;
+    }
+
+    /* ছবির ওপর বাম পাশে Discount Badge */
+    .discount-badge {
+      position:absolute;
+      top:10px;
+      left:10px;
+      z-index:2;
+      background:#e52525;
+      color:#fff;
+      font-size:12px;
+      font-weight:800;
+      line-height:1;
+      padding:7px 9px;
+      border-radius:20px;
+      box-shadow:0 2px 6px rgba(0,0,0,.15);
+    }
+
+    .discount-badge {
+      position:absolute;
+      top:10px;
+      left:10px;
+      z-index:2;
+      background:#e52525;
+      color:#fff;
+      font-size:12px;
+      font-weight:800;
+      line-height:1;
+      padding:7px 9px;
+      border-radius:20px;
+      box-shadow:0 2px 6px rgba(0,0,0,.15);
     }
 
     .product-image img {
@@ -975,26 +1005,28 @@
       const unit=escapeHTML(product.unit||"প্রতি বক্স");
       const image=safeImagePath(product.image_url);
       const {mrp,discount,finalPrice}=getPrices(product);
+      const badgeHTML = discount > 0
+        ? `<span class="discount-badge">${Number(discount.toFixed(2))}% OFF</span>`
+        : "";
 
       let priceHTML;
 
       if(mrp===null) {
         priceHTML='<div class="product-price">দাম জানতে যোগাযোগ করুন</div>';
       } else if(discount>0) {
-        /* ডিসকাউন্টের আগের রং ও লেখা অপরিবর্তিত */
         priceHTML=`
           <div style="font-size:12px;color:#718078;">MRP: <span style="text-decoration:line-through;">${formatPrice(mrp)}</span></div>
-          <div style="font-size:11px;color:#087f5b;font-weight:800;margin-top:3px;">${Number(discount.toFixed(2))}% OFF</div>
           <div class="product-price">${formatPrice(finalPrice)}</div>`;
       } else {
         priceHTML=`<div class="product-price">${formatPrice(mrp)}</div>`;
       }
 
       const imageHTML=image?`
+        ${badgeHTML}
         <img src="${escapeHTML(image)}" alt="${name}" loading="lazy"
           onerror="this.style.display='none';this.nextElementSibling.style.display='block';">
         <div class="image-placeholder"><span class="medical-icon">💊</span><small>ছবি পাওয়া যায়নি</small></div>
-      `:`<div class="image-placeholder" style="display:block"><span class="medical-icon">💊</span><small>ওষুধের ছবি</small></div>`;
+      `:`${badgeHTML}<div class="image-placeholder" style="display:block"><span class="medical-icon">💊</span><small>ওষুধের ছবি</small></div>`;
 
       return `
         <article class="product-card">
