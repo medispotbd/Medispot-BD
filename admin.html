@@ -306,7 +306,7 @@ function renderMedicines(){
     const priceDetails = document.createElement("p");
     priceDetails.textContent =
       "Final Price: ৳" + finalPrice.toFixed(2) +
-      " • Discount: " + discount.toFixed(2) + "%";
+      " • Discount: " + discount.toFixed(4) + "%";
     div.appendChild(priceDetails);
 
     const modeDetails = document.createElement("p");
@@ -445,7 +445,7 @@ document.getElementById("medicineForm").addEventListener("submit",async e=>{
       return;
     }
 
-    discount = Math.round(((price - finalPrice) / price) * 10000) / 100;
+    discount = Math.round(((price - finalPrice) / price) * 1000000) / 10000;
   }
 
   const stockText = document.getElementById("stock").value;
