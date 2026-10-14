@@ -18,6 +18,7 @@ h3{margin-top:0}
 input,select,button{width:100%;padding:12px;margin:7px 0;border:1px solid #d5e1da;border-radius:9px;font-size:15px}
 input[readonly]{background:#edf3ef;color:#52645a}
 button{background:#087b50;color:white;border:0;font-weight:bold;cursor:pointer}
+button:disabled{opacity:.6;cursor:wait}
 button.secondary{background:#e7f3ed;color:#087b50}
 button.danger{background:#b42318;color:white}
 button.flash-active{background:#fff0cc;color:#805500}
@@ -142,6 +143,20 @@ const discountInput = document.getElementById("discount");
 const finalPriceInput = document.getElementById("finalPrice");
 const discountHelp = document.getElementById("discountHelp");
 
+function money2(value){
+  return Math.round((Number(value) + Number.EPSILON) * 100) / 100;
+}
+
+function getFinalPrice(m){
+  if(m.final_price !== null && m.final_price !== undefined && m.final_price !== ""){
+    return Number(m.final_price);
+  }
+
+  const mrp = Number(m.price || 0);
+  const discount = Number(m.discount_percent || 0);
+  return money2(mrp * (1 - discount / 100));
+}
+
 function updateDiscountFields(changedField){
   const priceText = priceInput.value;
   const mrp = Number(priceText);
@@ -170,15 +185,20 @@ function updateDiscountFields(changedField){
   if(mode === "percentage"){
     const d = Number(discountInput.value);
 
-    if(discountInput.value !== "" && Number.isFinite(d) && d >= 0 && d <= 100){
-      finalPriceInput.value = (mrp * (1 - d / 100)).toFixed(2);
+    if(discountInput.value !== "" &&
+       Number.isFinite(d) && d >= 0 && d <= 100){
+      finalPriceInput.value = money2(mrp * (1 - d / 100)).toFixed(2);
+    }else if(changedField === "mode" || changedField === "price"){
+      finalPriceInput.value = "";
     }
   }else{
     const saleText = finalPriceInput.value;
     const sale = Number(saleText);
 
-    if(saleText !== "" && Number.isFinite(sale) && sale >= 0 && sale <= mrp){
-      discountInput.value = (((mrp - sale) / mrp) * 100).toFixed(2);
+    if(saleText !== "" &&
+       Number.isFinite(sale) && sale > 0 && sale <= mrp){
+      discountInput.value =
+        (((mrp - sale) / mrp) * 100).toFixed(2);
     }else if(changedField === "mode" || changedField === "price"){
       discountInput.value = "";
     }
@@ -276,17 +296,25 @@ function renderMedicines(){
     }
 
     const title = document.createElement("strong");
-    title.textContent = (m.name || "নাম নেই") + " — MRP ৳" + m.price;
+    title.textContent = (m.name || "নাম নেই") +
+      " — MRP ৳" + Number(m.price || 0).toFixed(2);
     div.appendChild(title);
 
+    const finalPrice = getFinalPrice(m);
     const discount = Number(m.discount_percent || 0);
-    const finalPrice = Number(m.price || 0) * (1 - discount / 100);
 
     const priceDetails = document.createElement("p");
     priceDetails.textContent =
       "Final Price: ৳" + finalPrice.toFixed(2) +
       " • Discount: " + discount.toFixed(2) + "%";
     div.appendChild(priceDetails);
+
+    const modeDetails = document.createElement("p");
+    modeDetails.className = "small";
+    modeDetails.textContent =
+      "Price Mode: " +
+      (m.price_mode === "finalPrice" ? "Final Price Mode" : "Percentage Mode");
+    div.appendChild(modeDetails);
 
     const details = document.createElement("p");
     details.textContent = [
@@ -385,26 +413,39 @@ document.getElementById("medicineForm").addEventListener("submit",async e=>{
   }
 
   let discount;
+  let finalPrice;
 
   if(discountMode.value === "percentage"){
     discount = Number(discountInput.value);
 
-    if(discountInput.value === "" || !Number.isFinite(discount) ||
+    if(discountInput.value === "" ||
+       !Number.isFinite(discount) ||
        discount < 0 || discount > 100){
       msg.textContent = "Discount 0 থেকে 100-এর মধ্যে দাও।";
       return;
     }
+
+    finalPrice = money2(price * (1 - discount / 100));
+
   }else{
     const saleText = finalPriceInput.value;
     const sale = Number(saleText);
 
     if(saleText === "" || !Number.isFinite(sale) ||
        sale <= 0 || sale > price){
-      msg.textContent = "Final Price শূন্যের বেশি এবং MRP-এর সমান বা কম হতে হবে।";
+      msg.textContent =
+        "Final Price শূন্যের বেশি এবং MRP-এর সমান বা কম হতে হবে।";
       return;
     }
 
-    discount = Math.round(((price - sale) / price) * 10000) / 100;
+    finalPrice = money2(sale);
+
+    if(finalPrice <= 0 || finalPrice > price){
+      msg.textContent = "সঠিক Final Price দাও।";
+      return;
+    }
+
+    discount = Math.round(((price - finalPrice) / price) * 10000) / 100;
   }
 
   const stockText = document.getElementById("stock").value;
@@ -415,9 +456,9 @@ document.getElementById("medicineForm").addEventListener("submit",async e=>{
     return;
   }
 
-  const {data:{user}} = await db.auth.getUser();
+  const {data:{user},error:userError} = await db.auth.getUser();
 
-  if(!user){
+  if(userError || !user){
     msg.textContent = "আগে Admin Login করো।";
     return;
   }
@@ -442,6 +483,8 @@ document.getElementById("medicineForm").addEventListener("submit",async e=>{
       category: document.getElementById("category").value.trim(),
       price: price,
       discount_percent: discount,
+      final_price: finalPrice,
+      price_mode: discountMode.value,
       stock: stock
     };
 
@@ -486,9 +529,21 @@ function editMedicine(id){
     document.getElementById(k).value = m[k] ?? "";
   });
 
-  discountMode.value = "percentage";
+  discountMode.value =
+    m.price_mode === "finalPrice" ? "finalPrice" : "percentage";
+
   discountInput.value = m.discount_percent ?? 0;
-  updateDiscountFields("discount");
+
+  const savedFinalPrice = getFinalPrice(m);
+  finalPriceInput.value = savedFinalPrice.toFixed(2);
+
+  updateDiscountFields("mode");
+
+  if(discountMode.value === "finalPrice"){
+    finalPriceInput.value = savedFinalPrice.toFixed(2);
+    discountInput.value = Number(m.discount_percent || 0).toFixed(2);
+  }
+
   document.getElementById("photo").value = "";
 
   document.getElementById("formTitle").textContent = "ওষুধ Edit করো";
@@ -539,12 +594,17 @@ function resetForm(){
 }
 
 (async function checkSession(){
-  const {data:{session}} = await db.auth.getSession();
+  try{
+    const {data:{session}} = await db.auth.getSession();
 
-  if(session){
-    document.getElementById("login").style.display = "none";
-    document.getElementById("app").style.display = "block";
-    await loadMedicines();
+    if(session){
+      document.getElementById("login").style.display = "none";
+      document.getElementById("app").style.display = "block";
+      await loadMedicines();
+    }
+  }catch(err){
+    document.getElementById("loginMsg").textContent =
+      "Session চেক করা যায়নি: " + err.message;
   }
 })();
 </script>
