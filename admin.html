@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="bn">
 <head>
@@ -15,6 +16,7 @@ main{max-width:850px;margin:22px auto;padding:15px}
 .card{background:white;padding:20px;border-radius:16px;margin-bottom:18px;box-shadow:0 3px 14px #0000000c}
 h3{margin-top:0}
 input,select,button{width:100%;padding:12px;margin:7px 0;border:1px solid #d5e1da;border-radius:9px;font-size:15px}
+input[readonly]{background:#edf3ef;color:#52645a}
 button{background:#087b50;color:white;border:0;font-weight:bold;cursor:pointer}
 button.secondary{background:#e7f3ed;color:#087b50}
 button.danger{background:#b42318;color:white}
@@ -23,6 +25,7 @@ button.flash-active{background:#fff0cc;color:#805500}
 .item{border-top:1px solid #e4ebe6;padding:14px 0;overflow-wrap:anywhere}
 .item img{width:75px;height:75px;object-fit:contain}
 .small{font-size:13px;color:#66766d}
+label{display:block;font-size:14px;font-weight:bold;margin-top:10px}
 #app{display:none}
 @media(max-width:550px){.grid{grid-template-columns:1fr}}
 </style>
@@ -46,31 +49,69 @@ button.flash-active{background:#fff0cc;color:#805500}
 
 <section id="app">
 <div class="card">
-<h3>নতুন ওষুধ যোগ করো</h3>
+<h3 id="formTitle">নতুন ওষুধ যোগ করো</h3>
 
 <form id="medicineForm">
-<input id="name" placeholder="ওষুধের নাম *" required>
+<label for="name">ওষুধের নাম *</label>
+<input id="name" placeholder="ওষুধের নাম" required>
 
 <div class="grid">
+<div>
+<label for="company">কোম্পানির নাম</label>
 <input id="company" placeholder="কোম্পানির নাম">
-<input id="strength" placeholder="Strength (যেমন 10 mg)">
+</div>
+<div>
+<label for="strength">Strength</label>
+<input id="strength" placeholder="যেমন 10 mg">
+</div>
 </div>
 
 <div class="grid">
+<div>
+<label for="category">Category</label>
 <input id="category" placeholder="Category">
-<input id="price" type="number" min="0" step="0.01" placeholder="দাম (৳)" required>
 </div>
+<div>
+<label for="price">MRP / Regular Price (৳) *</label>
+<input id="price" type="number" min="0.01" step="0.01" placeholder="যেমন 980" required>
+</div>
+</div>
+
+<label for="discountMode">Discount দেওয়ার পদ্ধতি</label>
+<select id="discountMode">
+<option value="percentage">Percentage Mode (%)</option>
+<option value="finalPrice">Final Price Mode (৳)</option>
+</select>
 
 <div class="grid">
-<input id="discount" type="text" inputmode="decimal" placeholder="Discount % (যেমন 16.32)">
-<input id="stock" type="number" min="0" step="1" placeholder="Stock">
+<div>
+<label for="discount">Discount (%)</label>
+<input id="discount" type="number" min="0" max="100" step="0.01" value="0" placeholder="যেমন 16.33">
+</div>
+<div>
+<label for="finalPrice">Final Price (৳)</label>
+<input id="finalPrice" type="number" min="0.01" step="0.01" placeholder="বিক্রির দাম">
+</div>
 </div>
 
-<p class="small">Discount দশমিকসহ দিতে পারবে। উদাহরণ: 16.32%</p>
-<label>ওষুধের ছবি</label>
-<input id="photo" type="file" accept="image/*">
+<p class="small" id="discountHelp">
+Percentage Mode-এ Discount লিখলে Final Price নিজে হিসাব হবে।
+</p>
 
-<button type="submit">ওষুধ Save করো</button>
+<div class="grid">
+<div>
+<label for="stock">Stock (পরিমাণ)</label>
+<input id="stock" type="number" min="0" step="1" value="0" placeholder="Stock">
+</div>
+<div>
+<label for="photo">ওষুধের ছবি</label>
+<input id="photo" type="file" accept="image/*">
+</div>
+</div>
+
+<p class="small">নতুন ছবি না দিলে Edit করার সময় আগের ছবিই থাকবে। ছবি সর্বোচ্চ 5 MB।</p>
+
+<button type="submit" id="saveButton">ওষুধ Save করো</button>
 <button type="button" class="secondary" onclick="resetForm()">ফর্ম পরিষ্কার করো</button>
 </form>
 <p id="formMsg"></p>
@@ -78,7 +119,7 @@ button.flash-active{background:#fff0cc;color:#805500}
 
 <div class="card">
 <h3>ওষুধের তালিকা</h3>
-<p class="small">⚡ Flash Sale চালু করলে ওষুধটি Homepage-এর Flash Sale সেকশনে দেখানোর জন্য নির্বাচিত হবে। Homepage-এ দেখানোর জন্য আলাদা পরিবর্তনও প্রয়োজন।</p>
+<p class="small">⚡ Flash Sale চালু করলে ওষুধটি Homepage-এর Flash Sale সেকশনে দেখানোর জন্য নির্বাচিত হবে। Homepage-এ দেখানোর জন্য আলাদা পরিবর্তনও প্রয়োজন হতে পারে।</p>
 <input id="search" placeholder="ওষুধের নাম দিয়ে খুঁজুন" oninput="renderMedicines()">
 <div id="medicineList">লোড হচ্ছে...</div>
 <button class="secondary" onclick="loadMedicines()">তালিকা Refresh</button>
@@ -95,6 +136,71 @@ const db = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 let medicines = [];
 let editingId = null;
 
+const priceInput = document.getElementById("price");
+const discountMode = document.getElementById("discountMode");
+const discountInput = document.getElementById("discount");
+const finalPriceInput = document.getElementById("finalPrice");
+const discountHelp = document.getElementById("discountHelp");
+
+function updateDiscountFields(changedField){
+  const priceText = priceInput.value;
+  const mrp = Number(priceText);
+  const mode = discountMode.value;
+
+  if(mode === "percentage"){
+    discountInput.readOnly = false;
+    finalPriceInput.readOnly = true;
+    discountHelp.textContent =
+      "Percentage Mode: Discount (%) লিখুন; Final Price নিজে হিসাব হবে।";
+  }else{
+    discountInput.readOnly = true;
+    finalPriceInput.readOnly = false;
+    discountHelp.textContent =
+      "Final Price Mode: বিক্রির দাম লিখুন; Discount (%) নিজে হিসাব হবে।";
+  }
+
+  if(priceText === "" || !Number.isFinite(mrp) || mrp <= 0){
+    if(changedField === "price"){
+      finalPriceInput.value = "";
+      discountInput.value = mode === "percentage" ? "0" : "";
+    }
+    return;
+  }
+
+  if(mode === "percentage"){
+    const d = Number(discountInput.value);
+
+    if(discountInput.value !== "" && Number.isFinite(d) && d >= 0 && d <= 100){
+      finalPriceInput.value = (mrp * (1 - d / 100)).toFixed(2);
+    }
+  }else{
+    const saleText = finalPriceInput.value;
+    const sale = Number(saleText);
+
+    if(saleText !== "" && Number.isFinite(sale) && sale >= 0 && sale <= mrp){
+      discountInput.value = (((mrp - sale) / mrp) * 100).toFixed(2);
+    }else if(changedField === "mode" || changedField === "price"){
+      discountInput.value = "";
+    }
+  }
+}
+
+discountMode.addEventListener("change",function(){
+  updateDiscountFields("mode");
+});
+
+priceInput.addEventListener("input",function(){
+  updateDiscountFields("price");
+});
+
+discountInput.addEventListener("input",function(){
+  updateDiscountFields("discount");
+});
+
+finalPriceInput.addEventListener("input",function(){
+  updateDiscountFields("finalPrice");
+});
+
 async function loginAdmin(){
   const email = document.getElementById("email").value.trim();
   const password = document.getElementById("password").value;
@@ -102,16 +208,20 @@ async function loginAdmin(){
 
   msg.textContent = "লগইন হচ্ছে...";
 
-  const {error} = await db.auth.signInWithPassword({email,password});
+  try{
+    const {error} = await db.auth.signInWithPassword({email,password});
 
-  if(error){
-    msg.textContent = "লগইন হয়নি: " + error.message;
-    return;
+    if(error){
+      msg.textContent = "লগইন হয়নি: " + error.message;
+      return;
+    }
+
+    document.getElementById("login").style.display = "none";
+    document.getElementById("app").style.display = "block";
+    await loadMedicines();
+  }catch(err){
+    msg.textContent = "সমস্যা হয়েছে: " + err.message;
   }
-
-  document.getElementById("login").style.display = "none";
-  document.getElementById("app").style.display = "block";
-  await loadMedicines();
 }
 
 async function logoutAdmin(){
@@ -138,7 +248,8 @@ async function loadMedicines(){
 }
 
 function renderMedicines(){
-  const term = (document.getElementById("search").value || "").toLowerCase();
+  const searchInput = document.getElementById("search");
+  const term = (searchInput.value || "").toLowerCase();
   const list = document.getElementById("medicineList");
 
   const filtered = medicines.filter(m =>
@@ -165,15 +276,23 @@ function renderMedicines(){
     }
 
     const title = document.createElement("strong");
-    title.textContent = (m.name || "নাম নেই") + " — ৳" + m.price;
+    title.textContent = (m.name || "নাম নেই") + " — MRP ৳" + m.price;
     div.appendChild(title);
+
+    const discount = Number(m.discount_percent || 0);
+    const finalPrice = Number(m.price || 0) * (1 - discount / 100);
+
+    const priceDetails = document.createElement("p");
+    priceDetails.textContent =
+      "Final Price: ৳" + finalPrice.toFixed(2) +
+      " • Discount: " + discount.toFixed(2) + "%";
+    div.appendChild(priceDetails);
 
     const details = document.createElement("p");
     details.textContent = [
       m.company,
       m.strength,
       "Stock: " + (m.stock ?? 0),
-      "Discount: " + (m.discount_percent ?? 0) + "%",
       "Flash Sale: " + (m.is_flash_sale ? "চালু" : "বন্ধ")
     ].filter(Boolean).join(" • ");
 
@@ -184,7 +303,7 @@ function renderMedicines(){
       ? "⚡ Flash Sale বন্ধ করো"
       : "⚡ Flash Sale চালু করো";
     flash.className = m.is_flash_sale ? "flash-active" : "secondary";
-    flash.onclick = () => toggleFlashSale(m.id, m.is_flash_sale);
+    flash.onclick = () => toggleFlashSale(m.id,m.is_flash_sale);
     div.appendChild(flash);
 
     const edit = document.createElement("button");
@@ -257,18 +376,42 @@ document.getElementById("medicineForm").addEventListener("submit",async e=>{
   e.preventDefault();
 
   const msg = document.getElementById("formMsg");
-  const discountText = document.getElementById("discount").value.trim();
-  const discount = discountText === "" ? 0 : Number(discountText.replace(",", "."));
+  const priceText = priceInput.value;
+  const price = Number(priceText);
 
-  if(!Number.isFinite(discount) || discount < 0 || discount > 100){
-    msg.textContent = "Discount 0 থেকে 100-এর মধ্যে দাও।";
+  if(priceText === "" || !Number.isFinite(price) || price <= 0){
+    msg.textContent = "MRP শূন্যের বেশি হতে হবে।";
     return;
   }
 
-  const price = Number(document.getElementById("price").value);
+  let discount;
 
-  if(!Number.isFinite(price) || price < 0){
-    msg.textContent = "সঠিক দাম দাও।";
+  if(discountMode.value === "percentage"){
+    discount = Number(discountInput.value);
+
+    if(discountInput.value === "" || !Number.isFinite(discount) ||
+       discount < 0 || discount > 100){
+      msg.textContent = "Discount 0 থেকে 100-এর মধ্যে দাও।";
+      return;
+    }
+  }else{
+    const saleText = finalPriceInput.value;
+    const sale = Number(saleText);
+
+    if(saleText === "" || !Number.isFinite(sale) ||
+       sale <= 0 || sale > price){
+      msg.textContent = "Final Price শূন্যের বেশি এবং MRP-এর সমান বা কম হতে হবে।";
+      return;
+    }
+
+    discount = Math.round(((price - sale) / price) * 10000) / 100;
+  }
+
+  const stockText = document.getElementById("stock").value;
+  const stock = stockText === "" ? 0 : Number(stockText);
+
+  if(!Number.isInteger(stock) || stock < 0){
+    msg.textContent = "Stock শূন্য বা তার বেশি পূর্ণসংখ্যা হতে হবে।";
     return;
   }
 
@@ -279,6 +422,9 @@ document.getElementById("medicineForm").addEventListener("submit",async e=>{
     return;
   }
 
+  const saveButton = document.getElementById("saveButton");
+  saveButton.disabled = true;
+  saveButton.textContent = "Save হচ্ছে...";
   msg.textContent = "Save হচ্ছে...";
 
   try{
@@ -296,7 +442,7 @@ document.getElementById("medicineForm").addEventListener("submit",async e=>{
       category: document.getElementById("category").value.trim(),
       price: price,
       discount_percent: discount,
-      stock: Number(document.getElementById("stock").value || 0)
+      stock: stock
     };
 
     if(imageUrl){
@@ -324,6 +470,9 @@ document.getElementById("medicineForm").addEventListener("submit",async e=>{
 
   }catch(err){
     msg.textContent = "Save হয়নি: " + err.message;
+  }finally{
+    saveButton.disabled = false;
+    saveButton.textContent = "ওষুধ Save করো";
   }
 });
 
@@ -337,8 +486,13 @@ function editMedicine(id){
     document.getElementById(k).value = m[k] ?? "";
   });
 
-  document.getElementById("discount").value = m.discount_percent ?? 0;
+  discountMode.value = "percentage";
+  discountInput.value = m.discount_percent ?? 0;
+  updateDiscountFields("discount");
   document.getElementById("photo").value = "";
+
+  document.getElementById("formTitle").textContent = "ওষুধ Edit করো";
+  document.getElementById("saveButton").textContent = "পরিবর্তন Save করো";
 
   document.getElementById("formMsg").textContent =
     "Edit mode: পরিবর্তন করে Save করো। নতুন ছবি না দিলে আগের ছবিই থাকবে।";
@@ -359,12 +513,28 @@ async function deleteMedicine(id){
     return;
   }
 
+  if(String(editingId) === String(id)){
+    resetForm();
+  }
+
   await loadMedicines();
 }
 
 function resetForm(){
   editingId = null;
   document.getElementById("medicineForm").reset();
+
+  discountMode.value = "percentage";
+  discountInput.value = "0";
+  discountInput.readOnly = false;
+  finalPriceInput.value = "";
+  finalPriceInput.readOnly = true;
+
+  discountHelp.textContent =
+    "Percentage Mode-এ Discount লিখলে Final Price নিজে হিসাব হবে।";
+
+  document.getElementById("formTitle").textContent = "নতুন ওষুধ যোগ করো";
+  document.getElementById("saveButton").textContent = "ওষুধ Save করো";
   document.getElementById("formMsg").textContent = "";
 }
 
