@@ -1305,9 +1305,18 @@
         };
       });
 
+
       // শুধু Supabase medicines table-এর পণ্য দেখাবে।
-      allProducts=databaseProducts;
-      statusMessage.textContent="Supabase-এর পণ্যের তালিকা দেখানো হচ্ছে।";
+      // সব ওষুধের নাম A-Z অনুযায়ী সাজানো হবে।
+      allProducts = databaseProducts.sort((a, b) =>
+        String(a.name || "").localeCompare(
+          String(b.name || ""),
+          "en",
+          { sensitivity: "base", numeric: true }
+        )
+      );
+
+      statusMessage.textContent = "Supabase-এর পণ্যের তালিকা দেখানো হচ্ছে।";
 
     } catch(error) {
       console.error("Medicine loading error:",error);
