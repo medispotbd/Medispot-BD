@@ -34,12 +34,12 @@ label{display:block;font-size:14px;font-weight:bold;margin-top:10px}
 <body>
 <header>
   <h2>Medispot BD</h2>
-  <div>Medicine Management â¢ Admin Panel</div>
+  <div>Medicine Management • Admin Panel</div>
 </header>
 <main>
 <section class="card" id="login">
   <h3>Admin Login</h3>
-  <p class="small">à¦¤à§à¦®à¦¾à¦° Supabase Admin account à¦¦à¦¿à¦¯à¦¼à§ à¦²à¦à¦à¦¨ à¦à¦°à§à¥¤</p>
+  <p class="small">তোমার Supabase Admin account দিয়ে লগইন করো।</p>
   <input id="email" type="email" placeholder="Admin email" autocomplete="username">
   <input id="password" type="password" placeholder="Password" autocomplete="current-password">
   <button type="button" id="loginButton" onclick="loginAdmin()">Login</button>
@@ -48,45 +48,62 @@ label{display:block;font-size:14px;font-weight:bold;margin-top:10px}
 <section id="app">
 <!-- COMPANY LOGO MANAGEMENT -->
 <div class="card" id="companyLogoCard">
-  <h3>ð¢ Company Logo Management</h3>
+  <h3>🏢 Company Logo Management</h3>
   <p class="small">
-    à¦à¦à¦à¦¿ à¦à§à¦®à§à¦ªà¦¾à¦¨à¦¿à¦° à¦²à§à¦à§ à¦à¦à¦¬à¦¾à¦° Upload à¦à¦°à§à¥¤ Storefront-à¦à¦° company filter button-à¦
-    à¦à¦ à¦²à§à¦à§ à¦¦à§à¦à¦¾à¦¤à§ storefront code-à¦à¦ company_logos table à¦¬à§à¦¯à¦¬à¦¹à¦¾à¦° à¦à¦°à¦¤à§ à¦¹à¦¬à§à¥¤
-    à¦à¦·à§à¦§à§à¦° à¦à¦¾à¦°à§à¦¡à§ à¦à§à¦®à§à¦ªà¦¾à¦¨à¦¿à¦° à¦¨à¦¾à¦® à¦à¦à§à¦° à¦®à¦¤à§à¦ à¦¥à¦¾à¦à¦¬à§à¥¤
+    একটি কোম্পানির লোগো একবার Upload করো। Storefront-এ ওই কোম্পানির
+    সব ওষুধে একই লোগো দেখানোর জন্য কোম্পানির নাম মিলতে হবে।
   </p>
   <form id="companyLogoForm">
-    <label for="logoCompanyName">à¦à§à¦®à§à¦ªà¦¾à¦¨à¦¿à¦° à¦¨à¦¾à¦® *</label>
-    <input id="logoCompanyName" list="companyLogoSuggestions" type="text"
-      placeholder="à¦à§à¦®à§à¦ªà¦¾à¦¨à¦¿à¦° à¦¨à¦¾à¦® à¦²à¦¿à¦à§ à¦¬à¦¾ à¦¨à¦¿à¦°à§à¦¬à¦¾à¦à¦¨ à¦à¦°à§" maxlength="150" required>
+    <label for="logoCompanyName">কোম্পানির নাম *</label>
+    <input
+      id="logoCompanyName"
+      list="companyLogoSuggestions"
+      type="text"
+      placeholder="কোম্পানির নাম লিখো বা নির্বাচন করো"
+      maxlength="150"
+      required
+    >
     <datalist id="companyLogoSuggestions"></datalist>
-    <label for="companyLogoFile">à¦à§à¦®à§à¦ªà¦¾à¦¨à¦¿à¦° à¦²à§à¦à§</label>
-    <input id="companyLogoFile" type="file" accept="image/png,image/jpeg,image/webp">
-    <p class="small">à¦¨à¦¤à§à¦¨ Logo à¦¯à§à¦ à¦à¦°à¦¾à¦° à¦¸à¦®à¦¯à¦¼ à¦à¦¬à¦¿ à¦à¦¬à¦¶à§à¦¯à¦à¥¤ Edit à¦à¦°à¦¾à¦° à¦¸à¦®à¦¯à¦¼ à¦¨à¦¾à¦® à¦¬à¦¾ Logo à¦à¦²à¦¾à¦¦à¦¾à¦­à¦¾à¦¬à§ à¦¬à¦¦à¦²à¦¾à¦¨à§ à¦¯à¦¾à¦¬à§à¥¤ PNG, JPG à¦¬à¦¾ WEBP; à¦¸à¦°à§à¦¬à§à¦à§à¦ 5 MBà¥¤</p>
-    <button type="submit" id="companyLogoSaveButton">à¦²à§à¦à§ Upload à¦ Save</button>
-    <button type="button" class="secondary" id="companyLogoCancelButton" style="display:none">Edit à¦¬à¦¾à¦¤à¦¿à¦² à¦à¦°à§</button>
+    <label for="companyLogoFile">কোম্পানির লোগো *</label>
+    <input
+      id="companyLogoFile"
+      type="file"
+      accept="image/png,image/jpeg,image/webp"
+      required
+    >
+    <p class="small">PNG, JPG বা WEBP। সর্বোচ্চ 5 MB।</p>
+    <button type="submit" id="companyLogoSaveButton">
+      লোগো Upload ও Save
+    </button>
   </form>
   <p id="companyLogoMsg" class="status" role="status"></p>
   <hr style="border:0;border-top:1px solid #e4ebe6;margin:20px 0">
-  <h3>à¦à¦ªà¦²à§à¦¡ à¦à¦°à¦¾ à¦à§à¦®à§à¦ªà¦¾à¦¨à¦¿à¦° à¦²à§à¦à§</h3>
-  <input id="companyLogoSearch" type="search" placeholder="à¦à§à¦®à§à¦ªà¦¾à¦¨à¦¿à¦° à¦¨à¦¾à¦® à¦¦à¦¿à¦¯à¦¼à§ à¦à§à¦à¦à§à¦¨">
-  <div id="companyLogoList">à¦²à§à¦à§ à¦²à§à¦¡ à¦¹à¦à§à¦à§...</div>
-  <button type="button" class="secondary" id="companyLogoRefresh">à¦²à§à¦à§à¦° à¦¤à¦¾à¦²à¦¿à¦à¦¾ Refresh</button>
+  <h3>আপলোড করা কোম্পানির লোগো</h3>
+  <input id="companyLogoSearch" type="search" placeholder="কোম্পানির নাম দিয়ে খুঁজুন">
+  <div id="companyLogoList">লোগো লোড হচ্ছে...</div>
+  <button type="button" class="secondary" id="companyLogoRefresh">
+    লোগোর তালিকা Refresh
+  </button>
 </div>
 <!-- MEDICINE FORM -->
 <div class="card">
-  <h3 id="formTitle">à¦¨à¦¤à§à¦¨ à¦à¦·à§à¦§ à¦¯à§à¦ à¦à¦°à§</h3>
+  <h3 id="formTitle">নতুন ওষুধ যোগ করো</h3>
   <form id="medicineForm">
-    <label for="name">à¦à¦·à§à¦§à§à¦° à¦¨à¦¾à¦® *</label>
-    <input id="name" placeholder="à¦à¦·à§à¦§à§à¦° à¦¨à¦¾à¦®" required>
+    <label for="name">ওষুধের নাম *</label>
+    <input id="name" placeholder="ওষুধের নাম" required>
     <div class="grid">
       <div>
-        <label for="company">à¦à§à¦®à§à¦ªà¦¾à¦¨à¦¿à¦° à¦¨à¦¾à¦®</label>
-        <input id="company" list="medicineCompanySuggestions" placeholder="à¦à§à¦®à§à¦ªà¦¾à¦¨à¦¿à¦° à¦¨à¦¾à¦®">
+        <label for="company">কোম্পানির নাম</label>
+        <input
+          id="company"
+          list="medicineCompanySuggestions"
+          placeholder="কোম্পানির নাম"
+        >
         <datalist id="medicineCompanySuggestions"></datalist>
       </div>
       <div>
         <label for="strength">Strength</label>
-        <input id="strength" placeholder="à¦¯à§à¦®à¦¨ 10 mg">
+        <input id="strength" placeholder="যেমন 10 mg">
       </div>
     </div>
     <div class="grid">
@@ -95,49 +112,54 @@ label{display:block;font-size:14px;font-weight:bold;margin-top:10px}
         <input id="category" placeholder="Category">
       </div>
       <div>
-        <label for="price">MRP / Regular Price (à§³) *</label>
-        <input id="price" type="number" min="0.01" step="0.01" placeholder="à¦¯à§à¦®à¦¨ 980" required>
+        <label for="price">MRP / Regular Price (৳) *</label>
+        <input id="price" type="number" min="0.01" step="0.01" placeholder="যেমন 980" required>
       </div>
     </div>
-    <label for="discountMode">Discount à¦¦à§à¦à¦¯à¦¼à¦¾à¦° à¦ªà¦¦à§à¦§à¦¤à¦¿</label>
+    <label for="discountMode">Discount দেওয়ার পদ্ধতি</label>
     <select id="discountMode">
       <option value="percentage">Percentage Mode (%)</option>
-      <option value="finalPrice">Final Price Mode (à§³)</option>
+      <option value="finalPrice">Final Price Mode (৳)</option>
     </select>
     <div class="grid">
       <div>
         <label for="discount">Discount (%)</label>
-        <input id="discount" type="number" min="0" max="100" step="any" value="0" placeholder="à¦¯à§à¦®à¦¨ 16.3261">
+        <input id="discount" type="number" min="0" max="100" step="any" value="0" placeholder="যেমন 16.3261">
       </div>
       <div>
-        <label for="finalPrice">Final Price (à§³)</label>
-        <input id="finalPrice" type="number" min="0.01" step="0.01" placeholder="à¦¬à¦¿à¦à§à¦°à¦¿à¦° à¦¦à¦¾à¦®">
+        <label for="finalPrice">Final Price (৳)</label>
+        <input id="finalPrice" type="number" min="0.01" step="0.01" placeholder="বিক্রির দাম">
       </div>
     </div>
-    <p class="small" id="discountHelp">Percentage Mode-à¦ Discount à¦²à¦¿à¦à¦²à§ Final Price à¦¹à¦¿à¦¸à¦¾à¦¬ à¦¹à¦¬à§à¥¤</p>
+    <p class="small" id="discountHelp">
+      Percentage Mode-এ Discount লিখলে Final Price হিসাব হবে।
+    </p>
     <div class="grid">
       <div>
-        <label for="stock">Stock (à¦ªà¦°à¦¿à¦®à¦¾à¦£)</label>
+        <label for="stock">Stock (পরিমাণ)</label>
         <input id="stock" type="number" min="0" step="1" value="0" placeholder="Stock">
       </div>
       <div>
-        <label for="photo">à¦à¦·à§à¦§à§à¦° à¦à¦¬à¦¿</label>
+        <label for="photo">ওষুধের ছবি</label>
         <input id="photo" type="file" accept="image/*">
       </div>
     </div>
-    <p class="small">à¦¨à¦¤à§à¦¨ à¦à¦¬à¦¿ à¦¨à¦¾ à¦¦à¦¿à¦²à§ Edit à¦à¦°à¦¾à¦° à¦¸à¦®à¦¯à¦¼ à¦à¦à§à¦° à¦à¦¬à¦¿à¦ à¦¥à¦¾à¦à¦¬à§à¥¤ à¦à¦¬à¦¿ à¦¸à¦°à§à¦¬à§à¦à§à¦ 5 MBà¥¤</p>
-    <button type="submit" id="saveButton">à¦à¦·à§à¦§ Save à¦à¦°à§</button>
-    <button type="button" class="secondary" onclick="resetForm()">à¦«à¦°à§à¦® à¦ªà¦°à¦¿à¦·à§à¦à¦¾à¦° à¦à¦°à§</button>
+    <p class="small">নতুন ছবি না দিলে Edit করার সময় আগের ছবিই থাকবে। ছবি সর্বোচ্চ 5 MB।</p>
+    <button type="submit" id="saveButton">ওষুধ Save করো</button>
+    <button type="button" class="secondary" onclick="resetForm()">ফর্ম পরিষ্কার করো</button>
   </form>
   <p id="formMsg" class="status" role="status"></p>
 </div>
 <!-- MEDICINE LIST -->
 <div class="card">
-  <h3>à¦à¦·à§à¦§à§à¦° à¦¤à¦¾à¦²à¦¿à¦à¦¾</h3>
-  <p class="small">Flash Sale à¦à¦¾à¦²à§ à¦à¦°à¦²à§ à¦à¦·à§à¦§à¦à¦¿ Flash Sale-à¦à¦° à¦à¦¨à§à¦¯ à¦¨à¦¿à¦°à§à¦¬à¦¾à¦à¦¿à¦¤ à¦¹à¦¬à§à¥¤ Homepage-à¦ à¦¦à§à¦à¦¾à¦¨à§à¦° à¦à¦¨à§à¦¯ Storefront-à¦ Flash Sale à¦¸à¦®à¦°à§à¦¥à¦¨à¦ à¦¥à¦¾à¦à¦¤à§ à¦¹à¦¬à§à¥¤</p>
-  <input id="search" placeholder="à¦à¦·à§à¦§à§à¦° à¦¨à¦¾à¦® à¦¬à¦¾ à¦à§à¦®à§à¦ªà¦¾à¦¨à¦¿ à¦¦à¦¿à¦¯à¦¼à§ à¦à§à¦à¦à§à¦¨" oninput="renderMedicines()">
-  <div id="medicineList">à¦²à§à¦¡ à¦¹à¦à§à¦à§...</div>
-  <button type="button" class="secondary" onclick="loadMedicines()">à¦¤à¦¾à¦²à¦¿à¦à¦¾ Refresh</button>
+  <h3>ওষুধের তালিকা</h3>
+  <p class="small">
+    Flash Sale চালু করলে ওষুধটি Flash Sale-এর জন্য নির্বাচিত হবে।
+    Homepage-এ দেখানোর জন্য Storefront-এ Flash Sale সমর্থনও থাকতে হবে।
+  </p>
+  <input id="search" placeholder="ওষুধের নাম বা কোম্পানি দিয়ে খুঁজুন" oninput="renderMedicines()">
+  <div id="medicineList">লোড হচ্ছে...</div>
+  <button type="button" class="secondary" onclick="loadMedicines()">তালিকা Refresh</button>
   <button type="button" class="danger" onclick="logoutAdmin()">Logout</button>
 </div>
 </section>
@@ -146,12 +168,9 @@ label{display:block;font-size:14px;font-weight:bold;margin-top:10px}
 const SUPABASE_URL = "https://pnaaqkuzazjiabnnwxjq.supabase.co";
 const SUPABASE_KEY = "sb_publishable_ckj65sbFnET7xOjxPJOwfw_-KrevOkv";
 const db = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
-
 let medicines = [];
 let companyLogos = [];
 let editingId = null;
-let editingLogoOriginalName = null;
-
 const COMPANY_LOGO_BUCKET = "company-logos";
 const priceInput = document.getElementById("price");
 const discountMode = document.getElementById("discountMode");
@@ -166,21 +185,16 @@ const companyLogoList = document.getElementById("companyLogoList");
 const companyLogoSearch = document.getElementById("companyLogoSearch");
 const companyLogoSaveButton = document.getElementById("companyLogoSaveButton");
 const companyLogoSuggestions = document.getElementById("companyLogoSuggestions");
-const companyLogoCancelButton = document.getElementById("companyLogoCancelButton");
-
 // ===== PRICE AND DISCOUNT =====
 function updateDiscountFields(changedField) {
   const priceText = priceInput.value;
   const mrp = Number(priceText);
   const mode = discountMode.value;
-
   discountInput.readOnly = mode === "finalPrice";
   finalPriceInput.readOnly = mode === "percentage";
-
   discountHelp.textContent = mode === "percentage"
-    ? "Percentage Mode: Discount (%) à¦²à¦¿à¦à¦²à§ Final Price à¦¹à¦¿à¦¸à¦¾à¦¬ à¦¹à¦¬à§à¥¤"
-    : "Final Price Mode: à¦¬à¦¿à¦à§à¦°à¦¿à¦° à¦¦à¦¾à¦® à¦²à¦¿à¦à¦²à§ Discount (%) à¦¹à¦¿à¦¸à¦¾à¦¬ à¦¹à¦¬à§à¥¤";
-
+    ? "Percentage Mode: Discount (%) লিখলে Final Price হিসাব হবে।"
+    : "Final Price Mode: বিক্রির দাম লিখলে Discount (%) হিসাব হবে।";
   if (priceText === "" || !Number.isFinite(mrp) || mrp <= 0) {
     if (changedField === "price") {
       finalPriceInput.value = "";
@@ -188,7 +202,6 @@ function updateDiscountFields(changedField) {
     }
     return;
   }
-
   if (mode === "percentage") {
     const d = Number(discountInput.value);
     if (discountInput.value !== "" && Number.isFinite(d) && d >= 0 && d <= 100) {
@@ -208,65 +221,55 @@ discountMode.addEventListener("change", () => updateDiscountFields("mode"));
 priceInput.addEventListener("input", () => updateDiscountFields("price"));
 discountInput.addEventListener("input", () => updateDiscountFields("discount"));
 finalPriceInput.addEventListener("input", () => updateDiscountFields("finalPrice"));
-
 // ===== AUTHENTICATION =====
 async function loginAdmin() {
   const email = document.getElementById("email").value.trim();
   const password = document.getElementById("password").value;
   const msg = document.getElementById("loginMsg");
   const button = document.getElementById("loginButton");
-
   if (!email || !password) {
-    msg.textContent = "Email à¦ Password à¦¦à¦¾à¦à¥¤";
+    msg.textContent = "Email ও Password দাও।";
     return;
   }
-
   button.disabled = true;
-  msg.textContent = "à¦²à¦à¦à¦¨ à¦¹à¦à§à¦à§...";
+  msg.textContent = "লগইন হচ্ছে...";
   try {
     const { error } = await db.auth.signInWithPassword({ email, password });
     if (error) throw error;
-
     document.getElementById("login").style.display = "none";
     document.getElementById("app").style.display = "block";
     await Promise.all([loadMedicines(), loadCompanyLogos()]);
   } catch (err) {
-    msg.textContent = "à¦²à¦à¦à¦¨ à¦¹à¦¯à¦¼à¦¨à¦¿: " + err.message;
+    msg.textContent = "লগইন হয়নি: " + err.message;
   } finally {
     button.disabled = false;
   }
 }
-
 async function logoutAdmin() {
   const { error } = await db.auth.signOut();
   if (error) {
-    alert("Logout à¦¹à¦¯à¦¼à¦¨à¦¿: " + error.message);
+    alert("Logout হয়নি: " + error.message);
     return;
   }
   location.reload();
 }
-
 // ===== MEDICINE MANAGEMENT =====
 async function loadMedicines() {
   const list = document.getElementById("medicineList");
-  list.textContent = "à¦²à§à¦¡ à¦¹à¦à§à¦à§...";
-
+  list.textContent = "লোড হচ্ছে...";
   const { data, error } = await db
     .from("medicines")
     .select("*")
     .order("created_at", { ascending: false });
-
   if (error) {
-    list.textContent = "à¦¤à¦¾à¦²à¦¿à¦à¦¾ à¦²à§à¦¡ à¦¹à¦¯à¦¼à¦¨à¦¿: " + error.message;
+    list.textContent = "তালিকা লোড হয়নি: " + error.message;
     return;
   }
-
   medicines = data || [];
   renderMedicines();
   updateCompanySuggestions();
   updateLogoCompanySuggestions();
 }
-
 function renderMedicines() {
   const term = (document.getElementById("search").value || "").toLowerCase();
   const list = document.getElementById("medicineList");
@@ -274,17 +277,14 @@ function renderMedicines() {
     String(m.name || "").toLowerCase().includes(term) ||
     String(m.company || "").toLowerCase().includes(term)
   );
-
   list.replaceChildren();
   if (!filtered.length) {
-    list.textContent = "à¦à§à¦¨à§ à¦à¦·à§à¦§ à¦ªà¦¾à¦à¦¯à¦¼à¦¾ à¦¯à¦¾à¦¯à¦¼à¦¨à¦¿à¥¤";
+    list.textContent = "কোনো ওষুধ পাওয়া যায়নি।";
     return;
   }
-
   filtered.forEach(m => {
     const div = document.createElement("div");
     div.className = "item";
-
     if (m.image_url) {
       const img = document.createElement("img");
       img.src = m.image_url;
@@ -292,136 +292,120 @@ function renderMedicines() {
       img.loading = "lazy";
       div.appendChild(img);
     }
-
     const title = document.createElement("strong");
-    title.textContent = (m.name || "à¦¨à¦¾à¦® à¦¨à§à¦") + " â MRP à§³" + Number(m.price || 0).toFixed(2);
+    title.textContent = (m.name || "নাম নেই") + " — MRP ৳" + Number(m.price || 0).toFixed(2);
     div.appendChild(title);
-
     const discount = Number(m.discount_percent || 0);
     const finalPrice = Number(m.price || 0) * (1 - discount / 100);
     const priceDetails = document.createElement("p");
     priceDetails.textContent =
-      "à¦¹à¦¿à¦¸à¦¾à¦¬ à¦à¦°à¦¾ Final Price: à§³" + finalPrice.toFixed(2) +
-      " â¢ Discount: " + discount.toFixed(2) + "%";
+      "হিসাব করা Final Price: ৳" + finalPrice.toFixed(2) +
+      " • Discount: " + discount.toFixed(2) + "%";
     div.appendChild(priceDetails);
-
     const details = document.createElement("p");
     details.textContent = [
       m.company,
       m.strength,
       "Stock: " + (m.stock ?? 0),
-      "Flash Sale: " + (m.is_flash_sale ? "à¦à¦¾à¦²à§" : "à¦¬à¦¨à§à¦§")
-    ].filter(Boolean).join(" â¢ ");
+      "Flash Sale: " + (m.is_flash_sale ? "চালু" : "বন্ধ")
+    ].filter(Boolean).join(" • ");
     div.appendChild(details);
-
     const flash = document.createElement("button");
-    flash.textContent = m.is_flash_sale ? "â¡ Flash Sale à¦¬à¦¨à§à¦§ à¦à¦°à§" : "â¡ Flash Sale à¦à¦¾à¦²à§ à¦à¦°à§";
+    flash.textContent = m.is_flash_sale
+      ? "⚡ Flash Sale বন্ধ করো"
+      : "⚡ Flash Sale চালু করো";
     flash.className = m.is_flash_sale ? "flash-active" : "secondary";
     flash.onclick = () => toggleFlashSale(m.id, m.is_flash_sale);
     div.appendChild(flash);
-
     const edit = document.createElement("button");
     edit.textContent = "Edit";
     edit.className = "secondary";
     edit.onclick = () => editMedicine(m.id);
     div.appendChild(edit);
-
     const del = document.createElement("button");
     del.textContent = "Delete";
     del.className = "danger";
     del.onclick = () => deleteMedicine(m.id);
     div.appendChild(del);
-
     list.appendChild(div);
   });
 }
-
 async function toggleFlashSale(id, currentStatus) {
   const { error } = await db
     .from("medicines")
     .update({ is_flash_sale: !currentStatus })
     .eq("id", id);
-
   if (error) {
-    alert("Flash Sale à¦ªà¦°à¦¿à¦¬à¦°à§à¦¤à¦¨ à¦¹à¦¯à¦¼à¦¨à¦¿: " + error.message);
+    alert("Flash Sale পরিবর্তন হয়নি: " + error.message);
     return;
   }
   await loadMedicines();
 }
-
 async function uploadPhoto(file) {
   if (!file) return null;
-  if (!file.type.startsWith("image/")) throw new Error("à¦à¦¬à¦¿ à¦«à¦¾à¦à¦² à¦¨à¦¿à¦°à§à¦¬à¦¾à¦à¦¨ à¦à¦°à§à¥¤");
-  if (file.size > 5 * 1024 * 1024) throw new Error("à¦à¦¬à¦¿ 5 MB-à¦à¦° à¦à¦® à¦¹à¦¤à§ à¦¹à¦¬à§à¥¤");
-
-  const ext = (file.name.split(".").pop() || "jpg").toLowerCase().replace(/[^a-z0-9]/g, "");
-  const path = Date.now() + "-" + Math.random().toString(36).slice(2) + "." + ext;
-
+  if (!file.type.startsWith("image/")) {
+    throw new Error("ছবি ফাইল নির্বাচন করো।");
+  }
+  if (file.size > 5 * 1024 * 1024) {
+    throw new Error("ছবি 5 MB-এর কম হতে হবে।");
+  }
+  const ext = (file.name.split(".").pop() || "jpg")
+    .toLowerCase().replace(/[^a-z0-9]/g, "");
+  const path = Date.now() + "-" +
+    Math.random().toString(36).slice(2) + "." + ext;
   const { error } = await db.storage
     .from("Medicine-image")
     .upload(path, file, { upsert: false, contentType: file.type });
-
   if (error) throw error;
   const { data } = db.storage.from("Medicine-image").getPublicUrl(path);
   return data.publicUrl;
 }
-
 document.getElementById("medicineForm").addEventListener("submit", async e => {
   e.preventDefault();
-
   const msg = document.getElementById("formMsg");
   const priceText = priceInput.value;
   const price = Number(priceText);
-
   if (priceText === "" || !Number.isFinite(price) || price <= 0) {
-    msg.textContent = "MRP à¦¶à§à¦¨à§à¦¯à§à¦° à¦¬à§à¦¶à¦¿ à¦¹à¦¤à§ à¦¹à¦¬à§à¥¤";
+    msg.textContent = "MRP শূন্যের বেশি হতে হবে।";
     return;
   }
-
   let discount;
-  let exactFinalPrice = null;
-
   if (discountMode.value === "percentage") {
     discount = Number(discountInput.value);
-    if (discountInput.value === "" || !Number.isFinite(discount) || discount < 0 || discount > 100) {
-      msg.textContent = "Discount 0 à¦¥à§à¦à§ 100-à¦à¦° à¦®à¦§à§à¦¯à§ à¦¦à¦¾à¦à¥¤";
+    if (discountInput.value === "" || !Number.isFinite(discount) ||
+        discount < 0 || discount > 100) {
+      msg.textContent = "Discount 0 থেকে 100-এর মধ্যে দাও।";
       return;
     }
-    exactFinalPrice = Number((price * (1 - discount / 100)).toFixed(2));
   } else {
     const saleText = finalPriceInput.value;
     const sale = Number(saleText);
-    if (saleText === "" || !Number.isFinite(sale) || sale <= 0 || sale > price) {
-      msg.textContent = "Final Price à¦¶à§à¦¨à§à¦¯à§à¦° à¦¬à§à¦¶à¦¿ à¦à¦¬à¦ MRP-à¦à¦° à¦¸à¦®à¦¾à¦¨ à¦¬à¦¾ à¦à¦® à¦¹à¦¤à§ à¦¹à¦¬à§à¥¤";
+    if (saleText === "" || !Number.isFinite(sale) ||
+        sale <= 0 || sale > price) {
+      msg.textContent = "Final Price শূন্যের বেশি এবং MRP-এর সমান বা কম হতে হবে।";
       return;
     }
-    exactFinalPrice = Number(sale.toFixed(2));
-    discount = ((price - exactFinalPrice) / price) * 100;
+    discount = ((price - sale) / price) * 100;
   }
-
   const stockText = document.getElementById("stock").value;
   const stock = stockText === "" ? 0 : Number(stockText);
   if (!Number.isInteger(stock) || stock < 0) {
-    msg.textContent = "Stock à¦¶à§à¦¨à§à¦¯ à¦¬à¦¾ à¦¤à¦¾à¦° à¦¬à§à¦¶à¦¿ à¦ªà§à¦°à§à¦£à¦¸à¦à¦à§à¦¯à¦¾ à¦¹à¦¤à§ à¦¹à¦¬à§à¥¤";
+    msg.textContent = "Stock শূন্য বা তার বেশি পূর্ণসংখ্যা হতে হবে।";
     return;
   }
-
   const { data: { user }, error: authError } = await db.auth.getUser();
   if (authError || !user) {
-    msg.textContent = "à¦à¦à§ Admin Login à¦à¦°à§à¥¤";
+    msg.textContent = "আগে Admin Login করো।";
     return;
   }
-
   const saveButton = document.getElementById("saveButton");
   saveButton.disabled = true;
-  saveButton.textContent = "Save à¦¹à¦à§à¦à§...";
-  msg.textContent = "Save à¦¹à¦à§à¦à§...";
-
+  saveButton.textContent = "Save হচ্ছে...";
+  msg.textContent = "Save হচ্ছে...";
   try {
     const file = document.getElementById("photo").files[0];
     let imageUrl = null;
     if (file) imageUrl = await uploadPhoto(file);
-
     const row = {
       name: document.getElementById("name").value.trim(),
       company: document.getElementById("company").value.trim(),
@@ -431,73 +415,51 @@ document.getElementById("medicineForm").addEventListener("submit", async e => {
       discount_percent: discount,
       stock
     };
-
-    // Exact sale price is saved when the table supports sale_price.
-    // If that column is absent, retry without it to preserve existing table compatibility.
-    row.sale_price = exactFinalPrice;
-
+    if (imageUrl) row.image_url = imageUrl;
     let result;
     if (editingId) {
       result = await db.from("medicines").update(row).eq("id", editingId);
     } else {
       result = await db.from("medicines").insert(row);
     }
-
-    if (result.error && String(result.error.message || "").toLowerCase().includes("sale_price")) {
-      delete row.sale_price;
-      result = editingId
-        ? await db.from("medicines").update(row).eq("id", editingId)
-        : await db.from("medicines").insert(row);
-    }
-
     if (result.error) throw result.error;
-    msg.textContent = "à¦¸à¦«à¦²à¦­à¦¾à¦¬à§ Save à¦¹à¦¯à¦¼à§à¦à§!";
+    msg.textContent = "সফলভাবে Save হয়েছে!";
     resetForm();
     await loadMedicines();
   } catch (err) {
-    msg.textContent = "Save à¦¹à¦¯à¦¼à¦¨à¦¿: " + err.message;
+    msg.textContent = "Save হয়নি: " + err.message;
   } finally {
     saveButton.disabled = false;
-    saveButton.textContent = "à¦à¦·à§à¦§ Save à¦à¦°à§";
+    saveButton.textContent = "ওষুধ Save করো";
   }
 });
-
 function editMedicine(id) {
   const m = medicines.find(x => String(x.id) === String(id));
   if (!m) return;
-
   editingId = id;
   ["name", "company", "strength", "category", "price", "stock"].forEach(k => {
     document.getElementById(k).value = m[k] ?? "";
   });
-
   discountMode.value = "percentage";
   discountInput.value = m.discount_percent ?? 0;
   updateDiscountFields("discount");
-  if (m.sale_price !== null && m.sale_price !== undefined && Number.isFinite(Number(m.sale_price))) {
-    discountMode.value = "finalPrice";
-    finalPriceInput.value = Number(m.sale_price).toFixed(2);
-    updateDiscountFields("finalPrice");
-  }
-
   document.getElementById("photo").value = "";
-  document.getElementById("formTitle").textContent = "à¦à¦·à§à¦§ Edit à¦à¦°à§";
-  document.getElementById("saveButton").textContent = "à¦ªà¦°à¦¿à¦¬à¦°à§à¦¤à¦¨ Save à¦à¦°à§";
-  document.getElementById("formMsg").textContent = "Edit mode: à¦¨à¦¤à§à¦¨ à¦à¦¬à¦¿ à¦¨à¦¾ à¦¦à¦¿à¦²à§ à¦à¦à§à¦° à¦à¦¬à¦¿à¦ à¦¥à¦¾à¦à¦¬à§à¥¤";
+  document.getElementById("formTitle").textContent = "ওষুধ Edit করো";
+  document.getElementById("saveButton").textContent = "পরিবর্তন Save করো";
+  document.getElementById("formMsg").textContent =
+    "Edit mode: নতুন ছবি না দিলে আগের ছবিই থাকবে।";
   window.scrollTo({ top: 0, behavior: "smooth" });
 }
-
 async function deleteMedicine(id) {
-  if (!confirm("à¦à¦ à¦à¦·à§à¦§à¦à¦¿ à¦®à§à¦à§ à¦«à§à¦²à¦¤à§ à¦à¦¾à¦?")) return;
+  if (!confirm("এই ওষুধটি মুছে ফেলতে চাও?")) return;
   const { error } = await db.from("medicines").delete().eq("id", id);
   if (error) {
-    alert("Delete à¦¹à¦¯à¦¼à¦¨à¦¿: " + error.message);
+    alert("Delete হয়নি: " + error.message);
     return;
   }
   if (String(editingId) === String(id)) resetForm();
   await loadMedicines();
 }
-
 function resetForm() {
   editingId = null;
   document.getElementById("medicineForm").reset();
@@ -506,22 +468,21 @@ function resetForm() {
   discountInput.readOnly = false;
   finalPriceInput.value = "";
   finalPriceInput.readOnly = true;
-  discountHelp.textContent = "Percentage Mode-à¦ Discount à¦²à¦¿à¦à¦²à§ Final Price à¦¹à¦¿à¦¸à¦¾à¦¬ à¦¹à¦¬à§à¥¤";
-  document.getElementById("formTitle").textContent = "à¦¨à¦¤à§à¦¨ à¦à¦·à§à¦§ à¦¯à§à¦ à¦à¦°à§";
-  document.getElementById("saveButton").textContent = "à¦à¦·à§à¦§ Save à¦à¦°à§";
+  discountHelp.textContent =
+    "Percentage Mode-এ Discount লিখলে Final Price হিসাব হবে।";
+  document.getElementById("formTitle").textContent = "নতুন ওষুধ যোগ করো";
+  document.getElementById("saveButton").textContent = "ওষুধ Save করো";
   document.getElementById("formMsg").textContent = "";
 }
-
 // ===== COMPANY LOGO MANAGEMENT =====
 function normalizeCompanyName(name) {
   return String(name || "").trim().replace(/\s+/g, " ").toLowerCase();
 }
-
 function updateCompanySuggestions() {
   const names = [...new Set(
-    medicines.map(m => String(m.company || "").trim().replace(/\s+/g, " ")).filter(Boolean)
+    medicines.map(m => String(m.company || "").trim().replace(/\s+/g, " "))
+      .filter(Boolean)
   )].sort((a, b) => a.localeCompare(b));
-
   const datalist = document.getElementById("medicineCompanySuggestions");
   datalist.replaceChildren();
   names.forEach(name => {
@@ -530,13 +491,11 @@ function updateCompanySuggestions() {
     datalist.appendChild(option);
   });
 }
-
 function updateLogoCompanySuggestions() {
   const names = [...new Set([
     ...medicines.map(m => String(m.company || "").trim().replace(/\s+/g, " ")),
     ...companyLogos.map(x => String(x.company_name || "").trim().replace(/\s+/g, " "))
   ].filter(Boolean))].sort((a, b) => a.localeCompare(b));
-
   companyLogoSuggestions.replaceChildren();
   names.forEach(name => {
     const option = document.createElement("option");
@@ -544,286 +503,152 @@ function updateLogoCompanySuggestions() {
     companyLogoSuggestions.appendChild(option);
   });
 }
-
 async function loadCompanyLogos() {
-  companyLogoList.textContent = "à¦²à§à¦à§ à¦²à§à¦¡ à¦¹à¦à§à¦à§...";
+  companyLogoList.textContent = "লোগো লোড হচ্ছে...";
   const { data, error } = await db
     .from("company_logos")
     .select("company_name,logo_url")
     .order("company_name");
-
   if (error) {
     companyLogos = [];
-    companyLogoList.textContent = "à¦²à§à¦à§ à¦²à§à¦¡ à¦¹à¦¯à¦¼à¦¨à¦¿: " + error.message;
+    companyLogoList.textContent = "লোগো লোড হয়নি: " + error.message;
     return;
   }
-
   companyLogos = data || [];
   renderCompanyLogos();
   updateLogoCompanySuggestions();
 }
-
 function renderCompanyLogos() {
   const term = normalizeCompanyName(companyLogoSearch.value);
   const filtered = companyLogos.filter(item =>
     normalizeCompanyName(item.company_name).includes(term)
   );
-
   companyLogoList.replaceChildren();
   if (!filtered.length) {
-    companyLogoList.textContent = "à¦à¦à¦¨à§ à¦à§à¦¨à§ à¦à§à¦®à§à¦ªà¦¾à¦¨à¦¿à¦° à¦²à§à¦à§ à¦ªà¦¾à¦à¦¯à¦¼à¦¾ à¦¯à¦¾à¦¯à¦¼à¦¨à¦¿à¥¤";
+    companyLogoList.textContent = "এখনো কোনো কোম্পানির লোগো পাওয়া যায়নি।";
     return;
   }
-
   filtered.forEach(item => {
     const div = document.createElement("div");
     div.className = "item";
-
     const img = document.createElement("img");
     img.className = "logo-preview";
     img.src = item.logo_url;
     img.alt = item.company_name;
     img.loading = "lazy";
-
     const name = document.createElement("strong");
     name.textContent = item.company_name;
-
     const editButton = document.createElement("button");
     editButton.type = "button";
     editButton.className = "secondary";
-    editButton.textContent = "Edit / Logo à¦ªà¦°à¦¿à¦¬à¦°à§à¦¤à¦¨";
+    editButton.textContent = "লোগো পরিবর্তন করো";
     editButton.onclick = () => {
-      editingLogoOriginalName = item.company_name;
       logoCompanyName.value = item.company_name;
       companyLogoFile.value = "";
-      companyLogoFile.required = false;
-      companyLogoSaveButton.textContent = "à¦ªà¦°à¦¿à¦¬à¦°à§à¦¤à¦¨ Save à¦à¦°à§";
-      companyLogoCancelButton.style.display = "block";
       companyLogoMsg.textContent =
-        "Edit mode: à¦¶à§à¦§à§ à¦¨à¦¾à¦® à¦¬à¦¦à¦²à¦¾à¦¤à§ à¦¨à¦¤à§à¦¨ à¦à¦¬à¦¿ à¦²à¦¾à¦à¦¬à§ à¦¨à¦¾à¥¤ Logo à¦¬à¦¦à¦²à¦¾à¦¤à§ à¦¨à¦¤à§à¦¨ à¦à¦¬à¦¿ à¦¨à¦¿à¦°à§à¦¬à¦¾à¦à¦¨ à¦à¦°à§à¥¤";
+        "নতুন লোগো নির্বাচন করে Upload ও Save করো।";
       document.getElementById("companyLogoCard").scrollIntoView({
-        behavior: "smooth", block: "start"
+        behavior: "smooth",
+        block: "start"
       });
     };
-
-    const deleteButton = document.createElement("button");
-    deleteButton.type = "button";
-    deleteButton.className = "danger";
-    deleteButton.textContent = "Logo Delete";
-    deleteButton.onclick = () => deleteCompanyLogo(item.company_name);
-
-    div.append(img, name, editButton, deleteButton);
+    div.append(img, name, editButton);
     companyLogoList.appendChild(div);
   });
 }
-
-function resetCompanyLogoEditor() {
-  editingLogoOriginalName = null;
-  companyLogoForm.reset();
-  companyLogoFile.required = false;
-  companyLogoSaveButton.disabled = false;
-  companyLogoSaveButton.textContent = "à¦²à§à¦à§ Upload à¦ Save";
-  companyLogoCancelButton.style.display = "none";
-  companyLogoMsg.textContent = "";
-}
-
-function getCompanyLogoStoragePath(publicUrl) {
-  try {
-    const marker = "/storage/v1/object/public/" + COMPANY_LOGO_BUCKET + "/";
-    const index = String(publicUrl || "").indexOf(marker);
-    if (index < 0) return null;
-    return decodeURIComponent(String(publicUrl).slice(index + marker.length));
-  } catch {
-    return null;
-  }
-}
-
-async function deleteCompanyLogo(companyName) {
-  const item = companyLogos.find(x =>
-    normalizeCompanyName(x.company_name) === normalizeCompanyName(companyName)
-  );
-  if (!item) {
-    alert("à¦à¦ à¦à§à¦®à§à¦ªà¦¾à¦¨à¦¿à¦° Logo à¦¤à¦¾à¦²à¦¿à¦à¦¾à¦¯à¦¼ à¦ªà¦¾à¦à¦¯à¦¼à¦¾ à¦¯à¦¾à¦¯à¦¼à¦¨à¦¿à¥¤");
-    return;
-  }
-
-  if (!confirm('"' + item.company_name + '"-à¦à¦° Logo à¦®à§à¦à¦¤à§ à¦à¦¾à¦? Medicines à¦ Orders à¦®à§à¦à¦¬à§ à¦¨à¦¾à¥¤')) return;
-
-  try {
-    const { data: { user }, error: authError } = await db.auth.getUser();
-    if (authError || !user) throw new Error("à¦à¦à§ Admin Login à¦à¦°à§à¥¤");
-
-    const { error: rowError } = await db
-      .from("company_logos")
-      .delete()
-      .eq("company_name", item.company_name);
-    if (rowError) throw rowError;
-
-    const path = getCompanyLogoStoragePath(item.logo_url);
-    let storageWarning = "";
-
-    if (path) {
-      const { error: storageError } = await db.storage
-        .from(COMPANY_LOGO_BUCKET)
-        .remove([path]);
-      if (storageError) {
-        storageWarning = "\nDatabase record à¦®à§à¦à§ à¦à§à¦à§, à¦¤à¦¬à§ Storage image à¦®à§à¦à¦¤à§ à¦ªà¦¾à¦°à§à¦¨à¦¿: " + storageError.message;
-      }
-    } else {
-      storageWarning = "\nDatabase record à¦®à§à¦à§ à¦à§à¦à§, à¦à¦¿à¦¨à§à¦¤à§ Storage path à¦¶à¦¨à¦¾à¦à§à¦¤ à¦à¦°à¦¾ à¦¯à¦¾à¦¯à¦¼à¦¨à¦¿à¥¤";
-    }
-
-    if (editingLogoOriginalName &&
-        normalizeCompanyName(editingLogoOriginalName) === normalizeCompanyName(item.company_name)) {
-      resetCompanyLogoEditor();
-    }
-
-    await loadCompanyLogos();
-    alert("Logo record Delete à¦¹à¦¯à¦¼à§à¦à§à¥¤" + storageWarning);
-  } catch (err) {
-    alert("Logo Delete à¦¹à¦¯à¦¼à¦¨à¦¿: " + err.message);
-  }
-}
-
 async function uploadCompanyLogo(file, companyName) {
-  if (!file) throw new Error("à¦à§à¦®à§à¦ªà¦¾à¦¨à¦¿à¦° à¦²à§à¦à§ à¦¨à¦¿à¦°à§à¦¬à¦¾à¦à¦¨ à¦à¦°à§à¥¤");
-
+  if (!file) throw new Error("কোম্পানির লোগো নির্বাচন করো।");
   const allowedTypes = ["image/png", "image/jpeg", "image/webp"];
-  if (!allowedTypes.includes(file.type)) throw new Error("PNG, JPG à¦¬à¦¾ WEBP à¦à¦¬à¦¿ à¦¬à§à¦¯à¦¬à¦¹à¦¾à¦° à¦à¦°à§à¥¤");
-  if (file.size > 5 * 1024 * 1024) throw new Error("à¦²à§à¦à§à¦° à¦«à¦¾à¦à¦² 5 MB-à¦à¦° à¦à¦® à¦¹à¦¤à§ à¦¹à¦¬à§à¥¤");
-
+  if (!allowedTypes.includes(file.type)) {
+    throw new Error("PNG, JPG বা WEBP ছবি ব্যবহার করো।");
+  }
+  if (file.size > 5 * 1024 * 1024) {
+    throw new Error("লোগোর ফাইল 5 MB-এর কম হতে হবে।");
+  }
   const { data: { user }, error: authError } = await db.auth.getUser();
-  if (authError || !user) throw new Error("à¦à¦à§ Admin Login à¦à¦°à§à¥¤");
-
-  const ext = file.name.split(".").pop().toLowerCase().replace(/[^a-z0-9]/g, "") || "png";
-  const safeName = companyName.normalize("NFKD")
+  if (authError || !user) {
+    throw new Error("আগে Admin Login করো।");
+  }
+  const ext = file.name.split(".").pop().toLowerCase();
+  const safeName = companyName
+    .normalize("NFKD")
     .replace(/[^a-zA-Z0-9_-]+/g, "-")
     .replace(/^-+|-+$/g, "")
     .slice(0, 70) || "company";
   const path = safeName + "/" + Date.now() + "-" +
     Math.random().toString(36).slice(2) + "." + ext;
-
   const { error } = await db.storage
     .from(COMPANY_LOGO_BUCKET)
-    .upload(path, file, { upsert: false, contentType: file.type });
+    .upload(path, file, {
+      upsert: false,
+      contentType: file.type
+    });
   if (error) throw error;
-
-  const { data } = db.storage.from(COMPANY_LOGO_BUCKET).getPublicUrl(path);
-  if (!data || !data.publicUrl) throw new Error("à¦²à§à¦à§à¦° Public URL à¦ªà¦¾à¦à¦¯à¦¼à¦¾ à¦¯à¦¾à¦¯à¦¼à¦¨à¦¿à¥¤");
+  const { data } = db.storage
+    .from(COMPANY_LOGO_BUCKET)
+    .getPublicUrl(path);
+  if (!data || !data.publicUrl) {
+    throw new Error("লোগোর Public URL পাওয়া যায়নি।");
+  }
   return data.publicUrl;
 }
-
 companyLogoForm.addEventListener("submit", async event => {
   event.preventDefault();
-
   const companyName = logoCompanyName.value.trim().replace(/\s+/g, " ");
-  const file = companyLogoFile.files[0] || null;
-
-  if (!companyName) {
-    companyLogoMsg.textContent = "à¦à§à¦®à§à¦ªà¦¾à¦¨à¦¿à¦° à¦¨à¦¾à¦® à¦¦à¦¿à¦¤à§ à¦¹à¦¬à§à¥¤";
+  const file = companyLogoFile.files[0];
+  if (!companyName || !file) {
+    companyLogoMsg.textContent = "কোম্পানির নাম ও লোগো দুটোই দিতে হবে।";
     return;
   }
-  if (!editingLogoOriginalName && !file) {
-    companyLogoMsg.textContent = "à¦¨à¦¤à§à¦¨ Logo à¦¯à§à¦ à¦à¦°à¦¤à§ Logo file à¦¨à¦¿à¦°à§à¦¬à¦¾à¦à¦¨ à¦à¦°à§à¥¤";
-    return;
-  }
-
-  const duplicate = companyLogos.find(item =>
-    normalizeCompanyName(item.company_name) === normalizeCompanyName(companyName) &&
-    normalizeCompanyName(item.company_name) !== normalizeCompanyName(editingLogoOriginalName)
+  const existing = companyLogos.find(item =>
+    normalizeCompanyName(item.company_name) === normalizeCompanyName(companyName)
   );
-
-  if (duplicate) {
-    companyLogoMsg.textContent = "à¦à¦ à¦¨à¦¾à¦®à§ Logo à¦à¦à§ à¦¥à§à¦à§à¦ à¦à¦à§à¥¤ à¦¤à¦¾à¦²à¦¿à¦à¦¾ à¦¥à§à¦à§ à¦¸à§à¦à¦¿ Edit à¦à¦°à§à¥¤";
-    return;
-  }
-
   companyLogoSaveButton.disabled = true;
-  companyLogoSaveButton.textContent = "Save à¦¹à¦à§à¦à§...";
-  companyLogoMsg.textContent = "à¦à¦ªà§à¦à§à¦·à¦¾ à¦à¦°à§...";
-
+  companyLogoSaveButton.textContent = "Upload হচ্ছে...";
+  companyLogoMsg.textContent = "অপেক্ষা করো...";
   try {
-    const { data: { user }, error: authError } = await db.auth.getUser();
-    if (authError || !user) throw new Error("à¦à¦à§ Admin Login à¦à¦°à§à¥¤");
-
-    const original = editingLogoOriginalName
-      ? companyLogos.find(item =>
-          normalizeCompanyName(item.company_name) === normalizeCompanyName(editingLogoOriginalName)
-        )
-      : null;
-
-    if (editingLogoOriginalName && !original) {
-      throw new Error("Edit à¦à¦°à¦¾à¦° Logo à¦à¦° à¦¤à¦¾à¦²à¦¿à¦à¦¾à¦¯à¦¼ à¦¨à§à¦à¥¤ Refresh à¦à¦°à§ à¦à¦¬à¦¾à¦° à¦à§à¦·à§à¦à¦¾ à¦à¦°à§à¥¤");
-    }
-
-    let logoUrl = original ? original.logo_url : null;
-    if (file) logoUrl = await uploadCompanyLogo(file, companyName);
-
-    if (editingLogoOriginalName) {
-      if (normalizeCompanyName(companyName) === normalizeCompanyName(editingLogoOriginalName)) {
-        const { error } = await db
-          .from("company_logos")
-          .update({ logo_url: logoUrl })
-          .eq("company_name", editingLogoOriginalName);
-        if (error) throw error;
-      } else {
-        // Safer rename: insert new record first, then remove old record.
-        const { error: insertError } = await db
-          .from("company_logos")
-          .insert({ company_name: companyName, logo_url: logoUrl });
-        if (insertError) throw insertError;
-
-        const { error: deleteError } = await db
-          .from("company_logos")
-          .delete()
-          .eq("company_name", editingLogoOriginalName);
-
-        if (deleteError) {
-          companyLogoMsg.textContent =
-            "à¦¨à¦¤à§à¦¨ à¦¨à¦¾à¦®à§à¦° Logo à¦¤à§à¦°à¦¿ à¦¹à¦¯à¦¼à§à¦à§, à¦à¦¿à¦¨à§à¦¤à§ à¦ªà§à¦°à¦¨à§ record à¦®à§à¦à¦¤à§ à¦ªà¦¾à¦°à§à¦¨à¦¿: " + deleteError.message;
-          await loadCompanyLogos();
-          return;
-        }
-      }
-    } else {
-      const { error } = await db
+    const logoUrl = await uploadCompanyLogo(file, companyName);
+    let result;
+    if (existing) {
+      result = await db
         .from("company_logos")
-        .insert({ company_name: companyName, logo_url: logoUrl });
-      if (error) throw error;
+        .update({ logo_url: logoUrl })
+        .eq("company_name", existing.company_name);
+    } else {
+      result = await db
+        .from("company_logos")
+        .insert({
+          company_name: companyName,
+          logo_url: logoUrl
+        });
     }
-
-    companyLogoMsg.textContent = "Logo à¦¸à¦«à¦²à¦­à¦¾à¦¬à§ Save à¦¹à¦¯à¦¼à§à¦à§!";
-    resetCompanyLogoEditor();
+    if (result.error) throw result.error;
+    companyLogoMsg.textContent = "লোগো সফলভাবে Save হয়েছে!";
+    companyLogoForm.reset();
     await loadCompanyLogos();
   } catch (err) {
-    companyLogoMsg.textContent = "Logo Save à¦¹à¦¯à¦¼à¦¨à¦¿: " + err.message;
+    companyLogoMsg.textContent = "লোগো Save হয়নি: " + err.message;
   } finally {
     companyLogoSaveButton.disabled = false;
-    if (editingLogoOriginalName) {
-      companyLogoSaveButton.textContent = "à¦ªà¦°à¦¿à¦¬à¦°à§à¦¤à¦¨ Save à¦à¦°à§";
-    } else {
-      companyLogoSaveButton.textContent = "à¦²à§à¦à§ Upload à¦ Save";
-    }
+    companyLogoSaveButton.textContent = "লোগো Upload ও Save";
   }
 });
-
-companyLogoCancelButton.addEventListener("click", resetCompanyLogoEditor);
 companyLogoSearch.addEventListener("input", renderCompanyLogos);
-document.getElementById("companyLogoRefresh").addEventListener("click", loadCompanyLogos);
-
+document.getElementById("companyLogoRefresh")
+  .addEventListener("click", loadCompanyLogos);
 // ===== RESTORE SESSION =====
 (async function checkSession() {
   try {
     const { data: { session }, error } = await db.auth.getSession();
     if (error) throw error;
-
     if (session) {
       document.getElementById("login").style.display = "none";
       document.getElementById("app").style.display = "block";
       await Promise.all([loadMedicines(), loadCompanyLogos()]);
     }
   } catch (err) {
-    document.getElementById("loginMsg").textContent = "Session à¦ªà¦°à§à¦à§à¦·à¦¾ à¦à¦°à¦¾ à¦¯à¦¾à¦¯à¦¼à¦¨à¦¿: " + err.message;
+    document.getElementById("loginMsg").textContent =
+      "Session পরীক্ষা করা যায়নি: " + err.message;
   }
 })();
 </script>
