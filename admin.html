@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="bn">
 <head>
@@ -6,7 +5,6 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Medispot BD | Admin Panel</title>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-
 <style>
 *{box-sizing:border-box}
 body{margin:0;background:#f4f8f6;font-family:Arial,sans-serif;color:#20332b}
@@ -18,43 +16,64 @@ h3{margin-top:0}
 input,select,button{width:100%;padding:12px;margin:7px 0;border:1px solid #d5e1da;border-radius:9px;font-size:15px}
 input[readonly]{background:#edf3ef;color:#52645a}
 button{background:#087b50;color:white;border:0;font-weight:bold;cursor:pointer}
+button:disabled{opacity:.6;cursor:wait}
 button.secondary{background:#e7f3ed;color:#087b50}
 button.danger{background:#b42318;color:white}
 button.flash-active{background:#fff0cc;color:#805500}
 .grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
 .item{border-top:1px solid #e4ebe6;padding:14px 0;overflow-wrap:anywhere}
 .item img{width:75px;height:75px;object-fit:contain}
+.logo-preview{width:100px!important;height:70px!important;object-fit:contain!important;display:block;margin:8px 0}
 .small{font-size:13px;color:#66766d}
 label{display:block;font-size:14px;font-weight:bold;margin-top:10px}
 #app{display:none}
+.message{overflow-wrap:anywhere}
 @media(max-width:550px){.grid{grid-template-columns:1fr}}
 </style>
 </head>
-
 <body>
 <header>
 <h2>Medispot BD</h2>
 <div>Medicine Management • Admin Panel</div>
 </header>
-
 <main>
 <section class="card" id="login">
 <h3>Admin Login</h3>
 <p class="small">তোমার Supabase Admin account দিয়ে লগইন করো।</p>
-<input id="email" type="email" placeholder="Admin email">
-<input id="password" type="password" placeholder="Password">
+<input id="email" type="email" placeholder="Admin email" autocomplete="username">
+<input id="password" type="password" placeholder="Password" autocomplete="current-password">
 <button onclick="loginAdmin()">Login</button>
-<p id="loginMsg"></p>
+<p id="loginMsg" class="message"></p>
 </section>
-
 <section id="app">
+<!-- COMPANY LOGO MANAGEMENT -->
+<div class="card">
+<h3>Company Logo Management</h3>
+<p class="small">
+কোম্পানির নাম ও লোগো যোগ করো। একই কোম্পানির নাম ব্যবহার করে নতুন লোগো Save করলে আগের লোগো Update হবে।
+</p>
+<form id="companyLogoForm">
+<label for="logoCompanyName">কোম্পানির নাম *</label>
+<input id="logoCompanyName" placeholder="যেমন Square Pharmaceuticals" required>
+<label for="companyLogoFile">কোম্পানির Logo *</label>
+input
+<input id="companyLogoFile" type="file" accept="image/*" required>
+<p class="small">ছবি সর্বোচ্চ 5 MB হতে হবে।</p>
+div
+<button type="submit" id="saveLogoButton">Company Logo Save করো</button>
+<button type="button" class="secondary" onclick="resetLogoForm()">ফর্ম পরিষ্কার করো</button>
+</form>
+<p id="logoFormMsg" class="message"></p>
+<h3>সংরক্ষিত কোম্পানির লোগো</h3>
+<div id="companyLogoList">লগইন করার পর লোড হবে...</div>
+<button type="button" class="secondary" onclick="loadCompanyLogos()">Logo List Refresh</button>
+</div>
+<!-- MEDICINE FORM -->
 <div class="card">
 <h3 id="formTitle">নতুন ওষুধ যোগ করো</h3>
-
 <form id="medicineForm">
 <label for="name">ওষুধের নাম *</label>
 <input id="name" placeholder="ওষুধের নাম" required>
-
 <div class="grid">
 <div>
 <label for="company">কোম্পানির নাম</label>
@@ -65,7 +84,6 @@ label{display:block;font-size:14px;font-weight:bold;margin-top:10px}
 <input id="strength" placeholder="যেমন 10 mg">
 </div>
 </div>
-
 <div class="grid">
 <div>
 <label for="category">Category</label>
@@ -76,13 +94,11 @@ label{display:block;font-size:14px;font-weight:bold;margin-top:10px}
 <input id="price" type="number" min="0.01" step="0.01" placeholder="যেমন 980" required>
 </div>
 </div>
-
 <label for="discountMode">Discount দেওয়ার পদ্ধতি</label>
 <select id="discountMode">
 <option value="percentage">Percentage Mode (%)</option>
 <option value="finalPrice">Final Price Mode (৳)</option>
 </select>
-
 <div class="grid">
 <div>
 <label for="discount">Discount (%)</label>
@@ -93,11 +109,9 @@ label{display:block;font-size:14px;font-weight:bold;margin-top:10px}
 <input id="finalPrice" type="number" min="0.01" step="0.01" placeholder="বিক্রির দাম">
 </div>
 </div>
-
 <p class="small" id="discountHelp">
 Percentage Mode-এ Discount লিখলে Final Price নিজে হিসাব হবে।
 </p>
-
 <div class="grid">
 <div>
 <label for="stock">Stock (পরিমাণ)</label>
@@ -108,15 +122,13 @@ Percentage Mode-এ Discount লিখলে Final Price নিজে হিস�
 <input id="photo" type="file" accept="image/*">
 </div>
 </div>
-
 <p class="small">নতুন ছবি না দিলে Edit করার সময় আগের ছবিই থাকবে। ছবি সর্বোচ্চ 5 MB।</p>
-
 <button type="submit" id="saveButton">ওষুধ Save করো</button>
 <button type="button" class="secondary" onclick="resetForm()">ফর্ম পরিষ্কার করো</button>
 </form>
-<p id="formMsg"></p>
+<p id="formMsg" class="message"></p>
 </div>
-
+<!-- MEDICINE LIST -->
 <div class="card">
 <h3>ওষুধের তালিকা</h3>
 <p class="small">⚡ Flash Sale চালু করলে ওষুধটি Homepage-এর Flash Sale সেকশনে দেখানোর জন্য নির্বাচিত হবে। Homepage-এ দেখানোর জন্য আলাদা পরিবর্তনও প্রয়োজন হতে পারে।</p>
@@ -127,26 +139,22 @@ Percentage Mode-এ Discount লিখলে Final Price নিজে হিস�
 </div>
 </section>
 </main>
-
 <script>
 const SUPABASE_URL = "https://pnaaqkuzazjiabnnwxjq.supabase.co";
 const SUPABASE_KEY = "sb_publishable_ckj65sbFnET7xOjxPJOwfw_-KrevOkv";
 const db = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
-
 let medicines = [];
+let companyLogos = [];
 let editingId = null;
-
 const priceInput = document.getElementById("price");
 const discountMode = document.getElementById("discountMode");
 const discountInput = document.getElementById("discount");
 const finalPriceInput = document.getElementById("finalPrice");
 const discountHelp = document.getElementById("discountHelp");
-
 function updateDiscountFields(changedField){
   const priceText = priceInput.value;
   const mrp = Number(priceText);
   const mode = discountMode.value;
-
   if(mode === "percentage"){
     discountInput.readOnly = false;
     finalPriceInput.readOnly = true;
@@ -158,7 +166,6 @@ function updateDiscountFields(changedField){
     discountHelp.textContent =
       "Final Price Mode: বিক্রির দাম লিখুন; Discount (%) নিজে হিসাব হবে।";
   }
-
   if(priceText === "" || !Number.isFinite(mrp) || mrp <= 0){
     if(changedField === "price"){
       finalPriceInput.value = "";
@@ -166,17 +173,14 @@ function updateDiscountFields(changedField){
     }
     return;
   }
-
   if(mode === "percentage"){
     const d = Number(discountInput.value);
-
     if(discountInput.value !== "" && Number.isFinite(d) && d >= 0 && d <= 100){
       finalPriceInput.value = (mrp * (1 - d / 100)).toFixed(2);
     }
   }else{
     const saleText = finalPriceInput.value;
     const sale = Number(saleText);
-
     if(saleText !== "" && Number.isFinite(sale) && sale >= 0 && sale <= mrp){
       discountInput.value = (((mrp - sale) / mrp) * 100).toFixed(2);
     }else if(changedField === "mode" || changedField === "price"){
@@ -184,110 +188,87 @@ function updateDiscountFields(changedField){
     }
   }
 }
-
 discountMode.addEventListener("change",function(){
   updateDiscountFields("mode");
 });
-
 priceInput.addEventListener("input",function(){
   updateDiscountFields("price");
 });
-
 discountInput.addEventListener("input",function(){
   updateDiscountFields("discount");
 });
-
 finalPriceInput.addEventListener("input",function(){
   updateDiscountFields("finalPrice");
 });
-
 async function loginAdmin(){
   const email = document.getElementById("email").value.trim();
   const password = document.getElementById("password").value;
   const msg = document.getElementById("loginMsg");
-
   msg.textContent = "লগইন হচ্ছে...";
-
   try{
     const {error} = await db.auth.signInWithPassword({email,password});
-
     if(error){
       msg.textContent = "লগইন হয়নি: " + error.message;
       return;
     }
-
     document.getElementById("login").style.display = "none";
     document.getElementById("app").style.display = "block";
     await loadMedicines();
+    await loadCompanyLogos();
   }catch(err){
     msg.textContent = "সমস্যা হয়েছে: " + err.message;
   }
 }
-
 async function logoutAdmin(){
   await db.auth.signOut();
   location.reload();
 }
-
 async function loadMedicines(){
   const list = document.getElementById("medicineList");
   list.textContent = "লোড হচ্ছে...";
-
   const {data,error} = await db
     .from("medicines")
     .select("*")
     .order("created_at",{ascending:false});
-
   if(error){
     list.textContent = "তালিকা লোড হয়নি: " + error.message;
     return;
   }
-
   medicines = data || [];
   renderMedicines();
 }
-
 function renderMedicines(){
   const searchInput = document.getElementById("search");
   const term = (searchInput.value || "").toLowerCase();
   const list = document.getElementById("medicineList");
-
   const filtered = medicines.filter(m =>
     String(m.name || "").toLowerCase().includes(term) ||
     String(m.company || "").toLowerCase().includes(term)
   );
-
   if(!filtered.length){
     list.textContent = "কোনো ওষুধ পাওয়া যায়নি।";
     return;
   }
-
   list.innerHTML = "";
-
   filtered.forEach(m=>{
     const div = document.createElement("div");
     div.className = "item";
-
     if(m.image_url){
       const img = document.createElement("img");
       img.src = m.image_url;
       img.alt = m.name || "Medicine";
       div.appendChild(img);
     }
-
     const title = document.createElement("strong");
     title.textContent = (m.name || "নাম নেই") + " — MRP ৳" + m.price;
     div.appendChild(title);
-
     const discount = Number(m.discount_percent || 0);
     const finalPrice = Number(m.price || 0) * (1 - discount / 100);
-
     const priceDetails = document.createElement("p");
     priceDetails.textContent =
       "Final Price: ৳" + finalPrice.toFixed(2) +
       " • Discount: " + discount.toFixed(2) + "%";
     div.appendChild(priceDetails);
-
     const details = document.createElement("p");
     details.textContent = [
       m.company,
@@ -295,9 +276,7 @@ function renderMedicines(){
       "Stock: " + (m.stock ?? 0),
       "Flash Sale: " + (m.is_flash_sale ? "চালু" : "বন্ধ")
     ].filter(Boolean).join(" • ");
-
     div.appendChild(details);
-
     const flash = document.createElement("button");
     flash.textContent = m.is_flash_sale
       ? "⚡ Flash Sale বন্ধ করো"
@@ -305,90 +284,168 @@ function renderMedicines(){
     flash.className = m.is_flash_sale ? "flash-active" : "secondary";
     flash.onclick = () => toggleFlashSale(m.id,m.is_flash_sale);
     div.appendChild(flash);
-
     const edit = document.createElement("button");
     edit.textContent = "Edit";
     edit.className = "secondary";
     edit.onclick = () => editMedicine(m.id);
     div.appendChild(edit);
-
     const del = document.createElement("button");
     del.textContent = "Delete";
     del.className = "danger";
     del.onclick = () => deleteMedicine(m.id);
     div.appendChild(del);
-
     list.appendChild(div);
   });
 }
-
 async function toggleFlashSale(id,currentStatus){
   const newStatus = !currentStatus;
-
   const {error} = await db
     .from("medicines")
     .update({is_flash_sale:newStatus})
     .eq("id",id);
-
   if(error){
     alert("Flash Sale পরিবর্তন হয়নি: " + error.message);
     return;
   }
-
   await loadMedicines();
 }
-
 async function uploadPhoto(file){
   if(!file) return null;
-
   if(!file.type.startsWith("image/")){
     throw new Error("ছবি ফাইল নির্বাচন করো।");
   }
-
   if(file.size > 5*1024*1024){
     throw new Error("ছবি 5 MB-এর কম হতে হবে।");
   }
-
   const ext = (file.name.split(".").pop() || "jpg")
     .toLowerCase()
-    .replace(/[^a-z0-9]/g,"");
-
+    .replace(/[^a-z0-9]/g,"") || "jpg";
   const path = Date.now() + "-" +
     Math.random().toString(36).slice(2) + "." + ext;
-
   const {error} = await db.storage
     .from("Medicine-image")
     .upload(path,file,{
       upsert:false,
       contentType:file.type
     });
-
   if(error) throw error;
-
   const {data} = db.storage
     .from("Medicine-image")
     .getPublicUrl(path);
-
   return data.publicUrl;
 }
-
+/* COMPANY LOGO MANAGEMENT */
+async function loadCompanyLogos(){
+  const list = document.getElementById("companyLogoList");
+  if(!list) return;
+  list.textContent = "Logo লোড হচ্ছে...";
+  const {data,error} = await db
+    .from("company_logos")
+    .select("*")
+    .order("company_name",{ascending:true});
+  if(error){
+    list.textContent = "Logo লোড হয়নি: " + error.message;
+    return;
+  }
+  companyLogos = data || [];
+  if(!companyLogos.length){
+    list.textContent = "এখনো কোনো কোম্পানির Logo যোগ করা হয়নি।";
+    return;
+  }
+  list.innerHTML = "";
+  companyLogos.forEach(item=>{
+    const div = document.createElement("div");
+    div.className = "item";
+    const img = document.createElement("img");
+    img.src = item.logo_url;
+    img.alt = item.company_name;
+    img.className = "logo-preview";
+    div.appendChild(img);
+    const name = document.createElement("strong");
+    name.textContent = item.company_name;
+    div.appendChild(name);
+    const edit = document.createElement("button");
+    edit.className = "secondary";
+    edit.textContent = "Logo পরিবর্তন করো";
+    edit.onclick = ()=>{
+      document.getElementById("logoCompanyName").value =
+        item.company_name;
+      document.getElementById("companyLogoFile").value = "";
+      document.getElementById("logoFormMsg").textContent =
+        "নতুন Logo নির্বাচন করে Save করো।";
+      document.getElementById("companyLogoFile").required = true;
+      window.scrollTo({top:0,behavior:"smooth"});
+    };
+    div.appendChild(edit);
+    list.appendChild(div);
+  });
+}
+function resetLogoForm(){
+  document.getElementById("companyLogoForm").reset();
+  document.getElementById("companyLogoFile").required = true;
+  document.getElementById("logoFormMsg").textContent = "";
+}
+document.getElementById("companyLogoForm")
+.addEventListener("submit",async e=>{
+  e.preventDefault();
+  const msg = document.getElementById("logoFormMsg");
+  const button = document.getElementById("saveLogoButton");
+  const companyName =
+    document.getElementById("logoCompanyName").value.trim();
+  const file =
+    document.getElementById("companyLogoFile").files[0];
+  if(!companyName){
+    msg.textContent = "কোম্পানির নাম লিখো।";
+    return;
+  }
+  if(!file){
+    msg.textContent = "Logo ছবি নির্বাচন করো।";
+    return;
+  }
+  button.disabled = true;
+  button.textContent = "Save হচ্ছে...";
+  msg.textContent = "Logo আপলোড হচ্ছে...";
+  try{
+    const {data:{user},error:authError} = await db.auth.getUser();
+    if(authError) throw authError;
+    if(!user){
+      throw new Error("আগে Admin Login করো।");
+    }
+    const logoUrl = await uploadPhoto(file);
+    if(!logoUrl){
+      throw new Error("Logo আপলোড করা যায়নি।");
+    }
+    const {error} = await db
+      .from("company_logos")
+      .upsert({
+        company_name: companyName,
+        logo_url: logoUrl,
+        updated_at: new Date().toISOString()
+      },{onConflict:"company_name"});
+    if(error) throw error;
+    msg.textContent = "Company Logo সফলভাবে Save হয়েছে!";
+    resetLogoForm();
+    await loadCompanyLogos();
+  }catch(err){
+    msg.textContent = "Logo Save হয়নি: " + err.message;
+  }finally{
+    button.disabled = false;
+    button.textContent = "Company Logo Save করো";
+  }
+});
+/* MEDICINE SAVE / UPDATE */
 document.getElementById("medicineForm").addEventListener("submit",async e=>{
   e.preventDefault();
-
   const msg = document.getElementById("formMsg");
   const priceText = priceInput.value;
   const price = Number(priceText);
-
   if(priceText === "" || !Number.isFinite(price) || price <= 0){
     msg.textContent = "MRP শূন্যের বেশি হতে হবে।";
     return;
   }
-
   let discount;
-
   if(discountMode.value === "percentage"){
     discount = Number(discountInput.value);
-
     if(discountInput.value === "" || !Number.isFinite(discount) ||
        discount < 0 || discount > 100){
       msg.textContent = "Discount 0 থেকে 100-এর মধ্যে দাও।";
@@ -397,44 +454,38 @@ document.getElementById("medicineForm").addEventListener("submit",async e=>{
   }else{
     const saleText = finalPriceInput.value;
     const sale = Number(saleText);
-
     if(saleText === "" || !Number.isFinite(sale) ||
        sale <= 0 || sale > price){
       msg.textContent = "Final Price শূন্যের বেশি এবং MRP-এর সমান বা কম হতে হবে।";
       return;
     }
-
     discount = Math.round(((price - sale) / price) * 10000) / 100;
   }
-
   const stockText = document.getElementById("stock").value;
   const stock = stockText === "" ? 0 : Number(stockText);
-
   if(!Number.isInteger(stock) || stock < 0){
     msg.textContent = "Stock শূন্য বা তার বেশি পূর্ণসংখ্যা হতে হবে।";
     return;
   }
-
-  const {data:{user}} = await db.auth.getUser();
-
+  const {data:{user},error:authError} = await db.auth.getUser();
+  if(authError){
+    msg.textContent = "Login যাচাই করা যায়নি: " + authError.message;
+    return;
+  }
   if(!user){
     msg.textContent = "আগে Admin Login করো।";
     return;
   }
-
   const saveButton = document.getElementById("saveButton");
   saveButton.disabled = true;
   saveButton.textContent = "Save হচ্ছে...";
   msg.textContent = "Save হচ্ছে...";
-
   try{
     const file = document.getElementById("photo").files[0];
     let imageUrl = null;
-
     if(file){
       imageUrl = await uploadPhoto(file);
     }
-
     const row = {
       name: document.getElementById("name").value.trim(),
       company: document.getElementById("company").value.trim(),
@@ -444,13 +495,10 @@ document.getElementById("medicineForm").addEventListener("submit",async e=>{
       discount_percent: discount,
       stock: stock
     };
-
     if(imageUrl){
       row.image_url = imageUrl;
     }
-
     let result;
-
     if(editingId){
       result = await db
         .from("medicines")
@@ -461,13 +509,10 @@ document.getElementById("medicineForm").addEventListener("submit",async e=>{
         .from("medicines")
         .insert(row);
     }
-
     if(result.error) throw result.error;
-
     msg.textContent = "সফলভাবে Save হয়েছে!";
     resetForm();
     await loadMedicines();
-
   }catch(err){
     msg.textContent = "Save হয়নি: " + err.message;
   }finally{
@@ -475,76 +520,65 @@ document.getElementById("medicineForm").addEventListener("submit",async e=>{
     saveButton.textContent = "ওষুধ Save করো";
   }
 });
-
 function editMedicine(id){
   const m = medicines.find(x => String(x.id) === String(id));
   if(!m) return;
-
   editingId = id;
-
   ["name","company","strength","category","price","stock"].forEach(k=>{
     document.getElementById(k).value = m[k] ?? "";
   });
-
   discountMode.value = "percentage";
   discountInput.value = m.discount_percent ?? 0;
   updateDiscountFields("discount");
   document.getElementById("photo").value = "";
-
   document.getElementById("formTitle").textContent = "ওষুধ Edit করো";
   document.getElementById("saveButton").textContent = "পরিবর্তন Save করো";
-
   document.getElementById("formMsg").textContent =
     "Edit mode: পরিবর্তন করে Save করো। নতুন ছবি না দিলে আগের ছবিই থাকবে।";
-
   window.scrollTo({top:0,behavior:"smooth"});
 }
-
 async function deleteMedicine(id){
   if(!confirm("এই ওষুধটি মুছে ফেলতে চাও?")) return;
-
   const {error} = await db
     .from("medicines")
     .delete()
     .eq("id",id);
-
   if(error){
     alert("Delete হয়নি: " + error.message);
     return;
   }
-
   if(String(editingId) === String(id)){
     resetForm();
   }
-
   await loadMedicines();
 }
-
 function resetForm(){
   editingId = null;
   document.getElementById("medicineForm").reset();
-
   discountMode.value = "percentage";
   discountInput.value = "0";
   discountInput.readOnly = false;
   finalPriceInput.value = "";
   finalPriceInput.readOnly = true;
-
   discountHelp.textContent =
     "Percentage Mode-এ Discount লিখলে Final Price নিজে হিসাব হবে।";
-
   document.getElementById("formTitle").textContent = "নতুন ওষুধ যোগ করো";
   document.getElementById("saveButton").textContent = "ওষুধ Save করো";
   document.getElementById("formMsg").textContent = "";
 }
-
 (async function checkSession(){
-  const {data:{session}} = await db.auth.getSession();
-
-  if(session){
-    document.getElementById("login").style.display = "none";
-    document.getElementById("app").style.display = "block";
-    await loadMedicines();
+  try{
+    const {data:{session},error} = await db.auth.getSession();
+    if(error) throw error;
+    if(session){
+      document.getElementById("login").style.display = "none";
+      document.getElementById("app").style.display = "block";
+      await loadMedicines();
+      await loadCompanyLogos();
+    }
+  }catch(err){
+    document.getElementById("loginMsg").textContent =
+      "Session যাচাই করা যায়নি: " + err.message;
   }
 })();
 </script>
