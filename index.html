@@ -830,13 +830,6 @@
   const SUPABASE_URL = "https://pnaaqkuzazjiabnnwxjq.supabase.co";
   const SUPABASE_PUBLISHABLE_KEY = "sb_publishable_ckj65sbFnET7xOjxPJOwfw_-KrevOkv";
 
-  const LOCAL_PRODUCTS = [
-    {id:"local-1",name:"Napa 500 mg",company:"Beximco",strength:"500 mg",price:612,discount_percent:12.58,unit:"প্রতি বক্স",image_url:"./napa.jpg.JPG",category:"Tablet"},
-    {id:"local-2",name:"Seclo 20 mg",company:"Square",strength:"20 mg",price:720,discount_percent:22,unit:"প্রতি বক্স",image_url:"./seclo.JPG",category:"Capsule"},
-    {id:"local-3",name:"Rolac 10 mg",company:"Renata",strength:"10 mg",price:672,discount_percent:16.5,unit:"প্রতি বক্স",image_url:"./rolac.JPG",category:"Tablet"},
-    {id:"local-4",name:"Nexum Mups 20 mg",company:"Square",strength:"20 mg",price:1000,discount_percent:18,unit:"প্রতি বক্স",image_url:"./nexum.jpg.JPG",category:"Tablet"}
-  ];
-
   const grid = document.getElementById("productGrid");
   const flashSaleGrid = document.getElementById("flashSaleGrid");
   const flashSaleSection = document.getElementById("flashSale");
@@ -852,7 +845,7 @@
   const checkoutMessage = document.getElementById("checkoutMessage");
   const placeOrderBtn = document.getElementById("placeOrderBtn");
 
-  let allProducts = [...LOCAL_PRODUCTS];
+  let allProducts = [];
   let companyLogos = {};
   let selectedCompany = "all";
   let isSubmittingOrder = false;
@@ -1312,24 +1305,14 @@
         };
       });
 
-      const combined=[...LOCAL_PRODUCTS];
-
-      for(const product of databaseProducts) {
-        const duplicate=combined.some(existing=>
-          String(existing.name).trim().toLowerCase()===String(product.name).trim().toLowerCase() &&
-          String(existing.company).trim().toLowerCase()===String(product.company).trim().toLowerCase()
-        );
-
-        if(!duplicate)combined.push(product);
-      }
-
-      allProducts=combined;
-      statusMessage.textContent="GitHub ও Supabase-এর পণ্যের তালিকা দেখানো হচ্ছে।";
+      // শুধু Supabase medicines table-এর পণ্য দেখাবে।
+      allProducts=databaseProducts;
+      statusMessage.textContent="Supabase-এর পণ্যের তালিকা দেখানো হচ্ছে।";
 
     } catch(error) {
       console.error("Medicine loading error:",error);
-      allProducts=[...LOCAL_PRODUCTS];
-      statusMessage.textContent="প্রাথমিক পণ্যের তালিকা দেখানো হচ্ছে। ডেটাবেজ সংযোগ যাচাই করুন।";
+      allProducts=[];
+      statusMessage.textContent="Supabase থেকে পণ্য লোড করা যায়নি। ডেটাবেজ সংযোগ যাচাই করুন।";
     }
 
     renderCompanyFilters();
@@ -1429,4 +1412,4 @@
   });
 </script>
 </body>
-</html>
+</html
