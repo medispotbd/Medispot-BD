@@ -240,9 +240,17 @@
       border-color:var(--green);
     }
 
-    .filter-btn.company-logo-btn.active img {
-      filter:brightness(0) invert(1);
-    }
+    ./* কোম্পানি ফিল্টারে লোগোর আসল রং বজায় থাকবে */
+.filter-btn.company-logo-btn:hover,
+.filter-btn.company-logo-btn.active {
+  color: var(--text);
+  background: #e8f7f0;
+  border-color: var(--green);
+  box-shadow: 0 0 0 2px rgba(8,127,91,.10);
+}
+.filter-btn.company-logo-btn.active img {
+  filter: none;
+}
 
     .filter-btn.company-logo-btn.active .filter-logo-fallback {
       color:white;
