@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="bn">
 <head>
@@ -88,6 +87,7 @@
       font-size:13px;
     }
 
+    /* Hero: ডান পাশের কার্ড সরানো হয়েছে */
     .hero {
       padding:48px 0 38px;
       background:
@@ -207,6 +207,7 @@
       align-items:start;
     }
 
+    /* Flash Sale: horizontal swipe on mobile */
     #flashSale { display:none; padding:28px 0 8px; }
     .flash-sale-heading { display:flex; align-items:center; justify-content:space-between; gap:12px; margin-bottom:16px; }
     .flash-sale-heading h2 { font-size:clamp(22px,3vw,30px); }
@@ -235,6 +236,7 @@
       box-shadow:var(--shadow);
     }
 
+    /* ছবির সাইজ অপরিবর্তিত */
     .product-image {
       height:180px;
       flex-shrink:0;
@@ -246,21 +248,36 @@
       border-bottom:1px solid #edf3ef;
     }
 
-.discount-badge {
-  position:absolute;
-  top:10px;
-  left:10px;
-  z-index:2;
-  background:#e52525;
-  color:#fff;
-  font-size:12px;
-  font-weight:800;
-  line-height:1;
-  padding:6px 8px;
-  border-radius:18px;
-  box-shadow:0 2px 6px rgba(0,0,0,.15);
-}
+    /* ছবির ওপর বাম পাশে Discount Badge */
+    .discount-badge {
+      position:absolute;
+      top:10px;
+      left:10px;
+      z-index:2;
+      background:#e52525;
+      color:#fff;
+      font-size:12px;
+      font-weight:800;
+      line-height:1;
+      padding:7px 9px;
+      border-radius:20px;
+      box-shadow:0 2px 6px rgba(0,0,0,.15);
+    }
 
+    .discount-badge {
+      position:absolute;
+      top:10px;
+      left:10px;
+      z-index:2;
+      background:#e52525;
+      color:#fff;
+      font-size:12px;
+      font-weight:800;
+      line-height:1;
+      padding:7px 9px;
+      border-radius:20px;
+      box-shadow:0 2px 6px rgba(0,0,0,.15);
+    }
 
     .product-image img {
       max-width:100%;
@@ -279,6 +296,7 @@
     .medical-icon { font-size:42px; display:block; }
     .image-placeholder small { display:block; font-size:11px; margin-top:5px; }
 
+    /* তথ্যের অংশ: কম padding, কম line-height */
     .product-info {
       padding:10px;
       display:flex;
@@ -288,6 +306,28 @@
     }
 
     .company-label {
+      display:inline-block;
+      align-self:flex-start;
+      font-size:9px;
+      line-height:1.2;
+      font-weight:800;
+      color:var(--green);
+      background:var(--light);
+      border-radius:5px;
+      padding:3px 6px;
+      margin-bottom:4px;
+    }
+
+    .company-logo {
+      display:block;
+      width:76px;
+      height:30px;
+      object-fit:contain;
+      object-position:left center;
+      margin-bottom:5px;
+    }
+
+    .company-logo-fallback {
       display:inline-block;
       align-self:flex-start;
       font-size:9px;
@@ -316,6 +356,7 @@
       min-height:0;
     }
 
+    /* এখানে auto সরানো হয়েছে, যাতে দাম নিচে ঠেলে না যায় */
     .product-bottom {
       margin-top:6px;
       padding-top:0;
@@ -571,7 +612,9 @@
         gap:10px;
       }
 
+      /* মোবাইলের ছবির সাইজ অপরিবর্তিত */
       .product-image { height:145px; padding:10px; }
+
       .product-info { padding:8px; }
 
       .company-label {
@@ -633,7 +676,7 @@
     <div class="container hero-grid">
       <div>
         <div class="eyebrow">✦ ফার্মেসির জন্য স্মার্ট প্ল্যাটফর্ম</div>
-        <h1>আপনার ফার্মেসির জন্য <span>ওষুধ কিনুন</span> সহজেই দোকানে বসে</h1>
+        <h1>আপনার ফার্মেসির জন্য <span>ওষুধ কিনুন</span> সহজেই দোকানে বসে </h1>
         <p>Medispot BD-তে ওষুধের নাম, কোম্পানি ও দাম খুঁজে দেখুন। ফার্মেসির ওষুধ সংগ্রহের প্রক্রিয়াকে আরও সহজ করার আমাদের প্রচেষ্টা।</p>
       </div>
     </div>
@@ -752,7 +795,12 @@
   const SUPABASE_URL = "https://pnaaqkuzazjiabnnwxjq.supabase.co";
   const SUPABASE_PUBLISHABLE_KEY = "sb_publishable_ckj65sbFnET7xOjxPJOwfw_-KrevOkv";
 
-  const LOCAL_PRODUCTS = [];
+  const LOCAL_PRODUCTS = [
+    {id:"local-1",name:"Napa 500 mg",company:"Beximco",strength:"500 mg",price:612,discount_percent:12.58,unit:"প্রতি বক্স",image_url:"./napa.jpg.JPG",category:"Tablet"},
+    {id:"local-2",name:"Seclo 20 mg",company:"Square",strength:"20 mg",price:720,discount_percent:22,unit:"প্রতি বক্স",image_url:"./seclo.JPG",category:"Capsule"},
+    {id:"local-3",name:"Rolac 10 mg",company:"Renata",strength:"10 mg",price:672,discount_percent:16.5,unit:"প্রতি বক্স",image_url:"./rolac.JPG",category:"Tablet"},
+    {id:"local-4",name:"Nexum Mups 20 mg",company:"Square",strength:"20 mg",price:1000,discount_percent:18,unit:"প্রতি বক্স",image_url:"./nexum.jpg.JPG",category:"Tablet"}
+  ];
 
   const grid = document.getElementById("productGrid");
   const flashSaleGrid = document.getElementById("flashSaleGrid");
@@ -770,6 +818,7 @@
   const placeOrderBtn = document.getElementById("placeOrderBtn");
 
   let allProducts = [...LOCAL_PRODUCTS];
+  let companyLogos = {};
   let selectedCompany = "all";
   let isSubmittingOrder = false;
   let cart = [];
@@ -784,6 +833,51 @@
       '"':"&quot;",
       "'":"&#039;"
     }[char]));
+  }
+
+  function normalizeCompanyName(name) {
+    return String(name || "").trim().toLowerCase().replace(/\s+/g, " ");
+  }
+
+  async function loadCompanyLogos() {
+    try {
+      const response = await fetch(
+        SUPABASE_URL + "/rest/v1/company_logos?select=company_name,logo_url",
+        {
+          headers: {
+            apikey: SUPABASE_PUBLISHABLE_KEY,
+            Authorization: "Bearer " + SUPABASE_PUBLISHABLE_KEY
+          }
+        }
+      );
+
+      if (!response.ok) throw new Error("Company logo request failed: HTTP " + response.status);
+
+      const rows = await response.json();
+      const newLogos = {};
+
+      rows.forEach(row => {
+        const name = normalizeCompanyName(row.company_name);
+        const url = String(row.logo_url || "").trim();
+        if (name && /^https?:\/\//i.test(url)) newLogos[name] = url;
+      });
+
+      companyLogos = newLogos;
+    } catch (error) {
+      console.error("Company logo loading error:", error);
+      companyLogos = {};
+    }
+  }
+
+  function companyDisplayHTML(company) {
+    const originalName = String(company || "").trim();
+    const logoURL = companyLogos[normalizeCompanyName(originalName)];
+
+    if (logoURL) {
+      return `<img class="company-logo" src="${escapeHTML(logoURL)}" alt="${escapeHTML(originalName)}" loading="lazy" onerror="this.replaceWith(Object.assign(document.createElement('span'),{className:'company-logo-fallback',textContent:this.alt||'কোম্পানি'}))">`;
+    }
+
+    return `<span class="company-logo-fallback">${escapeHTML(originalName || "অনির্দিষ্ট কোম্পানি")}</span>`;
   }
 
   function safeImagePath(value) {
@@ -1001,6 +1095,7 @@
     grid.innerHTML=filtered.map(product=>{
       const name=escapeHTML(product.name||"ওষুধ");
       const company=escapeHTML(product.company||"অনির্দিষ্ট কোম্পানি");
+      const companyHTML=companyDisplayHTML(product.company);
       const category=escapeHTML(product.category||"");
       const unit=escapeHTML(product.unit||"প্রতি বক্স");
       const image=safeImagePath(product.image_url);
@@ -1032,7 +1127,7 @@
         <article class="product-card">
           <div class="product-image">${imageHTML}</div>
           <div class="product-info">
-            <span class="company-label">${company}</span>
+            ${companyHTML}
             <h3 class="product-name">${name}</h3>
             <div class="product-category">${category}</div>
             <div class="product-bottom">
@@ -1045,9 +1140,11 @@
     }).join("");
   }
 
+  /* Flash Sale ও সাধারণ পণ্যের কার্ড তৈরির ফাংশন */
   function productCardHTML(product) {
     const name = escapeHTML(product.name || "ওষুধ");
     const company = escapeHTML(product.company || "অনির্দিষ্ট কোম্পানি");
+    const companyHTML = companyDisplayHTML(product.company);
     const category = escapeHTML(product.category || "");
     const unit = escapeHTML(product.unit || "প্রতি বক্স");
     const image = safeImagePath(product.image_url);
@@ -1079,7 +1176,7 @@
       <article class="product-card">
         <div class="product-image">${imageHTML}</div>
         <div class="product-info">
-          <span class="company-label">${company}</span>
+          ${companyHTML}
           <h3 class="product-name">${name}</h3>
           <div class="product-category">${category}</div>
           <div class="product-bottom">
@@ -1091,6 +1188,7 @@
       </article>`;
   }
 
+  /* Admin Panel-এ Flash Sale চালু থাকা ও স্টকে থাকা পণ্যগুলোই দেখাবে */
   function renderFlashSale() {
     const saleProducts = allProducts.filter(product =>
       product.is_flash_sale === true &&
@@ -1198,10 +1296,9 @@
     renderFlashSale();
   }
 
-  /* নতুন অর্ডার সিস্টেম: Supabase Function দিয়ে স্টক যাচাই ও অর্ডার */
+  /* অর্ডার Supabase-এ পাঠানো */
   checkoutForm.addEventListener("submit",async event=>{
     event.preventDefault();
-
     if(isSubmittingOrder)return;
 
     if(!cart.length) {
@@ -1232,85 +1329,51 @@
       quantity:item.quantity
     }));
 
+    const submittedTotal=calculateCartTotal();
+
     isSubmittingOrder=true;
     placeOrderBtn.disabled=true;
     placeOrderBtn.textContent="অর্ডার জমা হচ্ছে...";
-    checkoutMessage.textContent="স্টক যাচাই করে অর্ডার জমা হচ্ছে। অপেক্ষা করো...";
+    checkoutMessage.textContent="অর্ডার জমা হচ্ছে। অপেক্ষা করো...";
 
     try {
-      const response=await fetch(
-        SUPABASE_URL+"/rest/v1/rpc/place_medicine_order",
-        {
-          method:"POST",
-          headers:{
-            apikey:SUPABASE_PUBLISHABLE_KEY,
-            Authorization:"Bearer "+SUPABASE_PUBLISHABLE_KEY,
-            "Content-Type":"application/json"
-          },
-          body:JSON.stringify({
-            p_customer_name:owner,
-            p_pharmacy_name:pharmacy,
-            p_phone:phone,
-            p_address:address,
-            p_items:submittedCart
-          })
-        }
-      );
-
-      const responseText=await response.text();
-      let result={};
-
-      try {
-        result=responseText ? JSON.parse(responseText) : {};
-      } catch {
-        result={message:responseText};
-      }
+      const response=await fetch(SUPABASE_URL+"/rest/v1/orders",{
+        method:"POST",
+        headers:{
+          apikey:SUPABASE_PUBLISHABLE_KEY,
+          Authorization:"Bearer "+SUPABASE_PUBLISHABLE_KEY,
+          "Content-Type":"application/json",
+          Prefer:"return=minimal"
+        },
+        body:JSON.stringify({
+          customer_name:owner,
+          pharmacy_name:pharmacy,
+          phone:phone,
+          address:address,
+          items:submittedCart,
+          total_amount:submittedTotal,
+          status:"pending"
+        })
+      });
 
       if(!response.ok) {
-        console.error("Supabase order error:",response.status,result);
-        throw new Error(
-          result.message || result.details || responseText || "HTTP "+response.status
-        );
+        const errorText=await response.text();
+        console.error("Supabase order error:",response.status,errorText);
+        throw new Error("HTTP "+response.status+" — "+errorText);
       }
-
-      if(!result.order_id) {
-        console.error("Unexpected order response:",result);
-        throw new Error("অর্ডার নম্বর পাওয়া যায়নি। Supabase Function-এর ফলাফল যাচাই করতে হবে।");
-      }
-
-      const orderedItems=Array.isArray(result.items) ? result.items : [];
-
-      const orderedSummary=orderedItems.map(item=>
-        String(item.name||"ওষুধ")+" — "+Number(item.quantity||0)+" বক্স"
-      ).join("\n");
 
       cart=[];
       saveCart();
       renderCart();
       checkoutForm.reset();
 
-      if(result.adjusted) {
-        checkoutMessage.textContent=
-          "✅ অর্ডার সফল! স্টকের কারণে কিছু পণ্যের পরিমাণ সমন্বয় করা হয়েছে।\n"+
-          "অর্ডার নম্বর: "+result.order_id+"\n"+
-          "চূড়ান্ত অর্ডার:\n"+orderedSummary+
-          "\nমোট: "+money(result.total_amount)+
-          "\nMedispot BD থেকে যোগাযোগ করা হবে।";
-      } else {
-        checkoutMessage.textContent=
-          "✅ অর্ডার সফলভাবে জমা হয়েছে!\n"+
-          "অর্ডার নম্বর: "+result.order_id+
-          "\nঅর্ডারকৃত পণ্য:\n"+orderedSummary+
-          "\nমোট: "+money(result.total_amount)+
-          "\nMedispot BD থেকে যোগাযোগ করা হবে।";
-      }
+      checkoutMessage.textContent="✅ অর্ডার সফলভাবে জমা হয়েছে! Medispot BD থেকে যোগাযোগ করে অর্ডার নিশ্চিত করা হবে।";
 
     } catch(error) {
       console.error("Order submission error:",error);
       checkoutMessage.textContent=
-        "❌ অর্ডার জমা হয়নি।\nকারণ: "+
-        (error.message||"অজানা সমস্যা")+
-        "\nError-এর screenshot আমাকে পাঠাও।";
+        "❌ অর্ডার জমা হয়নি।\nকারণ: "+(error.message||"অজানা সমস্যা")+
+        "\nএই error-এর screenshot আমাকে পাঠাও।";
 
     } finally {
       isSubmittingOrder=false;
@@ -1320,7 +1383,9 @@
   });
 
   renderCart();
-  loadProducts();
+  Promise.all([loadCompanyLogos(), loadProducts()]).catch(error => {
+    console.error("Initial loading error:", error);
+  });
 </script>
 </body>
 </html>
