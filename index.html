@@ -721,13 +721,14 @@
       .brand-name { font-size:16px; }
     }
 
-    /* Premium toast notification */
-    .premium-toast-host{position:fixed;top:18px;left:50%;transform:translateX(-50%);z-index:10050;width:min(92vw,390px);pointer-events:none}
-    .premium-toast{display:flex;align-items:center;gap:12px;padding:13px 16px;background:rgba(255,255,255,.97);border:1px solid #d9eee4;border-radius:16px;box-shadow:0 14px 38px rgba(8,65,44,.18);color:#17352b;opacity:0;transform:translateY(-14px) scale(.97);transition:opacity .24s ease,transform .24s ease;backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px)}
+    /* Premium cart toast — original Medispot style */
+    .premium-toast-host{position:fixed;top:22px;right:22px;left:auto;transform:none;z-index:10050;width:min(390px,calc(100vw - 28px));pointer-events:none}
+    .premium-toast{position:relative;display:flex;align-items:flex-start;gap:12px;padding:16px 42px 15px 15px;background:#fff;border:1px solid #dcefe5;border-radius:18px;box-shadow:0 16px 46px rgba(10,55,39,.19);color:#17352b;opacity:0;transform:translateY(-12px) scale(.97);transition:opacity .26s ease,transform .26s cubic-bezier(.2,.8,.2,1);pointer-events:auto;overflow:hidden}
     .premium-toast.visible{opacity:1;transform:translateY(0) scale(1)}
-    .premium-toast-icon{width:38px;height:38px;flex:0 0 38px;display:grid;place-items:center;border-radius:12px;background:#e4f7ed;color:#087f5b;font-size:21px;font-weight:800}
-    .premium-toast-copy{min-width:0;flex:1}.premium-toast-title{font-size:14px;font-weight:800;margin:0 0 3px}.premium-toast-message{font-size:12px;line-height:1.45;color:#61756b;margin:0}.premium-toast-progress{height:3px;background:#e5f1eb;border-radius:99px;overflow:hidden;margin-top:10px}.premium-toast-progress span{display:block;height:100%;width:100%;background:#087f5b;transform-origin:left;animation:toastProgress 3s linear forwards}
+    .premium-toast-icon{width:42px;height:42px;flex:0 0 42px;display:grid;place-items:center;border-radius:14px;background:linear-gradient(145deg,#e6f8ee,#d3f1e1);color:#087f5b;font-size:23px;font-weight:800;box-shadow:inset 0 0 0 1px rgba(8,127,91,.08)}
+    .premium-toast-copy{min-width:0;flex:1}.premium-toast-title{font-size:15px;font-weight:800;line-height:1.35;margin:1px 0 5px;color:#17352b}.premium-toast-product{font-size:13px;font-weight:700;line-height:1.45;color:#087f5b;overflow-wrap:anywhere;margin:0 0 3px}.premium-toast-message{font-size:12px;line-height:1.45;color:#718078;margin:0}.premium-toast-actions{display:flex;align-items:center;justify-content:flex-start;margin-top:10px}.premium-toast-cart-link{border:0;background:#087f5b;color:#fff;font:700 12px Arial,sans-serif;padding:8px 12px;border-radius:10px;cursor:pointer;box-shadow:0 4px 10px rgba(8,127,91,.15)}.premium-toast-cart-link:active{transform:scale(.97)}.premium-toast-close{position:absolute;top:8px;right:9px;width:26px;height:26px;border:0;border-radius:8px;background:#f3f7f5;color:#718078;font-size:17px;line-height:1;cursor:pointer;display:grid;place-items:center}.premium-toast-progress{position:absolute;bottom:0;left:0;right:0;height:3px;background:#e5f1eb;overflow:hidden}.premium-toast-progress span{display:block;height:100%;width:100%;background:linear-gradient(90deg,#087f5b,#41bd8b);transform-origin:left;animation:toastProgress 3s linear forwards}
     @keyframes toastProgress{from{transform:scaleX(1)}to{transform:scaleX(0)}}
+    @media(max-width:600px){.premium-toast-host{top:78px;right:12px;width:calc(100vw - 24px)}.premium-toast{padding:14px 40px 14px 13px;gap:10px}.premium-toast-icon{width:38px;height:38px;flex-basis:38px;border-radius:12px}.premium-toast-title{font-size:14px}}
     @media(prefers-reduced-motion:reduce){.premium-toast{transition:none}.premium-toast-progress span{animation:none}}
   </style>
 </head>
@@ -982,19 +983,28 @@
   }
 
   let premiumToastTimer = null;
-  function showPremiumToast(message, title = "Cart-এ যোগ হয়েছে") {
+  function showPremiumToast(productName, title = "কার্টে যোগ হয়েছে!") {
     const host = document.getElementById("premiumToastHost");
     if (!host) return;
     clearTimeout(premiumToastTimer);
-    host.innerHTML = '<div class="premium-toast" role="status"><div class="premium-toast-icon">✓</div><div class="premium-toast-copy"><p class="premium-toast-title"></p><p class="premium-toast-message"></p><div class="premium-toast-progress"><span></span></div></div></div>';
+    host.innerHTML = '<div class="premium-toast" role="status"><div class="premium-toast-icon" aria-hidden="true">✓</div><div class="premium-toast-copy"><p class="premium-toast-title"></p><p class="premium-toast-product"></p><p class="premium-toast-message"></p><div class="premium-toast-actions"><button class="premium-toast-cart-link" type="button">কার্ট দেখুন →</button></div></div><button class="premium-toast-close" type="button" aria-label="বন্ধ করুন">×</button><div class="premium-toast-progress"><span></span></div></div>';
     const toast = host.firstElementChild;
     toast.querySelector(".premium-toast-title").textContent = title;
-    toast.querySelector(".premium-toast-message").textContent = message;
-    requestAnimationFrame(() => toast.classList.add("visible"));
-    premiumToastTimer = setTimeout(() => {
+    toast.querySelector(".premium-toast-product").textContent = String(productName || "ওষুধ");
+    const count = cart.reduce((sum, item) => sum + (Number(item.quantity) || 0), 0);
+    toast.querySelector(".premium-toast-message").textContent = "কার্টে মোট " + count + "টি পণ্য";
+    const dismiss = () => {
+      clearTimeout(premiumToastTimer);
       toast.classList.remove("visible");
-      setTimeout(() => { if (host.firstElementChild === toast) host.innerHTML = ""; }, 260);
-    }, 3000);
+      setTimeout(() => { if (host.firstElementChild === toast) host.innerHTML = ""; }, 280);
+    };
+    toast.querySelector(".premium-toast-close").addEventListener("click", dismiss);
+    toast.querySelector(".premium-toast-cart-link").addEventListener("click", () => {
+      dismiss();
+      openCart();
+    });
+    requestAnimationFrame(() => toast.classList.add("visible"));
+    premiumToastTimer = setTimeout(dismiss, 3000);
   }
 
   function formatPrice(value) {
@@ -1243,7 +1253,7 @@
 
     renderCart();
     checkoutMessage.textContent="";
-    showPremiumToast(String(product.name||"ওষুধ") + " Cart-এ যোগ হয়েছে।");
+    showPremiumToast(String(product.name||"ওষুধ"));
   }
 
   function renderCompanyFilters() {
