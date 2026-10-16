@@ -1,302 +1,1603 @@
 <!DOCTYPE html>
 <html lang="bn">
 <head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Medispot BD | Order Management</title>
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Hind+Siliguri:wght@400;500;600;700&family=Noto+Sans+Bengali:wght@400;500;600;700&display=swap" rel="stylesheet">
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-<style>
-*{box-sizing:border-box}
-body{margin:0;background:#f3f7f5;color:#18352b;font-family:"Noto Sans Bengali","Hind Siliguri",Arial,sans-serif}
-header{background:#075e46;color:white;padding:22px 16px}
-header h1{margin:0;font-size:23px}
-header p{margin:7px 0 0;color:#d5f3e6;font-size:13px}
-main{max-width:1100px;margin:auto;padding:18px}
-.panel,.stat,.order{background:white;border:1px solid #e1ebe5;border-radius:14px;padding:17px;margin-bottom:15px}
-h2{font-size:18px;margin:0 0 15px}
-input,button,select{font:inherit;padding:11px;border-radius:9px;border:1px solid #d4e1d9}
-input{width:100%;margin-bottom:10px}
-button{cursor:pointer;background:#087653;color:white;border:0;font-weight:bold}
-button:disabled{opacity:.5}
-.secondary{background:#e7f3ed;color:#075e46}
-.danger{background:#a72c2c}
-.grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px}
-.stat strong{display:block;font-size:25px;margin-top:8px}
-.muted{color:#6c7c73;font-size:13px}
-.row{display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap}
-.order h3{margin:0 0 8px;font-size:17px}
-.order table{width:100%;border-collapse:collapse;margin-top:12px;font-size:13px}
-th,td{text-align:left;border-bottom:1px solid #e5ece7;padding:9px 5px}
-.tablewrap{overflow-x:auto}
-.tag{background:#e6f5ed;color:#075e46;padding:5px 8px;border-radius:7px;font-size:12px}
-#dashboard{display:none}
-#message{white-space:pre-wrap;font-size:13px;margin-top:10px}
-.filters{display:grid;grid-template-columns:2fr 1fr 1fr;gap:10px}
-.filters input,.filters select{width:100%;margin:0}
-.actions{display:flex;gap:8px;flex-wrap:wrap}
-.customer-photo{margin:14px 0;padding:13px;border:1px solid #cfe6d8;border-radius:12px;background:#f5fbf7}
-.customer-photo h4{margin:0 0 8px;color:#075e46;font-size:14px}
-.customer-photo img{display:block;width:auto;max-width:100%;max-height:320px;object-fit:contain;border-radius:9px;border:1px solid #dce8e0;background:#fff}
-.customer-photo a{display:inline-block;margin-top:8px;color:#075e46;font-weight:bold;font-size:13px}
-.photo-missing{font-size:13px;color:#6c7c73}
-@media(max-width:650px){.grid{grid-template-columns:1fr 1fr}.filters{grid-template-columns:1fr}main{padding:12px}.panel,.order{padding:13px}}
-@media print{body{background:white}.no-print{display:none!important}}
-</style>
-</head>
-<body>
-<header>
-<h1>Medispot BD</h1>
-<p>Order Management Dashboard</p>
-</header>
-<main>
-<section id="login" class="panel">
-<h2>Admin Login</h2>
-<p class="muted">তোমার Supabase Admin account দিয়ে লগইন করো।</p>
-<input id="email" type="email" placeholder="Admin email" autocomplete="username">
-<input id="password" type="password" placeholder="Password" autocomplete="current-password">
-<button id="loginBtn" onclick="login()">Login to Dashboard</button>
-<div id="message"></div>
-</section>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Medispot BD | Medicine Marketplace</title>
+  <meta name="description" content="Medispot BD — ফার্মেসির জন্য ওষুধ খোঁজা ও পাইকারি দামের তথ্য পাওয়ার সহজ প্ল্যাটফর্ম।">
 
-<section id="dashboard">
-<div class="row no-print" style="margin-bottom:15px">
-<div>
-<h2 style="margin-bottom:5px">অর্ডার ম্যানেজমেন্ট</h2>
-<div class="muted">নতুন অর্ডার দেখতে Refresh চাপো। তারিখ বেছে সেই দিনের অর্ডার দেখো।</div>
-</div>
-<div class="actions">
-<button class="secondary" onclick="enableNotifications()">Notification চালু</button>
-<button onclick="loadOrders()">Refresh</button>
-<button class="danger" onclick="logout()">Logout</button>
-</div>
-</div>
-
-<div class="grid">
-<div class="stat"><span class="muted">দেখানো অর্ডার</span><strong id="totalCount">0</strong></div>
-<div class="stat"><span class="muted">Pending</span><strong id="pendingCount">0</strong></div>
-<div class="stat"><span class="muted">দেখানো অর্ডারের মোট মূল্য</span><strong id="totalAmount">৳0</strong></div>
-</div>
-
-<div class="panel no-print">
-<div class="filters">
-<input id="search" placeholder="অর্ডার নম্বর / ফার্মেসি / ফোন দিয়ে খুঁজুন" oninput="renderOrders()">
-<input id="dateFilter" type="date" aria-label="তারিখ অনুযায়ী অর্ডার" onchange="renderOrders()">
-<select id="filter" onchange="renderOrders()">
-<option value="">সব Status</option>
-<option value="pending">Pending</option>
-<option value="confirmed">Confirmed</option>
-<option value="processing">Processing</option>
-<option value="shipped">Shipped</option>
-<option value="delivered">Delivered</option>
-<option value="cancelled">Cancelled</option>
-</select>
-</div>
-<div class="actions" style="margin-top:10px">
-<button class="secondary" onclick="clearFilters()">সব তারিখের অর্ডার</button>
-</div>
-</div>
-<div id="ordersList"><p class="muted">অর্ডার লোড হচ্ছে...</p></div>
-</section>
-</main>
-
-<script>
-const SUPABASE_URL = "https://pnaaqkuzazjiabnnwxjq.supabase.co";
-const SUPABASE_PUBLISHABLE_KEY = "sb_publishable_ckj65sbFnET7xOjxPJOwfw_-KrevOkv";
-const db = window.supabase.createClient(SUPABASE_URL, SUPABASE_PUBLISHABLE_KEY);
-let orders = [];
-let previousIds = new Set();
-let firstLoad = true;
-
-function msg(text){ document.getElementById("message").textContent = text; }
-function money(value){ return "৳" + Number(value || 0).toLocaleString("en-BD",{maximumFractionDigits:2}); }
-function escapeHtml(value){
-  return String(value??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
-}
-function dateKey(value){
-  if(!value) return "";
-  const d = new Date(value);
-  if(Number.isNaN(d.getTime())) return "";
-  const y=d.getFullYear(), m=String(d.getMonth()+1).padStart(2,"0"), day=String(d.getDate()).padStart(2,"0");
-  return `${y}-${m}-${day}`;
-}
-function formatDate(value){
-  if(!value) return "-";
-  const d=new Date(value);
-  return Number.isNaN(d.getTime()) ? "-" : d.toLocaleString("bn-BD");
-}
-
-async function login(){
-  const email=document.getElementById("email").value.trim();
-  const password=document.getElementById("password").value;
-  const btn=document.getElementById("loginBtn");
-  if(!email||!password){msg("Email ও password দাও।");return;}
-  btn.disabled=true; msg("Login হচ্ছে...");
-  try{
-    const {data,error}=await db.auth.signInWithPassword({email,password});
-    if(error) throw error;
-    document.getElementById("login").style.display="none";
-    document.getElementById("dashboard").style.display="block";
-    msg("");
-    await loadOrders(); subscribeOrders();
-  }catch(e){msg("Login হয়নি: "+e.message);}
-  finally{btn.disabled=false;}
-}
-async function logout(){
-  await db.auth.signOut();
-  document.getElementById("dashboard").style.display="none";
-  document.getElementById("login").style.display="block";
-  document.getElementById("password").value="";
-}
-function clearFilters(){
-  document.getElementById("search").value="";
-  document.getElementById("dateFilter").value="";
-  document.getElementById("filter").value="";
-  renderOrders();
-}
-async function loadOrders(){
-  const list=document.getElementById("ordersList");
-  list.innerHTML='<div class="panel">অর্ডার লোড হচ্ছে...</div>';
-  try{
-    const {data,error}=await db.from("orders")
-      .select("id,customer_name,pharmacy_name,phone,address,total_amount,status,created_at,items,customer_image_url")
-      .order("created_at",{ascending:false}).limit(1000);
-    if(error) throw error;
-    const fresh=await Promise.all((data||[]).map(async o=>{
-      const path=String(o.customer_image_url||"").trim();
-      if(!path) return {...o,customerImageSignedUrl:""};
-      // New orders store a private Storage object path, not a public URL.
-      try {
-        if(/^https?:\/\//i.test(path)) return {...o,customerImageSignedUrl:path};
-        const {data:signed,error:signedError}=await db.storage.from("customer-medicine-photos").createSignedUrl(path,3600);
-        if(signedError) { console.warn("Customer medicine photo could not be opened:",signedError.message); return {...o,customerImageSignedUrl:""}; }
-        return {...o,customerImageSignedUrl:signed?.signedUrl||""};
-      } catch(photoError) {
-        console.warn("Customer medicine photo error:",photoError);
-        return {...o,customerImageSignedUrl:""};
-      }
-    }));
-    if(!firstLoad){
-      const newOnes=fresh.filter(o=>!previousIds.has(String(o.id)));
-      if(newOnes.length&&"Notification" in window&&Notification.permission==="granted"){
-        new Notification("Medispot BD: নতুন অর্ডার",{body:newOnes.length+"টি নতুন অর্ডার এসেছে।"});
-      }
+  <style>
+    :root {
+      --green:#087f5b;
+      --dark:#056044;
+      --light:#e8f7f0;
+      --text:#17352b;
+      --muted:#718078;
+      --bg:#f6faf8;
+      --border:#e4eee8;
+      --shadow:0 8px 30px rgba(16,65,45,.07);
     }
-    previousIds=new Set(fresh.map(o=>String(o.id)));
-    firstLoad=false; orders=fresh; renderOrders();
-  }catch(e){
-    list.innerHTML='<div class="panel">অর্ডার লোড হয়নি: '+escapeHtml(e.message)+
-      '<p class="muted">Admin SELECT policy, UPDATE policy, login email এবং items কলাম পরীক্ষা করো।</p></div>';
-  }
-}
-function renderOrders(){
-  const search=document.getElementById("search").value.toLowerCase().trim();
-  const filter=document.getElementById("filter").value;
-  const selectedDate=document.getElementById("dateFilter").value;
-  const shown=orders.filter(o=>{
-    const hay=[o.id,o.customer_name,o.pharmacy_name,o.phone].join(" ").toLowerCase();
-    return (!search||hay.includes(search))&&(!filter||String(o.status||"").toLowerCase()===filter)&&(!selectedDate||dateKey(o.created_at)===selectedDate);
-  });
-  document.getElementById("totalCount").textContent=shown.length;
-  document.getElementById("pendingCount").textContent=shown.filter(o=>String(o.status||"").toLowerCase()==="pending").length;
-  document.getElementById("totalAmount").textContent=money(shown.reduce((sum,o)=>sum+Number(o.total_amount||0),0));
-  const list=document.getElementById("ordersList");
-  if(!shown.length){list.innerHTML='<div class="panel">এই ফিল্টারে কোনো অর্ডার পাওয়া যায়নি।</div>';return;}
-  list.innerHTML=shown.map(o=>{
-    const items=Array.isArray(o.items)?o.items:[];
-    const status=String(o.status||"pending").toLowerCase();
-    const itemRows=items.length?items.map(i=>{
-      const qty=Number(i.quantity??i.qty??0);
-      const price=Number(i.unit_price??i.price??i.sale_price??0);
-      return `<tr><td>${escapeHtml(i.name||i.medicine_name||i.product_name||"ওষুধ")}</td>
-      <td>${escapeHtml(i.company||i.company_name||"-")}</td><td>${qty}</td><td>${money(price)}</td><td>${money(qty*price)}</td></tr>`;
-    }).join(""):'<tr><td colspan="5">এই অর্ডারের items তালিকা পাওয়া যায়নি।</td></tr>';
-    return `<article class="order">
-      <div class="row">
-        <div><h3>অর্ডার #${escapeHtml(o.id)}</h3><span class="muted">${escapeHtml(formatDate(o.created_at))}</span></div>
-        <span class="tag">${escapeHtml(status.toUpperCase())}</span>
+
+    * { box-sizing:border-box; margin:0; padding:0; }
+    html { scroll-behavior:smooth; }
+
+    body {
+      font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","Noto Sans Bengali",Arial,sans-serif;
+      background:var(--bg);
+      color:var(--text);
+      line-height:1.5;
+    }
+
+    button,input,textarea { font:inherit; }
+    button { cursor:pointer; }
+    button:disabled { opacity:.6; cursor:not-allowed; }
+
+    .container { width:min(1160px,92%); margin:auto; }
+
+    header {
+      position:sticky;
+      top:0;
+      z-index:20;
+      background:rgba(255,255,255,.96);
+      border-bottom:1px solid var(--border);
+      backdrop-filter:blur(12px);
+    }
+
+    .navbar {
+      min-height:76px;
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:12px;
+    }
+
+    .brand {
+      display:flex;
+      align-items:center;
+      gap:11px;
+      text-decoration:none;
+      color:var(--text);
+    }
+
+    .brand-mark {
+      width:46px;
+      height:46px;
+      border-radius:15px;
+      background:linear-gradient(145deg,#0aa878,#056044);
+      color:white;
+      display:grid;
+      place-items:center;
+      font-size:20px;
+      font-weight:900;
+    }
+
+    .brand-name { font-size:21px; font-weight:850; }
+    .brand-name span { color:var(--green); }
+    .brand-subtitle { color:var(--muted); font-size:11px; margin-top:-4px; }
+    .nav-actions { display:flex; align-items:center; gap:8px; }
+
+    .nav-link {
+      text-decoration:none;
+      color:var(--green);
+      font-weight:750;
+      border:1px solid #bfe8d5;
+      background:var(--light);
+      padding:10px 14px;
+      border-radius:12px;
+      font-size:13px;
+    }
+
+    /* Hero: ডান পাশের কার্ড সরানো হয়েছে */
+    .hero {
+      padding:48px 0 38px;
+      background:
+        radial-gradient(circle at 90% 10%,#c7f2dc 0,transparent 30%),
+        linear-gradient(135deg,#effbf4,#fff 70%);
+      border-bottom:1px solid var(--border);
+    }
+
+    .hero-grid {
+      display:grid;
+      grid-template-columns:1fr;
+      gap:0;
+      align-items:center;
+    }
+
+    .eyebrow {
+      display:inline-block;
+      padding:7px 12px;
+      border-radius:30px;
+      color:var(--green);
+      background:#dff7e9;
+      font-size:12px;
+      font-weight:800;
+      margin-bottom:14px;
+    }
+
+    .hero h1 {
+      font-size:clamp(30px,5vw,48px);
+      line-height:1.25;
+      margin-bottom:12px;
+    }
+
+    .hero h1 span { color:var(--green); }
+
+    .hero p {
+      color:#60736a;
+      font-size:16px;
+      line-height:1.8;
+      max-width:760px;
+    }
+
+    .products-section { padding:35px 0 55px; }
+
+    .section-heading {
+      display:flex;
+      justify-content:space-between;
+      align-items:end;
+      gap:18px;
+      margin-bottom:20px;
+    }
+
+    .section-heading h2 { font-size:clamp(24px,3vw,31px); }
+    .section-heading p { font-size:14px; color:var(--muted); margin-top:4px; }
+
+    .result-count {
+      font-size:12px;
+      color:var(--green);
+      background:var(--light);
+      border-radius:30px;
+      padding:8px 12px;
+      white-space:nowrap;
+      font-weight:750;
+    }
+
+    .search-box {
+      display:flex;
+      align-items:center;
+      gap:12px;
+      background:white;
+      border:1px solid var(--border);
+      border-radius:15px;
+      padding:4px 15px;
+      box-shadow:0 4px 15px #164d3510;
+      margin-bottom:14px;
+    }
+
+    .search-icon { font-size:21px; color:var(--green); }
+
+    .search-box input {
+      width:100%;
+      border:none;
+      outline:none;
+      background:transparent;
+      padding:12px 0;
+      font-size:15px;
+      color:var(--text);
+    }
+
+    .filters {
+      display:flex;
+      gap:8px;
+      flex-wrap:wrap;
+      margin-bottom:20px;
+    }
+
+    .filter-btn {
+      border:1px solid var(--border);
+      color:#60736a;
+      background:white;
+      padding:8px 14px;
+      border-radius:30px;
+      font-size:13px;
+      font-weight:700;
+    }
+
+    .filter-btn:hover,
+    .filter-btn.active {
+      color:white;
+      background:var(--green);
+      border-color:var(--green);
+    }
+
+    /* Company filter logo: logo stays visible when selected */
+    .filter-btn.company-logo-btn {
+      min-width:92px;
+      min-height:44px;
+      display:inline-flex;
+      align-items:center;
+      justify-content:center;
+      padding:6px 12px;
+      background:#fff;
+      color:var(--text);
+      border:1px solid var(--border);
+    }
+
+    .filter-btn.company-logo-btn img {
+      display:block;
+      max-width:100px;
+      width:auto;
+      height:28px;
+      object-fit:contain;
+      filter:none;
+      opacity:1;
+    }
+
+    .filter-btn.company-logo-btn.active {
+      background:#e8f7f0;
+      color:var(--green);
+      border:2px solid var(--green);
+      box-shadow:0 0 0 2px #087f5b12;
+    }
+
+    .filter-btn.company-logo-btn .filter-company-name {
+      font-size:12px;
+      font-weight:750;
+    }
+
+    .product-grid {
+      display:grid;
+      grid-template-columns:repeat(4,minmax(0,1fr));
+      gap:16px;
+      align-items:start;
+    }
+
+    /* Flash Sale: horizontal swipe on mobile */
+    #flashSale { display:none; padding:28px 0 8px; }
+    .flash-sale-heading { display:flex; align-items:center; justify-content:space-between; gap:12px; margin-bottom:16px; }
+    .flash-sale-heading h2 { font-size:clamp(22px,3vw,30px); }
+    .flash-sale-heading p { color:var(--muted); font-size:13px; margin-top:4px; }
+    .flash-sale-label { color:#b42318; background:#fff0ed; border:1px solid #ffd4cc; border-radius:30px; padding:7px 11px; font-size:12px; font-weight:800; white-space:nowrap; }
+    #flashSaleGrid { display:grid; grid-auto-flow:column; grid-auto-columns:220px; grid-template-columns:none; gap:14px; overflow-x:auto; overflow-y:hidden; padding:4px 3px 14px; scroll-snap-type:x mandatory; -webkit-overflow-scrolling:touch; scrollbar-width:thin; scrollbar-color:#a8d9c1 transparent; }
+    #flashSaleGrid .product-card { border-color:#ccebd9; width:100%; min-width:0; scroll-snap-align:start; }
+    @media(max-width:650px) { #flashSaleGrid { grid-auto-columns:160px; gap:10px; } }
+    @media(max-width:360px) { #flashSaleGrid { grid-auto-columns:145px; } }
+
+    .product-card {
+      overflow:hidden;
+      background:white;
+      border:1px solid var(--border);
+      border-radius:16px;
+      box-shadow:0 3px 12px #174c3510;
+      transition:transform .2s,box-shadow .2s;
+      display:flex;
+      flex-direction:column;
+      min-width:0;
+      height:auto;
+    }
+
+    .product-card:hover {
+      transform:translateY(-3px);
+      box-shadow:var(--shadow);
+    }
+
+    /* ছবির সাইজ অপরিবর্তিত */
+    .product-image {
+      height:180px;
+      flex-shrink:0;
+      background:#f1f8f4;
+      display:grid;
+      place-items:center;
+      padding:15px;
+      position:relative;
+      border-bottom:1px solid #edf3ef;
+    }
+
+    /* ছবির ওপর বাম পাশে Discount Badge */
+    .discount-badge {
+      position:absolute;
+      top:10px;
+      left:10px;
+      z-index:2;
+      background:#e52525;
+      color:#fff;
+      font-size:12px;
+      font-weight:800;
+      line-height:1;
+      padding:7px 9px;
+      border-radius:20px;
+      box-shadow:0 2px 6px rgba(0,0,0,.15);
+    }
+
+    .discount-badge {
+      position:absolute;
+      top:10px;
+      left:10px;
+      z-index:2;
+      background:#e52525;
+      color:#fff;
+      font-size:12px;
+      font-weight:800;
+      line-height:1;
+      padding:7px 9px;
+      border-radius:20px;
+      box-shadow:0 2px 6px rgba(0,0,0,.15);
+    }
+
+    .product-image img {
+      max-width:100%;
+      max-height:100%;
+      width:100%;
+      height:100%;
+      object-fit:contain;
+    }
+
+    .image-placeholder {
+      display:none;
+      text-align:center;
+      color:#7b9a89;
+    }
+
+    .medical-icon { font-size:42px; display:block; }
+    .image-placeholder small { display:block; font-size:11px; margin-top:5px; }
+
+    /* তথ্যের অংশ: কম padding, কম line-height */
+    .product-info {
+      padding:10px;
+      display:flex;
+      flex-direction:column;
+      flex:0 0 auto;
+      gap:0;
+    }
+
+    .company-label {
+      display:inline-block;
+      align-self:flex-start;
+      font-size:9px;
+      line-height:1.2;
+      font-weight:800;
+      color:var(--green);
+      background:var(--light);
+      border-radius:5px;
+      padding:3px 6px;
+      margin-bottom:4px;
+    }
+
+    .company-logo {
+      display:block;
+      width:76px;
+      height:30px;
+      object-fit:contain;
+      object-position:left center;
+      margin-bottom:5px;
+    }
+
+    .company-logo-fallback {
+      display:inline-block;
+      align-self:flex-start;
+      font-size:9px;
+      line-height:1.2;
+      font-weight:800;
+      color:var(--green);
+      background:var(--light);
+      border-radius:5px;
+      padding:3px 6px;
+      margin-bottom:4px;
+    }
+
+    .product-name {
+      font-size:14px;
+      font-weight:800;
+      line-height:1.25;
+      margin:0;
+      overflow-wrap:anywhere;
+    }
+
+    .product-category {
+      color:var(--muted);
+      font-size:10px;
+      line-height:1.25;
+      margin-top:2px;
+      min-height:0;
+    }
+
+    /* এখানে auto সরানো হয়েছে, যাতে দাম নিচে ঠেলে না যায় */
+    .product-bottom {
+      margin-top:6px;
+      padding-top:0;
+    }
+
+    .price-label {
+      color:var(--muted);
+      font-size:10px;
+      line-height:1.3;
+      margin-bottom:2px;
+    }
+
+    .product-price {
+      color:var(--dark);
+      font-size:20px;
+      line-height:1.25;
+      font-weight:900;
+      margin:2px 0 7px;
+      overflow-wrap:anywhere;
+    }
+
+    .order-btn {
+      width:100%;
+      border:none;
+      border-radius:9px;
+      padding:9px 7px;
+      background:var(--green);
+      color:white;
+      font-size:12px;
+      line-height:1.35;
+      font-weight:800;
+    }
+
+    .order-btn:hover { background:var(--dark); }
+
+    .empty-state {
+      grid-column:1/-1;
+      padding:40px 18px;
+      background:white;
+      border:1px dashed #cbded2;
+      border-radius:16px;
+      text-align:center;
+      color:var(--muted);
+    }
+
+    .empty-state strong {
+      display:block;
+      color:var(--text);
+      font-size:17px;
+      margin-bottom:5px;
+    }
+
+    .empty-icon { font-size:35px; margin-bottom:10px; }
+
+    .status-message {
+      font-size:12px;
+      color:var(--muted);
+      margin-top:16px;
+      text-align:center;
+    }
+
+    .trust-section {
+      background:white;
+      border-block:1px solid var(--border);
+      padding:28px 0;
+    }
+
+    .trust-grid {
+      display:grid;
+      grid-template-columns:repeat(3,1fr);
+      gap:22px;
+    }
+
+    .trust-item { display:flex; gap:12px; align-items:center; }
+
+    .trust-icon {
+      width:44px;
+      height:44px;
+      flex-shrink:0;
+      border-radius:14px;
+      background:var(--light);
+      display:grid;
+      place-items:center;
+      font-size:21px;
+    }
+
+    .trust-item strong { display:block; font-size:14px; }
+    .trust-item span { display:block; color:var(--muted); font-size:12px; margin-top:2px; }
+
+    footer {
+      background:#103d2d;
+      color:white;
+      padding:32px 0 22px;
+    }
+
+    .footer-top {
+      display:flex;
+      justify-content:space-between;
+      align-items:start;
+      gap:25px;
+      padding-bottom:23px;
+    }
+
+    .footer-brand { font-size:22px; font-weight:850; }
+    .footer-brand span { color:#6de2ad; }
+
+    .footer-description {
+      color:#c0d6ca;
+      font-size:13px;
+      max-width:440px;
+      margin-top:8px;
+      line-height:1.8;
+    }
+
+    .footer-note {
+      color:#c0d6ca;
+      font-size:12px;
+      max-width:310px;
+      line-height:1.8;
+    }
+
+    .copyright {
+      border-top:1px solid #ffffff25;
+      padding-top:18px;
+      color:#b6cfc1;
+      font-size:11px;
+      text-align:center;
+    }
+
+    .cart-overlay {
+      position:fixed;
+      inset:0;
+      z-index:100;
+      background:rgba(10,30,20,.62);
+      padding:14px;
+      overflow-y:auto;
+    }
+
+    .cart-panel {
+      background:#fff;
+      color:var(--text);
+      width:min(600px,100%);
+      margin:20px auto;
+      padding:22px;
+      border-radius:20px;
+      box-shadow:0 15px 50px #0003;
+    }
+
+    .cart-heading {
+      display:flex;
+      justify-content:space-between;
+      align-items:center;
+      gap:12px;
+      margin-bottom:18px;
+    }
+
+    .cart-heading h2 { font-size:22px; }
+
+    .cart-close {
+      border:0;
+      background:var(--light);
+      border-radius:10px;
+      padding:8px 12px;
+      color:var(--green);
+    }
+
+    .cart-row {
+      display:flex;
+      justify-content:space-between;
+      align-items:center;
+      gap:12px;
+      padding:14px 0;
+      border-bottom:1px solid var(--border);
+    }
+
+    .cart-product { flex:1; min-width:0; }
+    .cart-product strong { display:block; overflow-wrap:anywhere; }
+    .cart-product small { color:var(--muted); }
+
+    .cart-product-main { display:flex; align-items:center; gap:12px; min-width:0; }
+    .cart-product-image {
+      width:68px; height:68px; flex:0 0 68px; object-fit:contain;
+      border:1px solid var(--border); border-radius:12px; background:#fff; padding:4px;
+    }
+    .cart-product-no-image {
+      width:68px; height:68px; flex:0 0 68px; display:grid; place-items:center;
+      border:1px solid var(--border); border-radius:12px; background:#f6faf8; font-size:24px;
+    }
+    .cart-product-info { min-width:0; }
+    .cart-product-info small { display:block; margin:3px 0; }
+    .cart-controls button { min-height:32px; }
+    .cart-controls button[data-cart-action="plus"],
+    .cart-controls button[data-cart-action="minus"] { min-width:34px; font-size:17px; font-weight:800; }
+
+    .customer-medicine-upload {
+      margin:16px 0 4px; padding:16px; background:#f4faf7;
+      border:1px dashed #8acbb0; border-radius:15px;
+    }
+    .customer-medicine-upload h3 { margin:0 0 6px; color:var(--green); font-size:16px; }
+    .customer-medicine-upload p { margin:0 0 12px; color:var(--muted); font-size:12px; line-height:1.6; }
+    .photo-upload-label {
+      display:inline-flex; align-items:center; gap:8px; padding:11px 14px;
+      background:var(--green); color:white; border-radius:10px; cursor:pointer;
+      font-size:13px; font-weight:750;
+    }
+    .photo-upload-label input { display:none; }
+    #customerMedicinePreview { margin-top:12px; }
+    #customerMedicinePreview img {
+      display:block; max-width:220px; width:100%; max-height:200px; object-fit:contain;
+      border:1px solid var(--border); border-radius:10px; background:#fff; padding:5px;
+    }
+    #removeCustomerMedicinePhoto {
+      margin-top:8px; border:1px solid #edc4c0; background:#fff5f4;
+      color:#b42318; border-radius:8px; padding:8px 11px; font-size:12px;
+    }
+
+    .cart-controls {
+      display:flex;
+      align-items:center;
+      gap:6px;
+      flex-wrap:wrap;
+    }
+
+    .cart-controls button {
+      border:1px solid #dce8e0;
+      background:#f6faf8;
+      border-radius:7px;
+      padding:5px 9px;
+      color:var(--text);
+    }
+
+    .cart-total { text-align:right; padding:18px 0; font-size:18px; }
+    .cart-total strong { color:var(--green); }
+    .checkout-title { margin:10px 0 12px; font-size:18px; }
+
+    #checkoutForm label {
+      display:block;
+      font-size:13px;
+      font-weight:750;
+      margin:12px 0 5px;
+    }
+
+    #checkoutForm input,
+    #checkoutForm textarea {
+      width:100%;
+      padding:12px;
+      border:1px solid #dce8e0;
+      border-radius:10px;
+      outline-color:var(--green);
+      background:white;
+      color:var(--text);
+    }
+
+    .cart-empty { padding:22px 0; text-align:center; color:var(--muted); }
+    .checkout-hint { color:var(--muted); font-size:12px; margin-top:8px; }
+
+    #checkoutMessage {
+      font-size:13px;
+      margin-top:12px;
+      overflow-wrap:anywhere;
+      white-space:pre-wrap;
+    }
+
+    body.cart-open { overflow:hidden; }
+
+    @media(max-width:950px) {
+      .product-grid { grid-template-columns:repeat(3,minmax(0,1fr)); gap:14px; }
+    }
+
+    @media(max-width:650px) {
+      .navbar { min-height:68px; }
+      .brand-mark { width:40px; height:40px; border-radius:12px; }
+      .brand-name { font-size:18px; }
+      .brand-subtitle { font-size:10px; }
+      .nav-actions { gap:5px; }
+      .nav-link { padding:9px 8px; font-size:11px; }
+
+      .hero { padding:35px 0 28px; }
+      .hero h1 { font-size:32px; }
+      .hero p { font-size:14px; line-height:1.7; }
+
+      .products-section { padding:28px 0 40px; }
+      .section-heading { align-items:start; gap:8px; margin-bottom:16px; }
+      .section-heading h2 { font-size:23px; }
+      .section-heading p { font-size:12px; }
+      .result-count { font-size:10px; padding:7px 9px; }
+
+      .product-grid {
+        grid-template-columns:repeat(2,minmax(0,1fr));
+        gap:10px;
+      }
+
+      /* মোবাইলের ছবির সাইজ অপরিবর্তিত */
+      .product-image { height:145px; padding:10px; }
+
+      .product-info { padding:8px; }
+
+      .company-label {
+        font-size:9px;
+        padding:3px 5px;
+        margin-bottom:3px;
+      }
+
+      .product-name { font-size:13px; line-height:1.25; }
+      .product-category { font-size:10px; margin-top:1px; }
+      .product-bottom { margin-top:5px; }
+      .price-label { font-size:10px; }
+      .product-price { font-size:18px; margin:2px 0 6px; }
+      .order-btn { padding:8px 4px; font-size:11px; }
+
+      .trust-grid { grid-template-columns:1fr; gap:18px; }
+      .footer-top { flex-direction:column; }
+      .cart-panel { padding:16px; margin:5px auto; }
+      .cart-heading h2 { font-size:19px; }
+      .cart-row { align-items:flex-start; flex-direction:column; }
+      .cart-controls { width:100%; }
+    }
+
+    @media(max-width:360px) {
+      .container { width:94%; }
+      .product-grid { gap:8px; }
+      .product-info { padding:7px; }
+      .product-image { height:125px; }
+      .product-name { font-size:12px; }
+      .product-price { font-size:16px; }
+      .brand { gap:6px; }
+      .brand-name { font-size:16px; }
+    }
+
+    /* Premium cart toast — original Medispot style */
+    .premium-toast-host{position:fixed;top:22px;right:22px;left:auto;transform:none;z-index:10050;width:min(390px,calc(100vw - 28px));pointer-events:none}
+    .premium-toast{position:relative;display:flex;align-items:flex-start;gap:12px;padding:16px 42px 15px 15px;background:#fff;border:1px solid #dcefe5;border-radius:18px;box-shadow:0 16px 46px rgba(10,55,39,.19);color:#17352b;opacity:0;transform:translateY(-12px) scale(.97);transition:opacity .26s ease,transform .26s cubic-bezier(.2,.8,.2,1);pointer-events:auto;overflow:hidden}
+    .premium-toast.visible{opacity:1;transform:translateY(0) scale(1)}
+    .premium-toast-icon{width:42px;height:42px;flex:0 0 42px;display:grid;place-items:center;border-radius:14px;background:linear-gradient(145deg,#e6f8ee,#d3f1e1);color:#087f5b;font-size:23px;font-weight:800;box-shadow:inset 0 0 0 1px rgba(8,127,91,.08)}
+    .premium-toast-copy{min-width:0;flex:1}.premium-toast-title{font-size:15px;font-weight:800;line-height:1.35;margin:1px 0 5px;color:#17352b}.premium-toast-product{font-size:13px;font-weight:700;line-height:1.45;color:#087f5b;overflow-wrap:anywhere;margin:0 0 3px}.premium-toast-message{font-size:12px;line-height:1.45;color:#718078;margin:0}.premium-toast-actions{display:flex;align-items:center;justify-content:flex-start;margin-top:10px}.premium-toast-cart-link{border:0;background:#087f5b;color:#fff;font:700 12px Arial,sans-serif;padding:8px 12px;border-radius:10px;cursor:pointer;box-shadow:0 4px 10px rgba(8,127,91,.15)}.premium-toast-cart-link:active{transform:scale(.97)}.premium-toast-close{position:absolute;top:8px;right:9px;width:26px;height:26px;border:0;border-radius:8px;background:#f3f7f5;color:#718078;font-size:17px;line-height:1;cursor:pointer;display:grid;place-items:center}.premium-toast-progress{position:absolute;bottom:0;left:0;right:0;height:3px;background:#e5f1eb;overflow:hidden}.premium-toast-progress span{display:block;height:100%;width:100%;background:linear-gradient(90deg,#087f5b,#41bd8b);transform-origin:left;animation:toastProgress 3s linear forwards}
+    @keyframes toastProgress{from{transform:scaleX(1)}to{transform:scaleX(0)}}
+    @media(max-width:600px){.premium-toast-host{top:78px;right:12px;width:calc(100vw - 24px)}.premium-toast{padding:14px 40px 14px 13px;gap:10px}.premium-toast-icon{width:38px;height:38px;flex-basis:38px;border-radius:12px}.premium-toast-title{font-size:14px}}
+    @media(prefers-reduced-motion:reduce){.premium-toast{transition:none}.premium-toast-progress span{animation:none}}
+  </style>
+</head>
+
+<body>
+<div id="premiumToastHost" class="premium-toast-host" aria-live="polite" aria-atomic="true"></div>
+<header>
+  <div class="container navbar">
+    <a class="brand" href="#">
+      <div class="brand-mark">MS</div>
+      <div>
+        <div class="brand-name">Medi<span>spot</span> BD</div>
+        <div class="brand-subtitle">Medicine Marketplace</div>
       </div>
-      <hr style="border:0;border-top:1px solid #e5ece7;margin:14px 0">
-      <p><b>অর্ডারকারীর নাম:</b> ${escapeHtml(o.customer_name||"-")}</p>
-      <p><b>ফার্মেসি:</b> ${escapeHtml(o.pharmacy_name||"-")}</p>
-      <p><b>ফোন:</b> ${escapeHtml(o.phone||"-")}</p>
-      <p><b>ঠিকানা:</b> ${escapeHtml(o.address||"-")}</p>
-      ${o.customerImageSignedUrl?`<div class="customer-photo"><h4>Customer-এর অতিরিক্ত ওষুধের ছবি</h4><a href="${escapeHtml(o.customerImageSignedUrl)}" target="_blank" rel="noopener noreferrer"><img src="${escapeHtml(o.customerImageSignedUrl)}" alt="Customer uploaded medicine photo" loading="lazy"></a><a href="${escapeHtml(o.customerImageSignedUrl)}" target="_blank" rel="noopener noreferrer">ছবিটি বড় করে দেখুন ↗</a></div>`:(o.customer_image_url?'<div class="customer-photo"><h4>Customer-এর অতিরিক্ত ওষুধের ছবি</h4><p class="photo-missing">ছবিটি এখন খোলা যাচ্ছে না। Admin login এবং Storage SELECT policy পরীক্ষা করো।</p></div>':'')}
-      <h3>ওষুধের তালিকা</h3>
-      <div class="tablewrap"><table><thead><tr><th>ওষুধ</th><th>কোম্পানি</th><th>পরিমাণ</th><th>একক দাম</th><th>মোট</th></tr></thead><tbody>${itemRows}</tbody></table></div>
-      <div class="row" style="margin-top:14px">
-        <b>অর্ডারের মোট: ${money(o.total_amount)}</b>
-        <div class="actions no-print">
-          <select id="status-${escapeHtml(o.id)}" aria-label="Status">
-            <option value="pending" ${status==="pending"?"selected":""}>Pending</option>
-            <option value="confirmed" ${status==="confirmed"?"selected":""}>Confirmed</option>
-            <option value="processing" ${status==="processing"?"selected":""}>Processing</option>
-            <option value="shipped" ${status==="shipped"?"selected":""}>Shipped</option>
-            <option value="delivered" ${status==="delivered"?"selected":""}>Delivered</option>
-            <option value="cancelled" ${status==="cancelled"?"selected":""}>Cancelled</option>
-          </select>
-          <button onclick="updateStatus('${escapeHtml(o.id)}',this)">Save Status</button>
-          <button class="secondary" onclick="printReceipt('${escapeHtml(o.id)}')">Receipt / PDF</button>
+    </a>
+
+    <div class="nav-actions">
+      <a class="nav-link" href="#products">ওষুধ খুঁজুন</a>
+      <button class="nav-link" id="cartOpenBtn" type="button">
+        🛒 Cart (<span id="cartCount">0</span>)
+      </button>
+    </div>
+  </div>
+</header>
+
+<main>
+  <section class="hero">
+    <div class="container hero-grid">
+      <div>
+        <div class="eyebrow">✦ ফার্মেসির জন্য স্মার্ট প্ল্যাটফর্ম</div>
+        <h1>আপনার ফার্মেসির জন্য <span>ওষুধ কিনুন</span> সহজেই দোকানে বসে </h1>
+        <p>Medispot BD-তে ওষুধের নাম, কোম্পানি ও দাম খুঁজে দেখুন। ফার্মেসির ওষুধ সংগ্রহের প্রক্রিয়াকে আরও সহজ করার আমাদের প্রচেষ্টা।</p>
+      </div>
+    </div>
+  </section>
+
+  <section class="flash-sale-section" id="flashSale" style="display:none;">
+    <div class="container">
+      <div class="flash-sale-heading">
+        <div><h2>⚡ Flash Sale</h2><p>বিশেষ অফারের ওষুধগুলো এখানে দেখুন</p></div>
+        <span class="flash-sale-label">SPECIAL OFFER</span>
+      </div>
+      <div id="flashSaleGrid">
+        <div class="empty-state"><div class="empty-icon">⚡</div><strong>Flash Sale লোড হচ্ছে</strong>একটু অপেক্ষা করুন...</div>
+      </div>
+      <p class="status-message">দাম ও পণ্যের প্রাপ্যতা অর্ডার নিশ্চিত করার সময় যাচাই করা হবে।</p>
+    </div>
+  </section>
+
+  <section class="products-section" id="products">
+    <div class="container">
+      <div class="section-heading">
+        <div>
+          <h2>ওষুধের তালিকা</h2>
+          <p>আপনার প্রয়োজনীয় ওষুধটি খুঁজে নিন</p>
+        </div>
+        <div class="result-count" id="resultCount">লোড হচ্ছে...</div>
+      </div>
+
+      <div class="search-box">
+        <span class="search-icon">⌕</span>
+        <input type="search" id="searchInput" placeholder="ওষুধের নাম বা কোম্পানি লিখুন..." aria-label="ওষুধ সার্চ করুন">
+      </div>
+
+      <div class="filters" id="companyFilters">
+        <button class="filter-btn active" data-company="all">সব ওষুধ</button>
+      </div>
+
+      <div class="product-grid" id="productGrid">
+        <div class="empty-state">
+          <div class="empty-icon">💊</div>
+          <strong>ওষুধের তালিকা লোড হচ্ছে</strong>
+          একটু অপেক্ষা করুন...
         </div>
       </div>
-    </article>`;
-  }).join("");
-}
-async function updateStatus(id,button){
-  const select=document.getElementById("status-"+id);
-  const status=select.value;
-  button.disabled=true;
-  try{
-    const {data,error}=await db.from("orders").update({status}).eq("id",id).select("id,status").maybeSingle();
-    if(error) throw error;
-    if(!data) throw new Error("কোনো row update হয়নি। Supabase UPDATE policy-তে আপনার Admin email এবং USING/WITH CHECK শর্ত পরীক্ষা করতে হবে।");
-    alert("স্ট্যাটাস আপডেট হয়েছে: "+status.toUpperCase());
-    await loadOrders();
-  }catch(e){alert("স্ট্যাটাস পরিবর্তন হয়নি: "+e.message);}
-  finally{button.disabled=false;}
-}
-function printReceipt(id){
-  const o=orders.find(x=>String(x.id)===String(id));
-  if(!o){alert("অর্ডার পাওয়া যায়নি। Refresh করে আবার চেষ্টা করো।");return;}
-  const items=Array.isArray(o.items)?o.items:[];
-  const rows=items.map(i=>{
-    const qty=Number(i.quantity??i.qty??0);
-    const price=Number(i.unit_price??i.price??i.sale_price??0);
-    return `<tr><td>${escapeHtml(i.name||i.medicine_name||i.product_name||"ওষুধ")}</td><td>${escapeHtml(i.company||i.company_name||"-")}</td><td>${qty}</td><td>${money(price)}</td><td>${money(qty*price)}</td></tr>`;
-  }).join("");
-  const w=window.open("","_blank","width=850,height=700");
-  if(!w){alert("Receipt খুলতে browser popup allow করো।");return;}
-  w.document.write(`<!DOCTYPE html><html lang="bn"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Medispot BD Receipt #${escapeHtml(o.id)}</title>
-  <style>body{font-family:"Noto Sans Bengali","Hind Siliguri",Arial,sans-serif;color:#18352b;max-width:850px;margin:25px auto;padding:20px}header{text-align:center;border-bottom:2px solid #075e46;padding-bottom:14px}h1{margin:0;color:#075e46}h2{font-size:18px} .line{display:flex;justify-content:space-between;gap:15px;flex-wrap:wrap}.info{margin:18px 0}.info p{margin:7px 0}table{width:100%;border-collapse:collapse;margin-top:12px}th,td{border-bottom:1px solid #ddd;text-align:left;padding:10px 6px;font-size:13px}th{background:#f0f6f2}.total{text-align:right;font-size:22px;font-weight:bold;margin-top:20px;border-top:2px solid #075e46;padding-top:14px}.muted{color:#666;font-size:12px}.print{padding:10px 15px;background:#075e46;color:white;border:0;border-radius:6px;cursor:pointer}@media print{.print{display:none}body{margin:0;padding:0}}</style></head><body>
-  <header><h1>MEDISPOT BD</h1><p>Medicine Order Receipt</p></header>
-  <div class="line info"><div><b>Order ID:</b> #${escapeHtml(o.id)}<br><b>Order Date:</b> ${escapeHtml(formatDate(o.created_at))}</div><div><b>Status:</b> ${escapeHtml(String(o.status||"pending").toUpperCase())}</div></div>
-  <h2>অর্ডারকারীর তথ্য</h2><div class="info"><p><b>নাম:</b> ${escapeHtml(o.customer_name||"-")}</p><p><b>ফার্মেসির নাম:</b> ${escapeHtml(o.pharmacy_name||"-")}</p><p><b>মোবাইল:</b> ${escapeHtml(o.phone||"-")}</p><p><b>ঠিকানা:</b> ${escapeHtml(o.address||"-")}</p></div>
-  <h2>অর্ডার করা পণ্য</h2><table><thead><tr><th>পণ্যের নাম</th><th>কোম্পানি</th><th>পরিমাণ</th><th>একক মূল্য</th><th>মোট</th></tr></thead><tbody>${rows||'<tr><td colspan="5">এই অর্ডারের পণ্যের বিস্তারিত সংরক্ষিত নেই।</td></tr>'}</tbody></table>
-  <div class="total">সর্বমোট: ${money(o.total_amount)}</div><p class="muted">এই রসিদটি Medispot BD অর্ডার রেকর্ড থেকে তৈরি।</p><button class="print" onclick="window.print()">Print / Save as PDF</button></body></html>`);
-  w.document.close();
-}
-async function enableNotifications(){
-  if(!("Notification" in window)){alert("এই ব্রাউজারে Notification support নেই।");return;}
-  const permission=await Notification.requestPermission();
-  alert(permission==="granted"?"Notification চালু হয়েছে।":"Browser notification অনুমতি পাওয়া যায়নি।");
-}
-function subscribeOrders(){
-  db.channel("orders-dashboard").on("postgres_changes",{event:"INSERT",schema:"public",table:"orders"},payload=>{
-    loadOrders();
-    if("Notification" in window&&Notification.permission==="granted"){
-      new Notification("Medispot BD: নতুন অর্ডার",{body:"অর্ডার #"+payload.new.id+" এসেছে।"});
-    }
-  }).subscribe();
-}
-db.auth.getSession().then(({data})=>{
-  if(data.session){
-    document.getElementById("login").style.display="none";
-    document.getElementById("dashboard").style.display="block";
-    loadOrders(); subscribeOrders();
+
+      <p class="status-message" id="statusMessage">ওষুধের তথ্য লোড হচ্ছে...</p>
+    </div>
+  </section>
+
+  <section class="trust-section">
+    <div class="container trust-grid">
+      <div class="trust-item">
+        <div class="trust-icon">🔎</div>
+        <div><strong>সহজে খুঁজুন</strong><span>নাম ও কোম্পানি দিয়ে সার্চ</span></div>
+      </div>
+      <div class="trust-item">
+        <div class="trust-icon">📋</div>
+        <div><strong>পণ্যের তথ্য</strong><span>দাম ও পণ্যের তালিকা দেখুন</span></div>
+      </div>
+      <div class="trust-item">
+        <div class="trust-icon">🏪</div>
+        <div><strong>ফার্মেসিকে গুরুত্ব</strong><span>ফার্মেসির কাজ সহজ করার উদ্যোগ</span></div>
+      </div>
+    </div>
+  </section>
+</main>
+
+<div id="cartModal" class="cart-overlay" style="display:none">
+  <section class="cart-panel" role="dialog" aria-modal="true" aria-labelledby="cartTitle">
+    <div class="cart-heading">
+      <h2 id="cartTitle">🛒 আপনার Cart</h2>
+      <button type="button" id="cartCloseBtn" class="cart-close" aria-label="বন্ধ করুন">✕</button>
+    </div>
+
+    <div id="cartItems"></div>
+
+    <section class="customer-medicine-upload" aria-labelledby="customerMedicineUploadTitle">
+      <h3 id="customerMedicineUploadTitle">📷 ওয়েবসাইটে নেই এমন ওষুধ?</h3>
+      <p>অন্য ওষুধের ছবি এখানে দিন। ছবিটি এই অর্ডারের সঙ্গে Admin Panel-এ যাবে। এটি ঐচ্ছিক।</p>
+      <label class="photo-upload-label" for="customerMedicinePhoto">＋ ওষুধের ছবি নির্বাচন করুন</label>
+      <input id="customerMedicinePhoto" type="file" accept="image/jpeg,image/png,image/webp,image/gif,image/*" hidden>
+      <div id="customerMedicinePreview" hidden>
+        <img id="customerMedicinePreviewImage" alt="নির্বাচিত ওষুধের ছবি">
+        <button type="button" id="removeCustomerMedicinePhoto">ছবি মুছুন</button>
+      </div>
+    </section>
+
+    <div class="cart-total">মোট: <strong id="cartTotal">৳0</strong></div>
+    <h3 class="checkout-title">ফার্মেসির তথ্য দিন</h3>
+
+    <form id="checkoutForm">
+      <label for="ownerName">মালিকের নাম</label>
+      <input id="ownerName" name="owner_name" required maxlength="120" autocomplete="name">
+
+      <label for="pharmacyName">ফার্মেসির নাম</label>
+      <input id="pharmacyName" name="pharmacy_name" required maxlength="160">
+
+      <label for="customerPhone">মোবাইল নম্বর</label>
+      <input id="customerPhone" name="phone" type="tel" required maxlength="20" autocomplete="tel" placeholder="01XXXXXXXXX">
+
+      <label for="customerAddress">ফার্মেসির ঠিকানা</label>
+      <textarea id="customerAddress" name="address" required maxlength="500" rows="3"></textarea>
+
+      <button id="placeOrderBtn" class="order-btn" type="submit" style="margin-top:16px">
+        অর্ডার কনফার্ম করুন
+      </button>
+
+      <p id="checkoutMessage" role="status" aria-live="polite"></p>
+      <p class="checkout-hint">অর্ডার জমা দেওয়ার পর Medispot BD থেকে ফোন করে পণ্য, দাম ও প্রাপ্যতা নিশ্চিত করা হবে।</p>
+    </form>
+  </section>
+</div>
+
+<footer>
+  <div class="container">
+    <div class="footer-top">
+      <div>
+        <div class="footer-brand">Medispot <span>BD</span></div>
+        <p class="footer-description">ফার্মেসির জন্য ওষুধ খোঁজা ও পণ্যের তথ্য দেখার একটি সহজ ডিজিটাল প্ল্যাটফর্ম।</p>
+      </div>
+      <p class="footer-note">মূল্য ও প্রাপ্যতা অর্ডারের আগে যাচাই করুন। ওষুধ কেনাবেচা প্রযোজ্য আইন ও লাইসেন্সের শর্ত মেনে করতে হবে।</p>
+    </div>
+    <div class="copyright">© <span id="currentYear"></span> Medispot BD. All rights reserved.</div>
+  </div>
+</footer>
+
+<script type="module">
+  const SUPABASE_URL = "https://pnaaqkuzazjiabnnwxjq.supabase.co";
+  const SUPABASE_PUBLISHABLE_KEY = "sb_publishable_ckj65sbFnET7xOjxPJOwfw_-KrevOkv";
+
+  const grid = document.getElementById("productGrid");
+  const flashSaleGrid = document.getElementById("flashSaleGrid");
+  const flashSaleSection = document.getElementById("flashSale");
+  const searchInput = document.getElementById("searchInput");
+  const filters = document.getElementById("companyFilters");
+  const resultCount = document.getElementById("resultCount");
+  const statusMessage = document.getElementById("statusMessage");
+  const cartModal = document.getElementById("cartModal");
+  const cartItemsEl = document.getElementById("cartItems");
+  const cartTotalEl = document.getElementById("cartTotal");
+  const cartCountEl = document.getElementById("cartCount");
+  const checkoutForm = document.getElementById("checkoutForm");
+  const checkoutMessage = document.getElementById("checkoutMessage");
+  const placeOrderBtn = document.getElementById("placeOrderBtn");
+  const customerPhotoInput = document.getElementById("customerMedicinePhoto");
+  const customerPhotoPreview = document.getElementById("customerMedicinePreview");
+  const customerPhotoPreviewImage = document.getElementById("customerMedicinePreviewImage");
+  const removeCustomerPhotoButton = document.getElementById("removeCustomerMedicinePhoto");
+
+  let customerMedicinePhotoFile = null;
+  let customerMedicinePhotoPreviewUrl = "";
+  let allProducts = [];
+  let companyLogos = {};
+  let selectedCompany = "all";
+  let isSubmittingOrder = false;
+  let cart = [];
+
+  document.getElementById("currentYear").textContent = new Date().getFullYear();
+
+  function escapeHTML(value) {
+    return String(value ?? "").replace(/[&<>"']/g, char => ({
+      "&":"&amp;",
+      "<":"&lt;",
+      ">":"&gt;",
+      '"':"&quot;",
+      "'":"&#039;"
+    }[char]));
   }
-});
+
+  function normalizeCompanyName(name) {
+    return String(name || "").trim().toLowerCase().replace(/\s+/g, " ");
+  }
+
+  async function loadCompanyLogos() {
+    try {
+      const response = await fetch(
+        SUPABASE_URL + "/rest/v1/company_logos?select=company_name,logo_url",
+        {
+          headers: {
+            apikey: SUPABASE_PUBLISHABLE_KEY,
+            Authorization: "Bearer " + SUPABASE_PUBLISHABLE_KEY
+          }
+        }
+      );
+
+      if (!response.ok) throw new Error("Company logo request failed: HTTP " + response.status);
+
+      const rows = await response.json();
+      const newLogos = {};
+
+      rows.forEach(row => {
+        const name = normalizeCompanyName(row.company_name);
+        const url = String(row.logo_url || "").trim();
+        if (name && /^https?:\/\//i.test(url)) newLogos[name] = url;
+      });
+
+      companyLogos = newLogos;
+      // Logo data আসার পর filter buttons আবার render হবে,
+      // তাই medicine list আগে load হলেও company logo দেখা যাবে।
+      renderCompanyFilters();
+    } catch (error) {
+      console.error("Company logo loading error:", error);
+      companyLogos = {};
+      renderCompanyFilters();
+    }
+  }
+
+  // Medicine card-এর company name আগের মতোই text হিসেবে থাকবে।
+  // Company logo শুধু উপরের company filter buttons-এ দেখানো হবে।
+  function companyDisplayHTML(company) {
+    const name = String(company || "").trim() || "অনির্দিষ্ট কোম্পানি";
+    return `<span class="company-label">${escapeHTML(name)}</span>`;
+  }
+
+  function safeImagePath(value) {
+    const path = String(value ?? "").trim();
+    if (!path) return "";
+    if (/^https?:\/\//i.test(path)) return path;
+    if (path.startsWith("/") || path.startsWith("./") || path.startsWith("../")) return path;
+    return "./" + path;
+  }
+
+  let premiumToastTimer = null;
+  function showPremiumToast(productName, title = "কার্টে যোগ হয়েছে!") {
+    const host = document.getElementById("premiumToastHost");
+    if (!host) return;
+    clearTimeout(premiumToastTimer);
+    host.innerHTML = '<div class="premium-toast" role="status"><div class="premium-toast-icon" aria-hidden="true">✓</div><div class="premium-toast-copy"><p class="premium-toast-title"></p><p class="premium-toast-product"></p><p class="premium-toast-message"></p><div class="premium-toast-actions"><button class="premium-toast-cart-link" type="button">কার্ট দেখুন →</button></div></div><button class="premium-toast-close" type="button" aria-label="বন্ধ করুন">×</button><div class="premium-toast-progress"><span></span></div></div>';
+    const toast = host.firstElementChild;
+    toast.querySelector(".premium-toast-title").textContent = title;
+    toast.querySelector(".premium-toast-product").textContent = String(productName || "ওষুধ");
+    const count = cart.reduce((sum, item) => sum + (Number(item.quantity) || 0), 0);
+    toast.querySelector(".premium-toast-message").textContent = "কার্টে মোট " + count + "টি পণ্য";
+    const dismiss = () => {
+      clearTimeout(premiumToastTimer);
+      toast.classList.remove("visible");
+      setTimeout(() => { if (host.firstElementChild === toast) host.innerHTML = ""; }, 280);
+    };
+    toast.querySelector(".premium-toast-close").addEventListener("click", dismiss);
+    toast.querySelector(".premium-toast-cart-link").addEventListener("click", () => {
+      dismiss();
+      openCart();
+    });
+    requestAnimationFrame(() => toast.classList.add("visible"));
+    premiumToastTimer = setTimeout(dismiss, 3000);
+  }
+
+  function formatPrice(value) {
+    const number = Number(value);
+    if (value === null || value === undefined || value === "" ||
+        !Number.isFinite(number) || number < 0) {
+      return "দাম জানতে যোগাযোগ করুন";
+    }
+    return "৳" + number.toLocaleString("en-US",{maximumFractionDigits:2});
+  }
+
+  function getPrices(product) {
+    const valid = product.price !== null &&
+      product.price !== undefined &&
+      product.price !== "" &&
+      Number.isFinite(Number(product.price)) &&
+      Number(product.price) >= 0;
+
+    const mrp = valid ? Number(product.price) : null;
+    const discount = Math.min(100,Math.max(0,Number(product.discount_percent)||0));
+
+    const finalPrice = mrp === null ? null :
+      Math.round((mrp * (1-discount/100) + Number.EPSILON)*100)/100;
+
+    return {mrp,discount,finalPrice};
+  }
+
+  try {
+    const saved = JSON.parse(localStorage.getItem("medispot_cart") || "[]");
+
+    if (Array.isArray(saved)) {
+      cart = saved.filter(item =>
+        item && typeof item.id === "string" &&
+        typeof item.name === "string" &&
+        Number.isFinite(Number(item.unit_price)) &&
+        Number(item.unit_price)>0 &&
+        Number.isInteger(Number(item.quantity)) &&
+        Number(item.quantity)>0 &&
+        Number(item.quantity)<=999
+      ).map(item => ({
+        id:item.id,
+        name:item.name,
+        company:String(item.company||""),
+        image_url:String(item.image_url||""),
+        unit_price:Number(item.unit_price),
+        quantity:Number(item.quantity)
+      }));
+    }
+  } catch {
+    cart = [];
+  }
+
+  function saveCart() {
+    try {
+      localStorage.setItem("medispot_cart",JSON.stringify(cart));
+    } catch(error) {
+      console.warn("Cart save error:",error);
+    }
+  }
+
+  function money(value) {
+    return "৳" + Number(value).toLocaleString("en-US",{maximumFractionDigits:2});
+  }
+
+  function calculateCartTotal() {
+    const total = cart.reduce((sum,item)=>sum+item.unit_price*item.quantity,0);
+    return Math.round((total+Number.EPSILON)*100)/100;
+  }
+
+  function renderCart() {
+    cartCountEl.textContent = cart.reduce((sum,item)=>sum+item.quantity,0);
+    cartTotalEl.textContent = money(calculateCartTotal());
+
+    if (!cart.length) {
+      cartItemsEl.innerHTML =
+        '<div class="cart-empty">তোমার Cart এখনো খালি। আগে ওষুধ যোগ করো।</div>';
+    } else {
+      cartItemsEl.innerHTML = cart.map(item=>`
+        <div class="cart-row">
+          <div class="cart-product-main">
+            ${item.image_url ? `<img class="cart-product-image" src="${escapeHTML(safeImagePath(item.image_url))}" alt="${escapeHTML(item.name)}" loading="lazy" onerror="this.style.display='none'">` : '<div class="cart-product-no-image" aria-hidden="true">💊</div>'}
+            <div class="cart-product cart-product-info">
+              <strong>${escapeHTML(item.name)}</strong>
+              <small>${escapeHTML(item.company)} · ${money(item.unit_price)} / বক্স</small>
+              <div><strong>${money(item.unit_price*item.quantity)}</strong></div>
+            </div>
+          </div>
+          <div class="cart-controls">
+            <button type="button" data-cart-action="minus" data-id="${escapeHTML(item.id)}">−</button>
+            <span>${item.quantity}</span>
+            <button type="button" data-cart-action="plus" data-id="${escapeHTML(item.id)}">+</button>
+            <button type="button" data-cart-action="remove" data-id="${escapeHTML(item.id)}">বাদ দিন</button>
+          </div>
+        </div>
+      `).join("");
+    }
+
+    saveCart();
+  }
+
+  customerPhotoInput.addEventListener("change", () => {
+    const file = customerPhotoInput.files && customerPhotoInput.files[0];
+    if (!file) return;
+
+    if (!file.type.startsWith("image/")) {
+      alert("দয়া করে একটি ছবির ফাইল নির্বাচন করুন।");
+      customerPhotoInput.value = "";
+      return;
+    }
+    if (file.size > 8 * 1024 * 1024) {
+      alert("ছবির সাইজ সর্বোচ্চ 8 MB হতে পারবে।");
+      customerPhotoInput.value = "";
+      return;
+    }
+
+    if (customerMedicinePhotoPreviewUrl) URL.revokeObjectURL(customerMedicinePhotoPreviewUrl);
+    customerMedicinePhotoFile = file;
+    customerMedicinePhotoPreviewUrl = URL.createObjectURL(file);
+    customerPhotoPreviewImage.src = customerMedicinePhotoPreviewUrl;
+    customerPhotoPreview.hidden = false;
+    checkoutMessage.textContent = "";
+  });
+
+  function clearCustomerMedicinePhoto() {
+    if (customerMedicinePhotoPreviewUrl) URL.revokeObjectURL(customerMedicinePhotoPreviewUrl);
+    customerMedicinePhotoPreviewUrl = "";
+    customerMedicinePhotoFile = null;
+    customerPhotoInput.value = "";
+    customerPhotoPreviewImage.removeAttribute("src");
+    customerPhotoPreview.hidden = true;
+  }
+
+  removeCustomerPhotoButton.addEventListener("click", clearCustomerMedicinePhoto);
+
+  async function uploadCustomerMedicinePhoto() {
+    if (!customerMedicinePhotoFile) return null;
+
+    const file = customerMedicinePhotoFile;
+    const allowedTypes = ["image/jpeg", "image/png", "image/webp", "image/gif"];
+    if (!allowedTypes.includes(file.type)) {
+      throw new Error("ছবিটি JPG, PNG, WEBP অথবা GIF ফরম্যাটে দিন।");
+    }
+
+    const extensionByType = {
+      "image/jpeg": "jpg",
+      "image/png": "png",
+      "image/webp": "webp",
+      "image/gif": "gif"
+    };
+    const uniqueName = Date.now() + "-" + Math.random().toString(36).slice(2) + "." + extensionByType[file.type];
+    const storagePath = "orders/" + uniqueName;
+    const encodedPath = storagePath.split("/").map(encodeURIComponent).join("/");
+
+    const uploadResponse = await fetch(
+      SUPABASE_URL + "/storage/v1/object/customer-medicine-photos/" + encodedPath,
+      {
+        method: "POST",
+        headers: {
+          apikey: SUPABASE_PUBLISHABLE_KEY,
+          Authorization: "Bearer " + SUPABASE_PUBLISHABLE_KEY,
+          "Content-Type": file.type,
+          "x-upsert": "false"
+        },
+        body: file
+      }
+    );
+
+    if (!uploadResponse.ok) {
+      const errorText = await uploadResponse.text();
+      console.error("Customer photo upload error:", uploadResponse.status, errorText);
+      throw new Error("ওষুধের ছবি আপলোড হয়নি। আবার চেষ্টা করুন।");
+    }
+
+    return storagePath;
+  }
+
+  function openCart() {
+    cartModal.style.display="block";
+    document.body.classList.add("cart-open");
+    checkoutMessage.textContent="";
+    renderCart();
+  }
+
+  function closeCart() {
+    cartModal.style.display="none";
+    document.body.classList.remove("cart-open");
+  }
+
+  document.getElementById("cartOpenBtn").addEventListener("click",openCart);
+  document.getElementById("cartCloseBtn").addEventListener("click",closeCart);
+
+  cartModal.addEventListener("click",event=>{
+    if(event.target===cartModal)closeCart();
+  });
+
+  document.addEventListener("keydown",event=>{
+    if(event.key==="Escape" && cartModal.style.display!=="none")closeCart();
+  });
+
+  cartItemsEl.addEventListener("click",event=>{
+    const button=event.target.closest("button[data-cart-action]");
+    if(!button)return;
+
+    const item=cart.find(entry=>entry.id===button.dataset.id);
+    if(!item)return;
+
+    if(button.dataset.cartAction==="plus") {
+      if(item.quantity<999)item.quantity++;
+    } else if(button.dataset.cartAction==="minus") {
+      item.quantity--;
+      if(item.quantity<=0)cart=cart.filter(entry=>entry.id!==item.id);
+    } else if(button.dataset.cartAction==="remove") {
+      cart=cart.filter(entry=>entry.id!==item.id);
+    }
+
+    renderCart();
+  });
+
+  function addToCart(product) {
+    const prices=getPrices(product);
+
+    if(prices.finalPrice===null || prices.finalPrice<=0) {
+      alert("এই পণ্যের সঠিক বিক্রয়মূল্য এখনো দেওয়া হয়নি।");
+      return;
+    }
+
+    const id=String(product.id);
+    const existing=cart.find(item=>item.id===id);
+
+    if(existing) {
+      if(existing.quantity>=999) {
+        alert("একসঙ্গে সর্বোচ্চ 999 বক্স যোগ করা যাবে।");
+        return;
+      }
+      existing.quantity++;
+    } else {
+      cart.push({
+        id,
+        name:String(product.name||"ওষুধ"),
+        company:String(product.company||""),
+        image_url:String(product.image_url||""),
+        unit_price:prices.finalPrice,
+        quantity:1
+      });
+    }
+
+    renderCart();
+    checkoutMessage.textContent="";
+    showPremiumToast(String(product.name||"ওষুধ"));
+  }
+
+  function renderCompanyFilters() {
+    const companies=[...new Set(
+      allProducts.map(p=>String(p.company||"").trim()).filter(Boolean)
+    )].sort((a,b)=>a.localeCompare(b));
+
+    filters.innerHTML=`
+      <button class="filter-btn ${selectedCompany==="all"?"active":""}" data-company="all" type="button">সব ওষুধ</button>
+      ${companies.map(company=>{
+        const logoURL=companyLogos[normalizeCompanyName(company)];
+        const active=selectedCompany===company;
+        const buttonClass=`filter-btn company-logo-btn ${active?"active":""}`;
+        const content=logoURL
+          ? `<img src="${escapeHTML(logoURL)}" alt="${escapeHTML(company)}" loading="lazy" onerror="this.replaceWith(Object.assign(document.createElement('span'),{className:'filter-company-name',textContent:this.alt}))">`
+          : `<span class="filter-company-name">${escapeHTML(company)}</span>`;
+        return `<button class="${buttonClass}" data-company="${escapeHTML(company)}" type="button" aria-label="${escapeHTML(company)} কোম্পানির ওষুধ দেখুন" aria-pressed="${active}">${content}</button>`;
+      }).join("")}
+    `;
+  }
+
+  function renderProducts() {
+    const term=searchInput.value.trim().toLowerCase();
+
+    const filtered=allProducts.filter(product=>{
+      const searchable=[
+        product.name,
+        product.company,
+        product.strength,
+        product.category
+      ].join(" ").toLowerCase();
+
+      return searchable.includes(term) &&
+        (selectedCompany==="all" || product.company===selectedCompany);
+    });
+
+    resultCount.textContent=`${filtered.length}টি পণ্য`;
+
+    if(!filtered.length) {
+      grid.innerHTML=
+        '<div class="empty-state"><div class="empty-icon">🔎</div><strong>কোনো ওষুধ পাওয়া যায়নি</strong>অন্য নাম দিয়ে সার্চ করুন অথবা অন্য কোম্পানি নির্বাচন করুন।</div>';
+      return;
+    }
+
+    grid.innerHTML=filtered.map(product=>{
+      const name=escapeHTML(product.name||"ওষুধ");
+      const company=escapeHTML(product.company||"অনির্দিষ্ট কোম্পানি");
+      const companyHTML=companyDisplayHTML(product.company);
+      const category=escapeHTML(product.category||"");
+      const unit=escapeHTML(product.unit||"প্রতি বক্স");
+      const image=safeImagePath(product.image_url);
+      const {mrp,discount,finalPrice}=getPrices(product);
+      const badgeHTML = discount > 0
+        ? `<span class="discount-badge">${Number(discount.toFixed(2))}% OFF</span>`
+        : "";
+
+      let priceHTML;
+
+      if(mrp===null) {
+        priceHTML='<div class="product-price">দাম জানতে যোগাযোগ করুন</div>';
+      } else if(discount>0) {
+        priceHTML=`
+          <div style="font-size:12px;color:#718078;">MRP: <span style="text-decoration:line-through;">${formatPrice(mrp)}</span></div>
+          <div class="product-price">${formatPrice(finalPrice)}</div>`;
+      } else {
+        priceHTML=`<div class="product-price">${formatPrice(mrp)}</div>`;
+      }
+
+      const imageHTML=image?`
+        ${badgeHTML}
+        <img src="${escapeHTML(image)}" alt="${name}" loading="lazy"
+          onerror="this.style.display='none';this.nextElementSibling.style.display='block';">
+        <div class="image-placeholder"><span class="medical-icon">💊</span><small>ছবি পাওয়া যায়নি</small></div>
+      `:`${badgeHTML}<div class="image-placeholder" style="display:block"><span class="medical-icon">💊</span><small>ওষুধের ছবি</small></div>`;
+
+      return `
+        <article class="product-card">
+          <div class="product-image">${imageHTML}</div>
+          <div class="product-info">
+            ${companyHTML}
+            <h3 class="product-name">${name}</h3>
+            <div class="product-category">${category}</div>
+            <div class="product-bottom">
+              <div class="price-label">${unit}</div>
+              ${priceHTML}
+              <button class="order-btn" type="button" data-product="${escapeHTML(product.id)}">কার্টে যোগ করুন 🛒</button>
+            </div>
+          </div>
+        </article>`;
+    }).join("");
+  }
+
+  /* Flash Sale ও সাধারণ পণ্যের কার্ড তৈরির ফাংশন */
+  function productCardHTML(product) {
+    const name = escapeHTML(product.name || "ওষুধ");
+    const company = escapeHTML(product.company || "অনির্দিষ্ট কোম্পানি");
+    const companyHTML = companyDisplayHTML(product.company);
+    const category = escapeHTML(product.category || "");
+    const unit = escapeHTML(product.unit || "প্রতি বক্স");
+    const image = safeImagePath(product.image_url);
+    const {mrp, discount, finalPrice} = getPrices(product);
+
+    const badgeHTML = discount > 0
+      ? `<span class="discount-badge">${Number(discount.toFixed(2))}% OFF</span>`
+      : "";
+
+    let priceHTML;
+    if (mrp === null) {
+      priceHTML = '<div class="product-price">দাম জানতে যোগাযোগ করুন</div>';
+    } else if (discount > 0) {
+      priceHTML = `
+        <div style="font-size:12px;color:#718078;">MRP: <span style="text-decoration:line-through;">${formatPrice(mrp)}</span></div>
+        <div class="product-price">${formatPrice(finalPrice)}</div>`;
+    } else {
+      priceHTML = `<div class="product-price">${formatPrice(mrp)}</div>`;
+    }
+
+    const imageHTML = image ? `
+      ${badgeHTML}
+      <img src="${escapeHTML(image)}" alt="${name}" loading="lazy"
+        onerror="this.style.display='none';this.nextElementSibling.style.display='block';">
+      <div class="image-placeholder"><span class="medical-icon">💊</span><small>ছবি পাওয়া যায়নি</small></div>
+    ` : `${badgeHTML}<div class="image-placeholder" style="display:block"><span class="medical-icon">💊</span><small>ওষুধের ছবি</small></div>`;
+
+    return `
+      <article class="product-card">
+        <div class="product-image">${imageHTML}</div>
+        <div class="product-info">
+          ${companyHTML}
+          <h3 class="product-name">${name}</h3>
+          <div class="product-category">${category}</div>
+          <div class="product-bottom">
+            <div class="price-label">${unit}</div>
+            ${priceHTML}
+            <button class="order-btn" type="button" data-product="${escapeHTML(product.id)}">কার্টে যোগ করুন 🛒</button>
+          </div>
+        </div>
+      </article>`;
+  }
+
+  /* Admin Panel-এ Flash Sale চালু থাকা ও স্টকে থাকা পণ্যগুলোই দেখাবে */
+  function renderFlashSale() {
+    const saleProducts = allProducts.filter(product =>
+      product.is_flash_sale === true &&
+      (product.stock === null || product.stock === undefined || Number(product.stock) > 0)
+    );
+
+    if (saleProducts.length === 0) {
+      flashSaleSection.style.display = "none";
+      flashSaleGrid.innerHTML = "";
+      return;
+    }
+
+    flashSaleSection.style.display = "block";
+    flashSaleGrid.innerHTML = saleProducts.map(productCardHTML).join("");
+  }
+
+  filters.addEventListener("click",event=>{
+    const button=event.target.closest("button[data-company]");
+    if(!button)return;
+
+    selectedCompany=button.dataset.company;
+    renderCompanyFilters();
+    renderProducts();
+    renderFlashSale();
+  });
+
+  searchInput.addEventListener("input",renderProducts);
+
+  flashSaleGrid.addEventListener("click",event=>{
+    const button=event.target.closest("button[data-product]");
+    if(!button)return;
+    const product=allProducts.find(item=>String(item.id)===button.dataset.product);
+    if(product)addToCart(product);
+  });
+
+  grid.addEventListener("click",event=>{
+    const button=event.target.closest("button[data-product]");
+    if(!button)return;
+
+    const product=allProducts.find(item=>String(item.id)===button.dataset.product);
+    if(product)addToCart(product);
+  });
+
+  async function loadProducts() {
+    try {
+      const response=await fetch(
+        SUPABASE_URL+"/rest/v1/medicines?select=id,name,company,strength,price,discount_percent,image_url,stock,category,is_flash_sale",
+        {
+          headers:{
+            apikey:SUPABASE_PUBLISHABLE_KEY,
+            Authorization:"Bearer "+SUPABASE_PUBLISHABLE_KEY
+          }
+        }
+      );
+
+      if(!response.ok) {
+        throw new Error("Medicine request failed: HTTP "+response.status);
+      }
+
+      const rows=await response.json();
+
+      const databaseProducts=rows.filter(row=>
+        row.stock===null || row.stock===undefined || Number(row.stock)>0
+      ).map(row=>{
+        const name=String(row.name||"").trim();
+        const strength=String(row.strength||"").trim();
+
+        return {
+          id:"db-"+row.id,
+          name:strength&&!name.toLowerCase().includes(strength.toLowerCase())?name+" "+strength:name,
+          company:row.company||"",
+          strength,
+          price:row.price,
+          discount_percent:Number(row.discount_percent)||0,
+          unit:"প্রতি বক্স",
+          image_url:row.image_url||"",
+          category:row.category||"",
+          stock:row.stock,
+          is_flash_sale:row.is_flash_sale===true
+        };
+      });
+
+      // শুধু Supabase medicines table-এর পণ্য দেখাবে।
+      allProducts=databaseProducts;
+      statusMessage.textContent="Supabase-এর পণ্যের তালিকা দেখানো হচ্ছে।";
+
+    } catch(error) {
+      console.error("Medicine loading error:",error);
+      allProducts=[];
+      statusMessage.textContent="Supabase থেকে পণ্য লোড করা যায়নি। ডেটাবেজ সংযোগ যাচাই করুন।";
+    }
+
+    renderCompanyFilters();
+    renderProducts();
+    renderFlashSale();
+  }
+
+  /* অর্ডার Supabase-এ পাঠানো */
+  checkoutForm.addEventListener("submit",async event=>{
+    event.preventDefault();
+    if(isSubmittingOrder)return;
+
+    if(!cart.length && !customerMedicinePhotoFile) {
+      checkoutMessage.textContent="আগে Cart-এ ওষুধ যোগ করো অথবা ওষুধের ছবি আপলোড করো।";
+      return;
+    }
+
+    const owner=document.getElementById("ownerName").value.trim();
+    const pharmacy=document.getElementById("pharmacyName").value.trim();
+    const phone=document.getElementById("customerPhone").value.trim();
+    const address=document.getElementById("customerAddress").value.trim();
+
+    if(!owner||!pharmacy||!phone||!address) {
+      checkoutMessage.textContent="সব তথ্য পূরণ করো।";
+      return;
+    }
+
+    if(!/^[0-9+\-\s()]{8,20}$/.test(phone)) {
+      checkoutMessage.textContent="সঠিক মোবাইল নম্বর দাও।";
+      return;
+    }
+
+    const submittedCart=cart.map(item=>({
+      id:item.id,
+      name:item.name,
+      company:item.company,
+      image_url:item.image_url||"",
+      unit_price:item.unit_price,
+      quantity:item.quantity
+    }));
+
+    const submittedTotal=calculateCartTotal();
+
+    isSubmittingOrder=true;
+    placeOrderBtn.disabled=true;
+    placeOrderBtn.textContent="অর্ডার জমা হচ্ছে...";
+    checkoutMessage.textContent="অর্ডার জমা হচ্ছে। অপেক্ষা করো...";
+
+    try {
+      // Attempt photo upload, but do not block the order if Storage rejects it.
+      let customerImagePath = null;
+      let customerPhotoUploadFailed = false;
+      if (customerMedicinePhotoFile) {
+        try {
+          customerImagePath = await uploadCustomerMedicinePhoto();
+        } catch (photoError) {
+          customerPhotoUploadFailed = true;
+          console.error("Customer photo upload failed; continuing order submission:", photoError);
+        }
+      }
+      const response=await fetch(SUPABASE_URL+"/rest/v1/orders",{
+        method:"POST",
+        headers:{
+          apikey:SUPABASE_PUBLISHABLE_KEY,
+          Authorization:"Bearer "+SUPABASE_PUBLISHABLE_KEY,
+          "Content-Type":"application/json",
+          Prefer:"return=minimal"
+        },
+        body:JSON.stringify({
+          customer_name:owner,
+          pharmacy_name:pharmacy,
+          phone:phone,
+          address:address,
+          items:submittedCart,
+          total_amount:submittedTotal,
+          status:"pending",
+          customer_image_url:customerImagePath
+        })
+      });
+
+      if(!response.ok) {
+        const errorText=await response.text();
+        console.error("Supabase order error:",response.status,errorText);
+        throw new Error("HTTP "+response.status+" — "+errorText);
+      }
+
+      cart=[];
+      saveCart();
+      renderCart();
+      checkoutForm.reset();
+      clearCustomerMedicinePhoto();
+
+      checkoutMessage.textContent = customerPhotoUploadFailed
+        ? "✅ অর্ডার সফলভাবে জমা হয়েছে! তবে ছবিটি আপলোড হয়নি। ছবিটি পরে পাঠাতে হবে। Medispot BD থেকে যোগাযোগ করে অর্ডার নিশ্চিত করা হবে।"
+        : "✅ অর্ডার সফলভাবে জমা হয়েছে! Medispot BD থেকে যোগাযোগ করে অর্ডার নিশ্চিত করা হবে।";
+
+    } catch(error) {
+      console.error("Order submission error:",error);
+      checkoutMessage.textContent=
+        "❌ অর্ডার জমা হয়নি।\nকারণ: "+(error.message||"অজানা সমস্যা")+
+        "\nএই error-এর screenshot আমাকে পাঠাও।";
+
+    } finally {
+      isSubmittingOrder=false;
+      placeOrderBtn.disabled=false;
+      placeOrderBtn.textContent="অর্ডার কনফার্ম করুন";
+    }
+  });
+
+  renderCart();
+  Promise.all([loadCompanyLogos(), loadProducts()]).catch(error => {
+    console.error("Initial loading error:", error);
+  });
 </script>
 </body>
 </html>
