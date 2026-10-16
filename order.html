@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="bn">
 <head>
@@ -7,297 +6,58 @@
 <title>Medispot BD | Order Management</title>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <style>
-*{box-sizing:border-box}
-body{margin:0;background:#f3f7f5;color:#18352b;font-family:Arial,sans-serif}
-header{background:#075e46;color:white;padding:20px 16px}
-header h1{margin:0}
-header p{margin:7px 0 0;color:#d5f3e6}
-main{max-width:1100px;margin:auto;padding:15px}
-.panel,.stat,.order{background:white;border:1px solid #e1ebe5;border-radius:13px;padding:15px;margin-bottom:14px}
-h2{font-size:18px}
-input,select,button{font:inherit;padding:11px;border-radius:8px;border:1px solid #d4e1d9}
-input{width:100%;margin-bottom:10px}
-button{background:#087653;color:white;border:0;font-weight:bold;cursor:pointer}
-button:disabled{opacity:.5}
-.secondary{background:#e7f3ed;color:#075e46}
-.danger{background:#a72c2c}
-.grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px}
-.stat strong{display:block;font-size:24px;margin-top:8px}
-.muted{color:#6c7c73;font-size:13px}
-.row{display:flex;justify-content:space-between;align-items:center;gap:8px;flex-wrap:wrap}
-.order h3{margin:0 0 8px}
-.order table{width:100%;border-collapse:collapse;margin-top:10px;font-size:13px}
-th,td{text-align:left;border-bottom:1px solid #e5ece7;padding:8px 5px}
-.tablewrap{overflow-x:auto}
-.tag{background:#e6f5ed;color:#075e46;padding:5px 8px;border-radius:7px;font-size:12px}
-#dashboard{display:none}
-#message{white-space:pre-wrap;font-size:13px}
-.filters{display:grid;grid-template-columns:2fr 1fr 1fr;gap:8px}
-.filters input,.filters select{width:100%;margin:0}
-.actions{display:flex;gap:8px;flex-wrap:wrap}
-@media(max-width:650px){
- .grid{grid-template-columns:1fr 1fr}
- .filters{grid-template-columns:1fr}
- main{padding:10px}
- .panel,.order{padding:12px}
-}
-@media print{.no-print{display:none!important}}
+:root{--green:#087b50;--green2:#096746;--bg:#f3f7f5;--ink:#17352b;--muted:#6c7f77;--line:#e1ebe6;--white:#fff;--red:#b42318;--orange:#a15c00}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);font-family:Arial,"Noto Sans Bengali",sans-serif;color:var(--ink)}button,input,select{font:inherit}button{cursor:pointer}.topbar{background:linear-gradient(120deg,#087b50,#075e40);color:#fff;padding:19px 18px;box-shadow:0 5px 20px #164c3320}.topinner{max-width:1200px;margin:auto;display:flex;align-items:center;justify-content:space-between;gap:12px}.brand{font-size:21px;font-weight:800}.brand span{color:#b8f3d8}.topnote{font-size:12px;opacity:.85;margin-top:4px}.wrap{max-width:1200px;margin:24px auto;padding:0 14px 40px}.panel{background:#fff;border:1px solid var(--line);border-radius:18px;padding:20px;box-shadow:0 8px 30px #17352b08}.loginbox{max-width:430px;margin:8vh auto}.heading{font-size:22px;font-weight:800;margin:0 0 8px}.muted{color:var(--muted);font-size:13px;line-height:1.6}.field{margin-top:14px}.field label{display:block;font-weight:700;font-size:13px;margin-bottom:7px}.field input,.filters input,.filters select{width:100%;padding:12px 13px;border:1px solid #d8e4de;border-radius:10px;background:#fff;outline:none;min-width:0}.field input:focus,.filters input:focus,.filters select:focus{border-color:#0b9865;box-shadow:0 0 0 3px #0b986512}.btn{border:0;border-radius:10px;padding:11px 15px;font-weight:700;background:var(--green);color:white}.btn:hover{background:var(--green2)}.btn.secondary{background:#edf5f0;color:#176347;border:1px solid #dcebe2}.btn.danger{background:#fff0ef;color:#a51c16;border:1px solid #ffd9d5}.btn.small{padding:8px 10px;font-size:12px}.msg{font-size:13px;margin-top:12px;line-height:1.5}.msg.error{color:var(--red)}.msg.ok{color:var(--green)}.hidden{display:none!important}.dashhead{display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap;margin-bottom:17px}.stats{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px;margin:16px 0}.stat{background:#fff;border:1px solid var(--line);border-radius:14px;padding:15px}.stat .label{font-size:12px;color:var(--muted)}.stat .num{font-size:24px;font-weight:800;margin-top:7px;overflow-wrap:anywhere}.filters{display:grid;grid-template-columns:2fr 1fr 1fr 1fr;gap:10px;margin:16px 0}.orders{display:grid;gap:14px}.order{background:#fff;border:1px solid var(--line);border-radius:16px;overflow:hidden}.orderhead{padding:15px 16px;background:#f9fcfa;border-bottom:1px solid var(--line);display:flex;justify-content:space-between;align-items:flex-start;gap:12px;flex-wrap:wrap}.orderid{font-size:15px;font-weight:800}.orderdate{font-size:12px;color:var(--muted);margin-top:5px}.statuspill{display:inline-flex;align-items:center;border-radius:30px;padding:6px 10px;font-size:12px;font-weight:800;background:#fff4dc;color:#8a5700}.status-confirmed{background:#e7f3ff;color:#155a9b}.status-processing{background:#f1eaff;color:#6d36a8}.status-shipped{background:#e6f7f4;color:#087d70}.status-delivered{background:#e3f8e9;color:#18733a}.status-cancelled{background:#ffebea;color:#a9231c}.orderbody{padding:16px}.customergrid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:9px 18px;margin-bottom:14px}.info{font-size:13px;line-height:1.55;overflow-wrap:anywhere}.info strong{display:block;font-size:11px;color:var(--muted);font-weight:700;margin-bottom:2px}.itemswrap{overflow-x:auto;border:1px solid var(--line);border-radius:10px;margin:12px 0}.items{border-collapse:collapse;width:100%;min-width:480px;font-size:13px}.items th,.items td{text-align:left;padding:10px;border-bottom:1px solid var(--line)}.items th{background:#f6faf7;color:#567066;font-size:11px}.items tr:last-child td{border-bottom:0}.totalrow{display:flex;justify-content:flex-end;font-weight:800;margin:12px 0 15px;font-size:17px}.photoarea{border:1px solid #dcebe2;background:#f7fbf8;border-radius:13px;padding:13px;margin:14px 0}.photo-title{font-size:14px;font-weight:800;margin-bottom:8px}.customer-photo{display:block;max-width:100%;width:auto;max-height:320px;object-fit:contain;background:white;border:1px solid #dce7e1;border-radius:10px;padding:5px}.photo-link{display:inline-block;margin-top:9px;color:#087b50;font-size:13px;font-weight:700}.no-photo{font-size:13px;color:var(--muted)}.actions{display:flex;align-items:center;gap:8px;flex-wrap:wrap;border-top:1px solid var(--line);padding-top:14px}.actions select{border:1px solid #d8e4de;border-radius:9px;padding:9px;background:white}.empty{padding:35px 15px;text-align:center;color:var(--muted);background:#fff;border:1px dashed #cbdcd2;border-radius:15px}.errorbox{padding:12px;background:#fff0ef;color:#9e241d;border-radius:10px;margin-bottom:12px;font-size:13px;line-height:1.6}.print-only{display:none}@media(max-width:760px){.stats{grid-template-columns:repeat(2,minmax(0,1fr))}.filters{grid-template-columns:1fr 1fr}.filters input:first-child{grid-column:1/-1}.customergrid{grid-template-columns:1fr 1fr}.wrap{margin-top:15px}.panel{padding:16px}.orderbody{padding:13px}}@media(max-width:430px){.filters{grid-template-columns:1fr}.filters input:first-child{grid-column:auto}.customergrid{grid-template-columns:1fr}.stat .num{font-size:21px}}
+@media print{body{background:#fff}.topbar,.dashhead,.stats,.filters,.actions,.no-print,#loginPanel{display:none!important}.wrap{max-width:none;margin:0;padding:0}.order{break-inside:avoid;border:1px solid #aaa;margin-bottom:14px;box-shadow:none}.orderhead{background:#fff!important}.print-only{display:block}.customer-photo{max-height:220px}}
 </style>
 </head>
 <body>
-<header>
-<h1>Medispot BD</h1>
-<p>Order Management Dashboard</p>
-</header>
-<main>
-<section id="login" class="panel">
-<h2>Admin Login</h2>
-<p class="muted">Supabase Admin account দিয়ে লগইন করো।</p>
-<input id="email" type="email" placeholder="Admin email">
-<input id="password" type="password" placeholder="Password">
-<button id="loginBtn" onclick="login()">Login to Dashboard</button>
-<p id="message"></p>
-</section>
-
-<section id="dashboard">
-<div class="row no-print">
-<div>
-<h2>অর্ডার ম্যানেজমেন্ট</h2>
-<p class="muted">তারিখ অনুযায়ী অর্ডার দেখো এবং Receipt তৈরি করো।</p>
-</div>
-<div class="actions">
-<button class="secondary" onclick="enableNotifications()">Notification</button>
-<button onclick="loadOrders()">Refresh</button>
-<button class="danger" onclick="logout()">Logout</button>
-</div>
-</div>
-
-<div class="grid">
-<div class="stat">দেখানো অর্ডার<strong id="totalCount">0</strong></div>
-<div class="stat">Pending<strong id="pendingCount">0</strong></div>
-<div class="stat">মোট মূল্য<strong id="totalAmount">৳0</strong></div>
-</div>
-
-<div class="panel no-print">
-<div class="filters">
-<input id="search" placeholder="অর্ডার / ফার্মেসি / ফোন খুঁজুন" oninput="renderOrders()">
-<input id="dateFilter" type="date" onchange="renderOrders()">
-<select id="filter" onchange="renderOrders()">
-<option value="">সব Status</option>
-<option value="pending">Pending</option>
-<option value="confirmed">Confirmed</option>
-<option value="processing">Processing</option>
-<option value="shipped">Shipped</option>
-<option value="delivered">Delivered</option>
-<option value="cancelled">Cancelled</option>
-</select>
-</div>
-<button class="secondary" style="margin-top:10px" onclick="clearFilters()">সব তারিখের অর্ডার</button>
-</div>
-<div id="ordersList">অর্ডার লোড হচ্ছে...</div>
-</section>
+<header class="topbar"><div class="topinner"><div><div class="brand">Medispot <span>BD</span></div><div class="topnote">Order Management Â· Admin Panel</div></div><button id="logoutBtn" class="btn secondary hidden" type="button">Logout</button></div></header>
+<main class="wrap">
+<section id="loginPanel" class="panel loginbox"><h1 class="heading">Admin Login</h1><p class="muted">à¦à¦°à§à¦¡à¦¾à¦° à¦¦à§à¦à¦¤à§ Admin account à¦¦à¦¿à¦¯à¦¼à§ Login à¦à¦°à§à¥¤</p><form id="loginForm"><div class="field"><label for="email">Admin Email</label><input id="email" type="email" autocomplete="username" required placeholder="Admin email"></div><div class="field"><label for="password">Password</label><input id="password" type="password" autocomplete="current-password" required placeholder="Password"></div><div class="field"><button class="btn" style="width:100%" id="loginBtn" type="submit">Login</button></div><div id="loginMsg" class="msg" role="status"></div></form></section>
+<section id="dashboard" class="hidden"><div class="dashhead"><div><h1 class="heading">Order Management</h1><div class="muted">à¦¨à¦¤à§à¦¨ à¦à¦°à§à¦¡à¦¾à¦° à¦¦à§à¦à§, customer medicine photo à¦à§à¦²à§ à¦à¦¬à¦ status à¦à¦ªà¦¡à§à¦ à¦à¦°à§à¥¤</div></div><div class="no-print"><button id="refreshBtn" class="btn secondary" type="button">â» Refresh</button> <button id="printBtn" class="btn" type="button">Print / Save PDF</button></div></div>
+<div id="topError" class="errorbox hidden"></div><div class="stats"><div class="stat"><div class="label">à¦®à§à¦ à¦à¦°à§à¦¡à¦¾à¦°</div><div class="num" id="statTotal">0</div></div><div class="stat"><div class="label">Pending</div><div class="num" id="statPending">0</div></div><div class="stat"><div class="label">à¦à¦à¦à§à¦° à¦à¦°à§à¦¡à¦¾à¦°</div><div class="num" id="statToday">0</div></div><div class="stat"><div class="label">à¦®à§à¦ à¦à¦°à§à¦¡à¦¾à¦° à¦®à§à¦²à§à¦¯</div><div class="num" id="statAmount">à§³0.00</div></div></div>
+<div class="panel" style="margin-bottom:15px"><div class="filters"><input id="searchBox" type="search" placeholder="à¦¨à¦¾à¦®, Pharmacy, à¦«à§à¦¨ à¦¬à¦¾ Order ID à¦à§à¦à¦à§à¦¨"><input id="dateFilter" type="date" aria-label="Date filter"><select id="statusFilter" aria-label="Status filter"><option value="all">à¦¸à¦¬ Status</option><option value="pending">Pending</option><option value="confirmed">Confirmed</option><option value="processing">Processing</option><option value="shipped">Shipped</option><option value="delivered">Delivered</option><option value="cancelled">Cancelled</option></select><button id="clearFilters" class="btn secondary" type="button">Filter Clear</button></div><div class="muted" id="resultCount">à¦à¦°à§à¦¡à¦¾à¦° à¦²à§à¦¡ à¦¹à¦à§à¦à§â¦</div></div>
+<div id="ordersList" class="orders"><div class="empty">à¦à¦°à§à¦¡à¦¾à¦° à¦²à§à¦¡ à¦¹à¦à§à¦à§â¦</div></div></section>
 </main>
-
 <script>
-const SUPABASE_URL="https://pnaaqkuzazjiabnnwxjq.supabase.co";
-const SUPABASE_PUBLISHABLE_KEY="sb_publishable_ckj65sbFnET7xOjxPJOwfw_-KrevOkv";
-const db=window.supabase.createClient(SUPABASE_URL,SUPABASE_PUBLISHABLE_KEY);
-let orders=[];
-let previousIds=new Set();
-let firstLoad=true;
-
-function money(v){
- return "৳"+Number(v||0).toLocaleString("en-BD",{maximumFractionDigits:2});
-}
-function esc(v){
- return String(v??"").replace(/[&<>"']/g,c=>({
- "&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"
- }[c]));
-}
-function dateKey(v){
- if(!v)return "";
- const d=new Date(v);
- if(isNaN(d.getTime()))return "";
- return d.getFullYear()+"-"+String(d.getMonth()+1).padStart(2,"0")+"-"+String(d.getDate()).padStart(2,"0");
-}
-function dateText(v){
- const d=new Date(v);
- return isNaN(d.getTime())?"-":d.toLocaleString("bn-BD");
-}
-async function login(){
- const email=document.getElementById("email").value.trim();
- const password=document.getElementById("password").value;
- const btn=document.getElementById("loginBtn");
- if(!email||!password){document.getElementById("message").textContent="Email ও password দাও।";return;}
- btn.disabled=true;
- document.getElementById("message").textContent="Login হচ্ছে...";
- try{
-  const {error}=await db.auth.signInWithPassword({email,password});
-  if(error)throw error;
-  document.getElementById("login").style.display="none";
-  document.getElementById("dashboard").style.display="block";
-  await loadOrders();
-  subscribeOrders();
- }catch(e){
-  document.getElementById("message").textContent="Login হয়নি: "+e.message;
- }finally{btn.disabled=false;}
-}
-async function logout(){
- await db.auth.signOut();
- document.getElementById("dashboard").style.display="none";
- document.getElementById("login").style.display="block";
- document.getElementById("password").value="";
-}
-function clearFilters(){
- document.getElementById("search").value="";
- document.getElementById("dateFilter").value="";
- document.getElementById("filter").value="";
- renderOrders();
-}
-async function loadOrders(){
- const list=document.getElementById("ordersList");
- list.innerHTML='<div class="panel">অর্ডার লোড হচ্ছে...</div>';
- try{
-  const {data,error}=await db.from("orders")
-   .select("id,customer_name,pharmacy_name,phone,address,total_amount,status,created_at,items")
-   .order("created_at",{ascending:false}).limit(1000);
-  if(error)throw error;
-  const fresh=data||[];
-  if(!firstLoad&&"Notification"in window&&Notification.permission==="granted"){
-   const newOnes=fresh.filter(o=>!previousIds.has(String(o.id)));
-   if(newOnes.length)new Notification("Medispot BD",{body:newOnes.length+"টি নতুন অর্ডার এসেছে।"});
-  }
-  previousIds=new Set(fresh.map(o=>String(o.id)));
-  firstLoad=false;
-  orders=fresh;
-  renderOrders();
- }catch(e){
-  list.innerHTML='<div class="panel">অর্ডার লোড হয়নি: '+esc(e.message)+
-   '<p class="muted">Supabase SELECT policy এবং items কলাম পরীক্ষা করো।</p></div>';
- }
-}
-function renderOrders(){
- const search=document.getElementById("search").value.toLowerCase().trim();
- const filter=document.getElementById("filter").value;
- const day=document.getElementById("dateFilter").value;
- const shown=orders.filter(o=>{
-  const hay=[o.id,o.customer_name,o.pharmacy_name,o.phone].join(" ").toLowerCase();
-  return (!search||hay.includes(search))&&
-   (!filter||String(o.status||"").toLowerCase()===filter)&&
-   (!day||dateKey(o.created_at)===day);
- });
- document.getElementById("totalCount").textContent=shown.length;
- document.getElementById("pendingCount").textContent=shown.filter(o=>o.status==="pending").length;
- document.getElementById("totalAmount").textContent=money(shown.reduce((s,o)=>s+Number(o.total_amount||0),0));
- const list=document.getElementById("ordersList");
- if(!shown.length){list.innerHTML='<div class="panel">এই ফিল্টারে কোনো অর্ডার পাওয়া যায়নি।</div>';return;}
- list.innerHTML=shown.map(o=>{
-  const items=Array.isArray(o.items)?o.items:[];
-  const status=String(o.status||"pending").toLowerCase();
-  const rows=items.map(i=>{
-   const q=Number(i.quantity??i.qty??0);
-   const p=Number(i.unit_price??i.price??i.sale_price??0);
-   return `<tr><td>${esc(i.name||i.medicine_name||i.product_name||"ওষুধ")}</td>
-   <td>${esc(i.company||i.company_name||"-")}</td><td>${q}</td>
-   <td>${money(p)}</td><td>${money(q*p)}</td></tr>`;
-  }).join("")||'<tr><td colspan="5">পণ্যের বিস্তারিত পাওয়া যায়নি।</td></tr>';
-  return `<article class="order">
-   <div class="row"><div><h3>অর্ডার #${esc(o.id)}</h3>
-   <span class="muted">${esc(dateText(o.created_at))}</span></div>
-   <span class="tag">${esc(status.toUpperCase())}</span></div>
-   <hr>
-   <p><b>অর্ডারকারীর নাম:</b> ${esc(o.customer_name||"-")}</p>
-   <p><b>ফার্মেসি:</b> ${esc(o.pharmacy_name||"-")}</p>
-   <p><b>ফোন:</b> ${esc(o.phone||"-")}</p>
-   <p><b>ঠিকানা:</b> ${esc(o.address||"-")}</p>
-   <h3>ওষুধের তালিকা</h3>
-   <div class="tablewrap"><table><thead><tr><th>ওষুধ</th><th>কোম্পানি</th><th>পরিমাণ</th><th>একক দাম</th><th>মোট</th></tr></thead><tbody>${rows}</tbody></table></div>
-   <div class="row" style="margin-top:12px"><b>সর্বমোট: ${money(o.total_amount)}</b>
-   <div class="actions no-print">
-   <select id="status-${esc(o.id)}">
-   <option value="pending" ${status==="pending"?"selected":""}>Pending</option>
-   <option value="confirmed" ${status==="confirmed"?"selected":""}>Confirmed</option>
-   <option value="processing" ${status==="processing"?"selected":""}>Processing</option>
-   <option value="shipped" ${status==="shipped"?"selected":""}>Shipped</option>
-   <option value="delivered" ${status==="delivered"?"selected":""}>Delivered</option>
-   <option value="cancelled" ${status==="cancelled"?"selected":""}>Cancelled</option>
-   </select>
-   <button onclick="updateStatus('${esc(o.id)}',this)">Save Status</button>
-   <button class="secondary" onclick="printReceipt('${esc(o.id)}')">Receipt / PDF</button>
-   </div></div></article>`;
- }).join("");
-}
-async function updateStatus(id,button){
- const status=document.getElementById("status-"+id).value;
- button.disabled=true;
- try{
-  const {data,error}=await db.from("orders").update({status}).eq("id",id).select("id,status").maybeSingle();
-  if(error)throw error;
-  if(!data)throw new Error("কোনো অর্ডার update হয়নি। Supabase Admin UPDATE policy পরীক্ষা করতে হবে।");
-  alert("Status আপডেট হয়েছে: "+status.toUpperCase());
-  await loadOrders();
- }catch(e){alert("Status পরিবর্তন হয়নি: "+e.message);}
- finally{button.disabled=false;}
-}
-function printReceipt(id){
- const o=orders.find(x=>String(x.id)===String(id));
- if(!o){alert("অর্ডার পাওয়া যায়নি। Refresh করো।");return;}
- const items=Array.isArray(o.items)?o.items:[];
- const rows=items.map(i=>{
-  const q=Number(i.quantity??i.qty??0);
-  const p=Number(i.unit_price??i.price??i.sale_price??0);
-  return `<tr><td>${esc(i.name||i.medicine_name||i.product_name||"ওষুধ")}</td>
-  <td>${esc(i.company||i.company_name||"-")}</td><td>${q}</td>
-  <td>${money(p)}</td><td>${money(q*p)}</td></tr>`;
- }).join("")||'<tr><td colspan="5">এই অর্ডারের পণ্যের বিস্তারিত সংরক্ষিত নেই।</td></tr>';
- const w=window.open("","_blank","width=850,height=700");
- if(!w){alert("Receipt খুলতে browser popup allow করো।");return;}
- w.document.write(`<!DOCTYPE html><html lang="bn"><head><meta charset="UTF-8"><title>Receipt #${esc(o.id)}</title>
- <style>body{font-family:Arial,sans-serif;color:#18352b;max-width:850px;margin:25px auto;padding:20px}
- header{text-align:center;border-bottom:2px solid #075e46;padding-bottom:12px}
- h1{color:#075e46;margin:0}h2{font-size:18px}
- .line{display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap}
- p{margin:8px 0}table{width:100%;border-collapse:collapse;margin-top:12px}
- th,td{border-bottom:1px solid #ddd;padding:9px 5px;text-align:left;font-size:13px}
- .total{text-align:right;font-size:22px;font-weight:bold;margin-top:20px;border-top:2px solid #075e46;padding-top:14px}
- .muted{color:#666;font-size:12px}.print{padding:10px 15px;background:#075e46;color:white;border:0;border-radius:6px}
- @media print{.print{display:none}body{margin:0;padding:0}}</style></head><body>
- <header><h1>MEDISPOT BD</h1><p>Medicine Order Receipt</p></header>
- <div class="line"><p><b>Order ID:</b> #${esc(o.id)}<br><b>তারিখ:</b> ${esc(dateText(o.created_at))}</p>
- <p><b>Status:</b> ${esc(String(o.status||"pending").toUpperCase())}</p></div>
- <h2>অর্ডারকারীর তথ্য</h2>
- <p><b>নাম:</b> ${esc(o.customer_name||"-")}</p>
- <p><b>ফার্মেসি:</b> ${esc(o.pharmacy_name||"-")}</p>
- <p><b>ফোন:</b> ${esc(o.phone||"-")}</p>
- <p><b>ঠিকানা:</b> ${esc(o.address||"-")}</p>
- <h2>অর্ডার করা পণ্য</h2><table><thead><tr><th>পণ্যের নাম</th><th>কোম্পানি</th><th>পরিমাণ</th><th>একক দাম</th><th>মোট</th></tr></thead><tbody>${rows}</tbody></table>
- <div class="total">সর্বমোট: ${money(o.total_amount)}</div>
- <p class="muted">এই রসিদ Medispot BD অর্ডার রেকর্ড থেকে তৈরি।</p>
- <button class="print" onclick="window.print()">Print / Save as PDF</button>
- </body></html>`);
- w.document.close();
-}
-async function enableNotifications(){
- if(!("Notification"in window)){alert("এই ব্রাউজারে Notification নেই।");return;}
- const p=await Notification.requestPermission();
- alert(p==="granted"?"Notification চালু হয়েছে।":"Notification অনুমতি পাওয়া যায়নি।");
-}
-function subscribeOrders(){
- db.channel("orders-dashboard").on("postgres_changes",
- {event:"INSERT",schema:"public",table:"orders"},payload=>{
-  loadOrders();
-  if("Notification"in window&&Notification.permission==="granted"){
-   new Notification("Medispot BD: নতুন অর্ডার",{body:"অর্ডার #"+payload.new.id+" এসেছে।"});
-  }
- }).subscribe();
-}
-db.auth.getSession().then(({data})=>{
- if(data.session){
-  document.getElementById("login").style.display="none";
-  document.getElementById("dashboard").style.display="block";
-  loadOrders();subscribeOrders();
- }
-});
+'use strict';
+const SUPABASE_URL = 'https://pnaaqkuzazjiabnnwxjq.supabase.co';
+const SUPABASE_PUBLISHABLE_KEY = 'sb_publishable_ckj65sbFnET7xOjxPJOwfw_-KrevOkv';
+const PHOTO_BUCKET = 'customer-medicine-photos';
+const db = window.supabase.createClient(SUPABASE_URL, SUPABASE_PUBLISHABLE_KEY);
+const $ = id => document.getElementById(id);
+let allOrders = [];
+let realtimeChannel = null;
+let isLoading = false;
+const STATUS_LABELS = {pending:'Pending',confirmed:'Confirmed',processing:'Processing',shipped:'Shipped',delivered:'Delivered',cancelled:'Cancelled'};
+function escapeHtml(value){return String(value ?? '').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));}
+function money(value){const n=Number(value);return 'à§³'+(Number.isFinite(n)?n:0).toLocaleString('en-BD',{minimumFractionDigits:2,maximumFractionDigits:2});}
+function showTopError(message){$('topError').textContent=message;$('topError').classList.remove('hidden');}
+function hideTopError(){$('topError').textContent='';$('topError').classList.add('hidden');}
+function formatDate(value){if(!value)return 'â';const d=new Date(value);if(Number.isNaN(d.getTime()))return escapeHtml(value);return d.toLocaleString('en-GB',{year:'numeric',month:'short',day:'2-digit',hour:'2-digit',minute:'2-digit'});}
+function localDateKey(value){const d=new Date(value);if(Number.isNaN(d.getTime()))return '';return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0');}
+function getItemName(item){return item?.name ?? item?.medicine_name ?? item?.product_name ?? item?.title ?? 'Medicine';}
+function getItemQty(item){return Number(item?.quantity ?? item?.qty ?? item?.count ?? 1)||1;}
+function getItemPrice(item){return Number(item?.price ?? item?.sale_price ?? item?.unit_price ?? item?.final_price ?? 0)||0;}
+function getItemLineTotal(item){const direct=Number(item?.subtotal ?? item?.line_total ?? item?.total);return Number.isFinite(direct)&&direct>0?direct:getItemQty(item)*getItemPrice(item);}
+function parseItems(items){if(Array.isArray(items))return items;if(typeof items==='string'){try{const v=JSON.parse(items);return Array.isArray(v)?v:[];}catch(_){return [];}}return [];}
+async function getPhotoSignedUrl(path){if(!path)return null;const raw=String(path);if(/^https?:\/\//i.test(raw))return raw;const clean=raw.replace(/^\/+/, '').replace(/^customer-medicine-photos\//,'');try{const {data,error}=await db.storage.from(PHOTO_BUCKET).createSignedUrl(clean,3600);if(error){console.warn('Photo signed URL error:',error.message);return null;}return data?.signedUrl||null;}catch(err){console.warn(err);return null;}}
+async function prepareOrder(order){const path=order.customer_image_url||order.customer_medicine_photo||order.photo_path||'';return {...order,_photoUrl:path?await getPhotoSignedUrl(path):null};}
+function orderMatches(order){const term=$('searchBox').value.trim().toLowerCase();const status=$('statusFilter').value;const date=$('dateFilter').value;if(status!=='all'&&String(order.status||'pending').toLowerCase()!==status)return false;if(date&&localDateKey(order.created_at)!==date)return false;if(term){const hay=[order.id,order.customer_name,order.pharmacy_name,order.phone,order.address].join(' ').toLowerCase();if(!hay.includes(term))return false;}return true;}
+function updateStats(){const today=localDateKey(new Date());$('statTotal').textContent=allOrders.length;$('statPending').textContent=allOrders.filter(o=>(o.status||'pending')==='pending').length;$('statToday').textContent=allOrders.filter(o=>localDateKey(o.created_at)===today).length;$('statAmount').textContent=money(allOrders.filter(o=>(o.status||'pending')!=='cancelled').reduce((sum,o)=>sum+(Number(o.total_amount)||0),0));}
+function renderItems(items){const rows=parseItems(items);if(!rows.length)return '<div class="muted">à¦à¦ à¦à¦°à§à¦¡à¦¾à¦°à§ medicine item details à¦ªà¦¾à¦à¦¯à¦¼à¦¾ à¦¯à¦¾à¦¯à¦¼à¦¨à¦¿à¥¤</div>';return '<div class="itemswrap"><table class="items"><thead><tr><th>Medicine</th><th>Qty</th><th>Unit Price</th><th>Subtotal</th></tr></thead><tbody>'+rows.map(item=>'<tr><td>'+escapeHtml(getItemName(item))+'</td><td>'+escapeHtml(getItemQty(item))+'</td><td>'+money(getItemPrice(item))+'</td><td>'+money(getItemLineTotal(item))+'</td></tr>').join('')+'</tbody></table></div>';}
+function renderOrder(order){const status=String(order.status||'pending').toLowerCase();const statusClass='status-'+(STATUS_LABELS[status]?status:'pending');const items=parseItems(order.items);const photo=order._photoUrl?'<img class="customer-photo" src="'+escapeHtml(order._photoUrl)+'" alt="Customer uploaded medicine photo" loading="lazy"><a class="photo-link" href="'+escapeHtml(order._photoUrl)+'" target="_blank" rel="noopener noreferrer">à¦à¦¬à¦¿à¦à¦¿ à¦¨à¦¤à§à¦¨ Tab-à¦ à¦¬à¦¡à¦¼ à¦à¦°à§ à¦¦à§à¦à§ â</a>':'<div class="no-photo">'+(order.customer_image_url?'à¦à¦¬à¦¿à¦° link à¦¤à§à¦°à¦¿ à¦à¦°à¦¾ à¦¯à¦¾à¦¯à¦¼à¦¨à¦¿à¥¤ Admin login/session à¦à¦¬à¦ Storage policy à¦¯à¦¾à¦à¦¾à¦ à¦à¦°à§à¥¤':'à¦à¦ à¦à¦°à§à¦¡à¦¾à¦°à§à¦° à¦¸à¦à§à¦à§ à¦à§à¦¨à§ à¦à¦¤à¦¿à¦°à¦¿à¦à§à¦¤ medicine photo à¦¦à§à¦à¦¯à¦¼à¦¾ à¦¹à¦¯à¦¼à¦¨à¦¿à¥¤')+'</div>';return '<article class="order" data-order-id="'+escapeHtml(order.id)+'"><div class="orderhead"><div><div class="orderid">Order #'+escapeHtml(order.id)+'</div><div class="orderdate">'+escapeHtml(formatDate(order.created_at))+'</div></div><span class="statuspill '+statusClass+'">'+escapeHtml(STATUS_LABELS[status]||status)+'</span></div><div class="orderbody"><div class="customergrid"><div class="info"><strong>Customer / Owner</strong>'+escapeHtml(order.customer_name||'â')+'</div><div class="info"><strong>Pharmacy Name</strong>'+escapeHtml(order.pharmacy_name||'â')+'</div><div class="info"><strong>Mobile Number</strong>'+escapeHtml(order.phone||'â')+'</div><div class="info"><strong>Address</strong>'+escapeHtml(order.address||'â')+'</div></div>'+renderItems(items)+'<div class="totalrow">Total: '+money(order.total_amount)+'</div><section class="photoarea"><div class="photo-title">ð· Customer-à¦à¦° à¦à¦¤à¦¿à¦°à¦¿à¦à§à¦¤ Medicine Photo</div>'+photo+'</section><div class="actions no-print"><label for="status-'+escapeHtml(order.id)+'" class="muted">Status:</label><select id="status-'+escapeHtml(order.id)+'" class="status-select" data-id="'+escapeHtml(order.id)+'">'+Object.keys(STATUS_LABELS).map(key=>'<option value="'+key+'" '+(key===status?'selected':'')+'>'+STATUS_LABELS[key]+'</option>').join('')+'</select><button class="btn small update-status" data-id="'+escapeHtml(order.id)+'" type="button">Status Update</button><button class="btn secondary small receipt-btn" data-id="'+escapeHtml(order.id)+'" type="button">Receipt / PDF</button></div><div class="print-only muted">Medispot BD â Order Receipt</div></div></article>';}
+function renderOrders(){const filtered=allOrders.filter(orderMatches);$('resultCount').textContent='à¦¦à§à¦à¦¾à¦¨à§ à¦¹à¦à§à¦à§ '+filtered.length+'à¦à¦¿ / à¦®à§à¦ '+allOrders.length+'à¦à¦¿ à¦à¦°à§à¦¡à¦¾à¦°';$('ordersList').innerHTML=filtered.length?filtered.map(renderOrder).join(''):'<div class="empty">à¦à¦ Filter-à¦ à¦à§à¦¨à§ à¦à¦°à§à¦¡à¦¾à¦° à¦ªà¦¾à¦à¦¯à¦¼à¦¾ à¦¯à¦¾à¦¯à¦¼à¦¨à¦¿à¥¤</div>';}
+async function loadOrders(){if(isLoading)return;isLoading=true;$('ordersList').innerHTML='<div class="empty">à¦à¦°à§à¦¡à¦¾à¦° à¦²à§à¦¡ à¦¹à¦à§à¦à§â¦</div>';hideTopError();try{const {data,error}=await db.from('orders').select('id,customer_name,pharmacy_name,phone,address,total_amount,status,created_at,items,customer_image_url').order('created_at',{ascending:false});if(error)throw error;allOrders=await Promise.all((data||[]).map(prepareOrder));updateStats();renderOrders();}catch(err){console.error('Load orders failed:',err);showTopError('à¦à¦°à§à¦¡à¦¾à¦° à¦²à§à¦¡ à¦à¦°à¦¾ à¦¯à¦¾à¦¯à¦¼à¦¨à¦¿: '+(err.message||'Unknown error')+' â orders table column / RLS policy à¦¯à¦¾à¦à¦¾à¦ à¦à¦°à§à¥¤');$('ordersList').innerHTML='<div class="empty">à¦à¦°à§à¦¡à¦¾à¦° à¦²à§à¦¡ à¦à¦°à¦¾ à¦¯à¦¾à¦¯à¦¼à¦¨à¦¿à¥¤ à¦à¦ªà¦°à§à¦° error à¦¦à§à¦à§à¥¤</div>';}finally{isLoading=false;}}
+async function updateStatus(id){const select=$('status-'+CSS.escape(String(id)));if(!select)return;const newStatus=select.value;const button=document.querySelector('.update-status[data-id="'+CSS.escape(String(id))+'"]');if(button){button.disabled=true;button.textContent='Savingâ¦';}try{const {error}=await db.from('orders').update({status:newStatus}).eq('id',id);if(error)throw error;const order=allOrders.find(o=>String(o.id)===String(id));if(order)order.status=newStatus;updateStats();renderOrders();}catch(err){alert('Status update à¦¹à¦¯à¦¼à¦¨à¦¿: '+(err.message||'Unknown error'));}finally{if(button){button.disabled=false;button.textContent='Status Update';}}}
+function printSingleOrder(id){const cards=[...document.querySelectorAll('.order')];const card=cards.find(el=>String(el.dataset.orderId)===String(id));if(!card){alert('à¦à¦°à§à¦¡à¦¾à¦°à¦à¦¿ current filter-à¦ à¦¦à§à¦à¦¾ à¦¯à¦¾à¦à§à¦à§ à¦¨à¦¾à¥¤');return;}const win=window.open('','_blank','width=850,height=900');if(!win){alert('Print window blocked à¦¹à¦¯à¦¼à§à¦à§à¥¤ Browser popup allow à¦à¦°à§à¥¤');return;}const style=[...document.querySelectorAll('style')].map(s=>s.innerHTML).join('\n');win.document.write('<!DOCTYPE html><html lang="bn"><head><meta charset="UTF-8"><title>Medispot BD Receipt</title><style>'+style+'body{padding:20px;background:#fff}.order{display:block!important}.actions,.no-print{display:none!important}.print-only{display:block!important}</style></head><body><h2>Medispot BD â Order Receipt</h2>'+card.outerHTML+'</body></html>');win.document.close();win.onload=()=>{win.focus();win.print();};}
+function startRealtime(){if(realtimeChannel){db.removeChannel(realtimeChannel);realtimeChannel=null;}realtimeChannel=db.channel('medispot-orders-live').on('postgres_changes',{event:'INSERT',schema:'public',table:'orders'},payload=>{const newOrder=payload.new;if(!newOrder)return;const already=allOrders.some(o=>String(o.id)===String(newOrder.id));if(!already){prepareOrder(newOrder).then(prepared=>{allOrders.unshift(prepared);updateStats();renderOrders();});try{if('Notification'in window&&Notification.permission==='granted')new Notification('Medispot BD â à¦¨à¦¤à§à¦¨ à¦à¦°à§à¦¡à¦¾à¦°',{body:(newOrder.pharmacy_name||newOrder.customer_name||'à¦¨à¦¤à§à¦¨ customer')+' Â· '+money(newOrder.total_amount)});else{const old=document.title;document.title='ð à¦¨à¦¤à§à¦¨ Order!';setTimeout(()=>document.title=old,5000);}}catch(_){}}}).subscribe(status=>{if(status==='CHANNEL_ERROR')console.warn('Order realtime subscription error');});}
+$('loginForm').addEventListener('submit',async event=>{event.preventDefault();$('loginMsg').textContent='Login à¦¹à¦à§à¦à§â¦';$('loginMsg').className='msg';$('loginBtn').disabled=true;try{const {data,error}=await db.auth.signInWithPassword({email:$('email').value.trim(),password:$('password').value});if(error)throw error;if(!data?.session)throw new Error('Login session à¦ªà¦¾à¦à¦¯à¦¼à¦¾ à¦¯à¦¾à¦¯à¦¼à¦¨à¦¿à¥¤');$('loginPanel').classList.add('hidden');$('dashboard').classList.remove('hidden');$('logoutBtn').classList.remove('hidden');await loadOrders();startRealtime();if('Notification'in window&&Notification.permission==='default'){try{await Notification.requestPermission();}catch(_){}}}catch(err){$('loginMsg').textContent='Login à¦¹à¦¯à¦¼à¦¨à¦¿: '+(err.message||'Email/password à¦¯à¦¾à¦à¦¾à¦ à¦à¦°à§à¥¤');$('loginMsg').className='msg error';}finally{$('loginBtn').disabled=false;}});
+$('logoutBtn').addEventListener('click',async()=>{if(realtimeChannel){await db.removeChannel(realtimeChannel);realtimeChannel=null;}await db.auth.signOut();allOrders=[];$('dashboard').classList.add('hidden');$('loginPanel').classList.remove('hidden');$('logoutBtn').classList.add('hidden');$('password').value='';$('loginMsg').textContent='Logout à¦¹à¦¯à¦¼à§à¦à§à¥¤';});
+$('refreshBtn').addEventListener('click',loadOrders);$('printBtn').addEventListener('click',()=>window.print());$('searchBox').addEventListener('input',renderOrders);$('statusFilter').addEventListener('change',renderOrders);$('dateFilter').addEventListener('change',renderOrders);$('clearFilters').addEventListener('click',()=>{$('searchBox').value='';$('statusFilter').value='all';$('dateFilter').value='';renderOrders();});
+$('ordersList').addEventListener('click',event=>{const statusButton=event.target.closest('.update-status');if(statusButton){updateStatus(statusButton.dataset.id);return;}const receiptButton=event.target.closest('.receipt-btn');if(receiptButton)printSingleOrder(receiptButton.dataset.id);});
+(async()=>{try{const {data:{session}}=await db.auth.getSession();if(session){$('loginPanel').classList.add('hidden');$('dashboard').classList.remove('hidden');$('logoutBtn').classList.remove('hidden');await loadOrders();startRealtime();}}catch(err){console.warn('Session check failed:',err);}})();
 </script>
 </body>
 </html>
