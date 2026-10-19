@@ -1,0 +1,12 @@
+
+{
+  "id": "/Medispot-BD/",
+  "name": "Medispot BD",
+  "short_name": "Medispot",
+  "description": "Medispot BD Medicine Marketplace",
+  "start_url": "/Medispot-BD/",
+  "scope": "/Medispot-BD/",
+  "display": "standalone",
+  "background_color": "#ffffff",
+  "theme_color": "#0b6b4f"
+}
