@@ -1,13 +1,16 @@
+
 <!DOCTYPE html>
 <html lang="bn">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Medispot BD | Order Management</title>
+
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Hind+Siliguri:wght@400;500;600;700&family=Noto+Sans+Bengali:wght@400;500;600;700&display=swap" rel="stylesheet">
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
 <style>
 *{box-sizing:border-box}
 body{margin:0;background:#f3f7f5;color:#18352b;font-family:"Noto Sans Bengali","Hind Siliguri",Arial,sans-serif}
@@ -20,9 +23,9 @@ h2{font-size:18px;margin:0 0 15px}
 input,button,select{font:inherit;padding:11px;border-radius:9px;border:1px solid #d4e1d9}
 input{width:100%;margin-bottom:10px}
 button{cursor:pointer;background:#087653;color:white;border:0;font-weight:bold}
-button:disabled{opacity:.5}
+button:disabled{opacity:.5;cursor:wait}
 .secondary{background:#e7f3ed;color:#075e46}
-.danger{background:#a72c2c}
+.danger{background:#a72c2c;color:white}
 .grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px}
 .stat strong{display:block;font-size:25px;margin-top:8px}
 .muted{color:#6c7c73;font-size:13px}
@@ -37,199 +40,414 @@ th,td{text-align:left;border-bottom:1px solid #e5ece7;padding:9px 5px}
 .filters{display:grid;grid-template-columns:2fr 1fr 1fr;gap:10px}
 .filters input,.filters select{width:100%;margin:0}
 .actions{display:flex;gap:8px;flex-wrap:wrap}
+.actions select{max-width:160px}
 .customer-photo{margin:14px 0;padding:13px;border:1px solid #cfe6d8;border-radius:12px;background:#f5fbf7}
 .customer-photo h4{margin:0 0 8px;color:#075e46;font-size:14px}
 .customer-photo img{display:block;width:auto;max-width:100%;max-height:320px;object-fit:contain;border-radius:9px;border:1px solid #dce8e0;background:#fff}
 .customer-photo a{display:inline-block;margin-top:8px;color:#075e46;font-weight:bold;font-size:13px}
 .photo-missing{font-size:13px;color:#6c7c73}
-@media(max-width:650px){.grid{grid-template-columns:1fr 1fr}.filters{grid-template-columns:1fr}main{padding:12px}.panel,.order{padding:13px}}
+.connection{font-size:12px;padding:6px 9px;border-radius:7px;background:#e7f3ed;color:#075e46}
+.connection.offline{background:#fff0e8;color:#9b451d}
+.empty{padding:25px;text-align:center}
+@media(max-width:650px){
+  .grid{grid-template-columns:1fr 1fr}
+  .filters{grid-template-columns:1fr}
+  main{padding:12px}
+  .panel,.order{padding:13px}
+  .actions select{max-width:100%;width:100%}
+}
 @media print{body{background:white}.no-print{display:none!important}}
 </style>
 </head>
+
 <body>
 <header>
-<h1>Medispot BD</h1>
-<p>Order Management Dashboard</p>
+  <h1>Medispot BD</h1>
+  <p>Order Management Dashboard</p>
 </header>
+
 <main>
-<section id="login" class="panel">
-<h2>Admin Login</h2>
-<p class="muted">তোমার Supabase Admin account দিয়ে লগইন করো।</p>
-<input id="email" type="email" placeholder="Admin email" autocomplete="username">
-<input id="password" type="password" placeholder="Password" autocomplete="current-password">
-<button id="loginBtn" onclick="login()">Login to Dashboard</button>
-<div id="message"></div>
-</section>
+  <section id="login" class="panel">
+    <h2>Admin Login</h2>
+    <p class="muted">তোমার Supabase Admin account দিয়ে লগইন করো।</p>
+    <input id="email" type="email" placeholder="Admin email" autocomplete="username">
+    <input id="password" type="password" placeholder="Password" autocomplete="current-password">
+    <button id="loginBtn" onclick="login()">Login to Dashboard</button>
+    <div id="message"></div>
+  </section>
 
-<section id="dashboard">
-<div class="row no-print" style="margin-bottom:15px">
-<div>
-<h2 style="margin-bottom:5px">অর্ডার ম্যানেজমেন্ট</h2>
-<div class="muted">নতুন অর্ডার দেখতে Refresh চাপো। তারিখ বেছে সেই দিনের অর্ডার দেখো।</div>
-</div>
-<div class="actions">
-<button class="secondary" onclick="enableNotifications()">Notification চালু</button>
-<button onclick="loadOrders()">Refresh</button>
-<button class="danger" onclick="logout()">Logout</button>
-</div>
-</div>
+  <section id="dashboard">
+    <div class="row no-print" style="margin-bottom:15px">
+      <div>
+        <h2 style="margin-bottom:5px">অর্ডার ম্যানেজমেন্ট</h2>
+        <div class="muted">নতুন অর্ডার এলে তালিকা আপডেট হবে। প্রয়োজনে Refresh চাপো।</div>
+        <p><span id="connectionStatus" class="connection">Realtime পরীক্ষা হচ্ছে...</span></p>
+      </div>
+      <div class="actions">
+        <button class="secondary" onclick="enableNotifications()">Notification চালু</button>
+        <button onclick="loadOrders()">Refresh</button>
+        <button class="danger" onclick="logout()">Logout</button>
+      </div>
+    </div>
 
-<div class="grid">
-<div class="stat"><span class="muted">দেখানো অর্ডার</span><strong id="totalCount">0</strong></div>
-<div class="stat"><span class="muted">Pending</span><strong id="pendingCount">0</strong></div>
-<div class="stat"><span class="muted">দেখানো অর্ডারের মোট মূল্য</span><strong id="totalAmount">৳0</strong></div>
-</div>
+    <div class="grid">
+      <div class="stat">
+        <span class="muted">দেখানো অর্ডার</span>
+        <strong id="totalCount">0</strong>
+      </div>
+      <div class="stat">
+        <span class="muted">Pending</span>
+        <strong id="pendingCount">0</strong>
+      </div>
+      <div class="stat">
+        <span class="muted">দেখানো অর্ডারের মোট মূল্য</span>
+        <strong id="totalAmount">৳0</strong>
+      </div>
+    </div>
 
-<div class="panel no-print">
-<div class="filters">
-<input id="search" placeholder="অর্ডার নম্বর / ফার্মেসি / ফোন দিয়ে খুঁজুন" oninput="renderOrders()">
-<input id="dateFilter" type="date" aria-label="তারিখ অনুযায়ী অর্ডার" onchange="renderOrders()">
-<select id="filter" onchange="renderOrders()">
-<option value="">সব Status</option>
-<option value="pending">Pending</option>
-<option value="confirmed">Confirmed</option>
-<option value="processing">Processing</option>
-<option value="shipped">Shipped</option>
-<option value="delivered">Delivered</option>
-<option value="cancelled">Cancelled</option>
-</select>
-</div>
-<div class="actions" style="margin-top:10px">
-<button class="secondary" onclick="clearFilters()">সব তারিখের অর্ডার</button>
-</div>
-</div>
-<div id="ordersList"><p class="muted">অর্ডার লোড হচ্ছে...</p></div>
-</section>
+    <div class="panel no-print">
+      <div class="filters">
+        <input id="search" placeholder="অর্ডার নম্বর / ফার্মেসি / ফোন দিয়ে খুঁজুন" oninput="renderOrders()">
+        <input id="dateFilter" type="date" aria-label="তারিখ অনুযায়ী অর্ডার" onchange="renderOrders()">
+        <select id="filter" onchange="renderOrders()">
+          <option value="">সব Status</option>
+          <option value="pending">Pending</option>
+          <option value="confirmed">Confirmed</option>
+          <option value="processing">Processing</option>
+          <option value="shipped">Shipped</option>
+          <option value="delivered">Delivered</option>
+          <option value="cancelled">Cancelled</option>
+        </select>
+      </div>
+      <div class="actions" style="margin-top:10px">
+        <button class="secondary" onclick="clearFilters()">সব তারিখের অর্ডার</button>
+      </div>
+    </div>
+
+    <div id="ordersList"><p class="muted">অর্ডার লোড হচ্ছে...</p></div>
+  </section>
 </main>
 
 <script>
 const SUPABASE_URL = "https://pnaaqkuzazjiabnnwxjq.supabase.co";
 const SUPABASE_PUBLISHABLE_KEY = "sb_publishable_ckj65sbFnET7xOjxPJOwfw_-KrevOkv";
-const db = window.supabase.createClient(SUPABASE_URL, SUPABASE_PUBLISHABLE_KEY);
-let orders = [];
-let previousIds = new Set();
-let firstLoad = true;
 
-function msg(text){ document.getElementById("message").textContent = text; }
-function money(value){ return "৳" + Number(value || 0).toLocaleString("en-BD",{maximumFractionDigits:2}); }
-function escapeHtml(value){
-  return String(value??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+const db = window.supabase.createClient(
+  SUPABASE_URL,
+  SUPABASE_PUBLISHABLE_KEY
+);
+
+let orders = [];
+let ordersChannel = null;
+let loadingOrders = false;
+let reloadQueued = false;
+let notifiedIds = new Set();
+let notificationPermissionAsked = false;
+
+function msg(text){
+  document.getElementById("message").textContent = text;
 }
+
+function money(value){
+  return "৳" + Number(value || 0).toLocaleString("en-BD", {
+    maximumFractionDigits: 2
+  });
+}
+
+function escapeHtml(value){
+  return String(value ?? "").replace(/[&<>"']/g, c => ({
+    "&":"&amp;",
+    "<":"&lt;",
+    ">":"&gt;",
+    '"':"&quot;",
+    "'":"&#39;"
+  }[c]));
+}
+
 function dateKey(value){
   if(!value) return "";
   const d = new Date(value);
   if(Number.isNaN(d.getTime())) return "";
-  const y=d.getFullYear(), m=String(d.getMonth()+1).padStart(2,"0"), day=String(d.getDate()).padStart(2,"0");
+  const y = d.getFullYear();
+  const m = String(d.getMonth()+1).padStart(2,"0");
+  const day = String(d.getDate()).padStart(2,"0");
   return `${y}-${m}-${day}`;
 }
+
 function formatDate(value){
   if(!value) return "-";
-  const d=new Date(value);
+  const d = new Date(value);
   return Number.isNaN(d.getTime()) ? "-" : d.toLocaleString("bn-BD");
 }
 
-async function login(){
-  const email=document.getElementById("email").value.trim();
-  const password=document.getElementById("password").value;
-  const btn=document.getElementById("loginBtn");
-  if(!email||!password){msg("Email ও password দাও।");return;}
-  btn.disabled=true; msg("Login হচ্ছে...");
+function setConnectionStatus(text, offline=false){
+  const el = document.getElementById("connectionStatus");
+  el.textContent = text;
+  el.classList.toggle("offline", offline);
+}
+
+function showBrowserNotification(title, body, id){
+  if(!("Notification" in window)) return;
+  if(Notification.permission !== "granted") return;
+
+  // একই order ID-এর জন্য একই session-এ বারবার notification আটকায়।
+  const key = String(id);
+  if(notifiedIds.has(key)) return;
+  notifiedIds.add(key);
+
   try{
-    const {data,error}=await db.auth.signInWithPassword({email,password});
-    if(error) throw error;
-    document.getElementById("login").style.display="none";
-    document.getElementById("dashboard").style.display="block";
-    msg("");
-    await loadOrders(); subscribeOrders();
-  }catch(e){msg("Login হয়নি: "+e.message);}
-  finally{btn.disabled=false;}
-}
-async function logout(){
-  await db.auth.signOut();
-  document.getElementById("dashboard").style.display="none";
-  document.getElementById("login").style.display="block";
-  document.getElementById("password").value="";
-}
-function clearFilters(){
-  document.getElementById("search").value="";
-  document.getElementById("dateFilter").value="";
-  document.getElementById("filter").value="";
-  renderOrders();
-}
-async function loadOrders(){
-  const list=document.getElementById("ordersList");
-  list.innerHTML='<div class="panel">অর্ডার লোড হচ্ছে...</div>';
-  try{
-    const {data,error}=await db.from("orders")
-      .select("id,customer_name,pharmacy_name,phone,address,total_amount,status,created_at,items,customer_image_url")
-      .order("created_at",{ascending:false}).limit(1000);
-    if(error) throw error;
-    const fresh=await Promise.all((data||[]).map(async o=>{
-      const path=String(o.customer_image_url||"").trim();
-      if(!path) return {...o,customerImageSignedUrl:""};
-      // New orders store a private Storage object path, not a public URL.
-      try {
-        if(/^https?:\/\//i.test(path)) return {...o,customerImageSignedUrl:path};
-        const {data:signed,error:signedError}=await db.storage.from("customer-medicine-photos").createSignedUrl(path,3600);
-        if(signedError) { console.warn("Customer medicine photo could not be opened:",signedError.message); return {...o,customerImageSignedUrl:""}; }
-        return {...o,customerImageSignedUrl:signed?.signedUrl||""};
-      } catch(photoError) {
-        console.warn("Customer medicine photo error:",photoError);
-        return {...o,customerImageSignedUrl:""};
-      }
-    }));
-    if(!firstLoad){
-      const newOnes=fresh.filter(o=>!previousIds.has(String(o.id)));
-      if(newOnes.length&&"Notification" in window&&Notification.permission==="granted"){
-        new Notification("Medispot BD: নতুন অর্ডার",{body:newOnes.length+"টি নতুন অর্ডার এসেছে।"});
-      }
-    }
-    previousIds=new Set(fresh.map(o=>String(o.id)));
-    firstLoad=false; orders=fresh; renderOrders();
-  }catch(e){
-    list.innerHTML='<div class="panel">অর্ডার লোড হয়নি: '+escapeHtml(e.message)+
-      '<p class="muted">Admin SELECT policy, UPDATE policy, login email এবং items কলাম পরীক্ষা করো।</p></div>';
+    new Notification(title, { body });
+  }catch(error){
+    console.warn("Browser notification failed:", error);
   }
 }
+
+async function login(){
+  const email = document.getElementById("email").value.trim();
+  const password = document.getElementById("password").value;
+  const btn = document.getElementById("loginBtn");
+
+  if(!email || !password){
+    msg("Email ও password দাও।");
+    return;
+  }
+
+  btn.disabled = true;
+  msg("Login হচ্ছে...");
+
+  try{
+    const { data, error } = await db.auth.signInWithPassword({
+      email,
+      password
+    });
+
+    if(error) throw error;
+    if(!data.session) throw new Error("Login session তৈরি হয়নি।");
+
+    document.getElementById("login").style.display = "none";
+    document.getElementById("dashboard").style.display = "block";
+    msg("");
+
+    await loadOrders();
+    subscribeOrders();
+  }catch(error){
+    msg("Login হয়নি: " + error.message);
+  }finally{
+    btn.disabled = false;
+  }
+}
+
+async function logout(){
+  await stopOrderSubscription();
+  await db.auth.signOut();
+
+  orders = [];
+  notifiedIds.clear();
+
+  document.getElementById("dashboard").style.display = "none";
+  document.getElementById("login").style.display = "block";
+  document.getElementById("password").value = "";
+  setConnectionStatus("লগইন করা নেই", true);
+}
+
+async function stopOrderSubscription(){
+  if(!ordersChannel) return;
+
+  const oldChannel = ordersChannel;
+  ordersChannel = null;
+
+  try{
+    await db.removeChannel(oldChannel);
+  }catch(error){
+    console.warn("Realtime channel close failed:", error);
+  }
+}
+
+function clearFilters(){
+  document.getElementById("search").value = "";
+  document.getElementById("dateFilter").value = "";
+  document.getElementById("filter").value = "";
+  renderOrders();
+}
+
+async function loadOrders(){
+  if(loadingOrders){
+    reloadQueued = true;
+    return;
+  }
+
+  loadingOrders = true;
+  const list = document.getElementById("ordersList");
+  list.innerHTML = '<div class="panel">অর্ডার লোড হচ্ছে...</div>';
+
+  try{
+    const { data, error } = await db
+      .from("orders")
+      .select("id,customer_name,pharmacy_name,phone,address,total_amount,status,created_at,items,customer_image_url")
+      .order("created_at", { ascending: false })
+      .limit(1000);
+
+    if(error) throw error;
+
+    const fresh = await Promise.all((data || []).map(async order => {
+      const path = String(order.customer_image_url || "").trim();
+
+      if(!path){
+        return { ...order, customerImageSignedUrl: "" };
+      }
+
+      try{
+        // আগে থেকেই URL থাকলে সেটি ব্যবহার করো।
+        if(/^https?:\/\//i.test(path)){
+          return { ...order, customerImageSignedUrl: path };
+        }
+
+        // Private Storage bucket থেকে সাময়িক signed URL তৈরি।
+        const { data: signed, error: signedError } = await db
+          .storage
+          .from("customer-medicine-photos")
+          .createSignedUrl(path, 3600);
+
+        if(signedError){
+          console.warn("Customer photo could not be opened:", signedError.message);
+          return { ...order, customerImageSignedUrl: "" };
+        }
+
+        return {
+          ...order,
+          customerImageSignedUrl: signed?.signedUrl || ""
+        };
+      }catch(photoError){
+        console.warn("Customer photo error:", photoError);
+        return { ...order, customerImageSignedUrl: "" };
+      }
+    }));
+
+    orders = fresh;
+    renderOrders();
+  }catch(error){
+    list.innerHTML =
+      '<div class="panel">অর্ডার লোড হয়নি: ' +
+      escapeHtml(error.message) +
+      '<p class="muted">Admin SELECT policy, orders টেবিলের কলাম এবং login session পরীক্ষা করো।</p></div>';
+
+    console.error("Order loading failed:", error);
+  }finally{
+    loadingOrders = false;
+
+    if(reloadQueued){
+      reloadQueued = false;
+      loadOrders();
+    }
+  }
+}
+
 function renderOrders(){
-  const search=document.getElementById("search").value.toLowerCase().trim();
-  const filter=document.getElementById("filter").value;
-  const selectedDate=document.getElementById("dateFilter").value;
-  const shown=orders.filter(o=>{
-    const hay=[o.id,o.customer_name,o.pharmacy_name,o.phone].join(" ").toLowerCase();
-    return (!search||hay.includes(search))&&(!filter||String(o.status||"").toLowerCase()===filter)&&(!selectedDate||dateKey(o.created_at)===selectedDate);
+  const search = document.getElementById("search").value.toLowerCase().trim();
+  const filter = document.getElementById("filter").value;
+  const selectedDate = document.getElementById("dateFilter").value;
+
+  const shown = orders.filter(order => {
+    const hay = [
+      order.id,
+      order.customer_name,
+      order.pharmacy_name,
+      order.phone
+    ].join(" ").toLowerCase();
+
+    return (!search || hay.includes(search)) &&
+      (!filter || String(order.status || "").toLowerCase() === filter) &&
+      (!selectedDate || dateKey(order.created_at) === selectedDate);
   });
-  document.getElementById("totalCount").textContent=shown.length;
-  document.getElementById("pendingCount").textContent=shown.filter(o=>String(o.status||"").toLowerCase()==="pending").length;
-  document.getElementById("totalAmount").textContent=money(shown.reduce((sum,o)=>sum+Number(o.total_amount||0),0));
-  const list=document.getElementById("ordersList");
-  if(!shown.length){list.innerHTML='<div class="panel">এই ফিল্টারে কোনো অর্ডার পাওয়া যায়নি।</div>';return;}
-  list.innerHTML=shown.map(o=>{
-    const items=Array.isArray(o.items)?o.items:[];
-    const status=String(o.status||"pending").toLowerCase();
-    const itemRows=items.length?items.map(i=>{
-      const qty=Number(i.quantity??i.qty??0);
-      const price=Number(i.unit_price??i.price??i.sale_price??0);
-      return `<tr><td>${escapeHtml(i.name||i.medicine_name||i.product_name||"ওষুধ")}</td>
-      <td>${escapeHtml(i.company||i.company_name||"-")}</td><td>${qty}</td><td>${money(price)}</td><td>${money(qty*price)}</td></tr>`;
-    }).join(""):'<tr><td colspan="5">এই অর্ডারের items তালিকা পাওয়া যায়নি।</td></tr>';
-    return `<article class="order">
+
+  document.getElementById("totalCount").textContent = shown.length;
+
+  document.getElementById("pendingCount").textContent =
+    shown.filter(order =>
+      String(order.status || "").toLowerCase() === "pending"
+    ).length;
+
+  document.getElementById("totalAmount").textContent = money(
+    shown.reduce((sum, order) => sum + Number(order.total_amount || 0), 0)
+  );
+
+  const list = document.getElementById("ordersList");
+
+  if(!shown.length){
+    list.innerHTML = '<div class="panel empty">এই ফিল্টারে কোনো অর্ডার পাওয়া যায়নি।</div>';
+    return;
+  }
+
+  list.innerHTML = shown.map(order => {
+    const items = Array.isArray(order.items) ? order.items : [];
+    const status = String(order.status || "pending").toLowerCase();
+
+    const itemRows = items.length ? items.map(item => {
+      const qty = Number(item.quantity ?? item.qty ?? 0);
+      const price = Number(item.unit_price ?? item.price ?? item.sale_price ?? 0);
+
+      return `<tr>
+        <td>${escapeHtml(item.name || item.medicine_name || item.product_name || "ওষুধ")}</td>
+        <td>${escapeHtml(item.company || item.company_name || "-")}</td>
+        <td>${qty}</td>
+        <td>${money(price)}</td>
+        <td>${money(qty * price)}</td>
+      </tr>`;
+    }).join("") : '<tr><td colspan="5">এই অর্ডারের items তালিকা পাওয়া যায়নি।</td></tr>';
+
+    const photoSection = order.customerImageSignedUrl
+      ? `<div class="customer-photo">
+          <h4>Customer-এর অতিরিক্ত ওষুধের ছবি</h4>
+          <a href="${escapeHtml(order.customerImageSignedUrl)}" target="_blank" rel="noopener noreferrer">
+            <img src="${escapeHtml(order.customerImageSignedUrl)}" alt="Customer uploaded medicine photo" loading="lazy">
+          </a>
+          <a href="${escapeHtml(order.customerImageSignedUrl)}" target="_blank" rel="noopener noreferrer">ছবিটি বড় করে দেখুন ↗</a>
+        </div>`
+      : (order.customer_image_url
+          ? `<div class="customer-photo">
+              <h4>Customer-এর অতিরিক্ত ওষুধের ছবি</h4>
+              <p class="photo-missing">ছবিটি খোলা যাচ্ছে না। Admin login এবং Storage SELECT policy পরীক্ষা করো।</p>
+            </div>`
+          : "");
+
+    return `<article class="order" data-order-id="${escapeHtml(order.id)}">
       <div class="row">
-        <div><h3>অর্ডার #${escapeHtml(o.id)}</h3><span class="muted">${escapeHtml(formatDate(o.created_at))}</span></div>
+        <div>
+          <h3>অর্ডার #${escapeHtml(order.id)}</h3>
+          <span class="muted">${escapeHtml(formatDate(order.created_at))}</span>
+        </div>
         <span class="tag">${escapeHtml(status.toUpperCase())}</span>
       </div>
+
       <hr style="border:0;border-top:1px solid #e5ece7;margin:14px 0">
-      <p><b>অর্ডারকারীর নাম:</b> ${escapeHtml(o.customer_name||"-")}</p>
-      <p><b>ফার্মেসি:</b> ${escapeHtml(o.pharmacy_name||"-")}</p>
-      <p><b>ফোন:</b> ${escapeHtml(o.phone||"-")}</p>
-      <p><b>ঠিকানা:</b> ${escapeHtml(o.address||"-")}</p>
-      ${o.customerImageSignedUrl?`<div class="customer-photo"><h4>Customer-এর অতিরিক্ত ওষুধের ছবি</h4><a href="${escapeHtml(o.customerImageSignedUrl)}" target="_blank" rel="noopener noreferrer"><img src="${escapeHtml(o.customerImageSignedUrl)}" alt="Customer uploaded medicine photo" loading="lazy"></a><a href="${escapeHtml(o.customerImageSignedUrl)}" target="_blank" rel="noopener noreferrer">ছবিটি বড় করে দেখুন ↗</a></div>`:(o.customer_image_url?'<div class="customer-photo"><h4>Customer-এর অতিরিক্ত ওষুধের ছবি</h4><p class="photo-missing">ছবিটি এখন খোলা যাচ্ছে না। Admin login এবং Storage SELECT policy পরীক্ষা করো।</p></div>':'')}
+
+      <p><b>অর্ডারকারীর নাম:</b> ${escapeHtml(order.customer_name || "-")}</p>
+      <p><b>ফার্মেসি:</b> ${escapeHtml(order.pharmacy_name || "-")}</p>
+      <p><b>ফোন:</b> ${escapeHtml(order.phone || "-")}</p>
+      <p><b>ঠিকানা:</b> ${escapeHtml(order.address || "-")}</p>
+
+      ${photoSection}
+
       <h3>ওষুধের তালিকা</h3>
-      <div class="tablewrap"><table><thead><tr><th>ওষুধ</th><th>কোম্পানি</th><th>পরিমাণ</th><th>একক দাম</th><th>মোট</th></tr></thead><tbody>${itemRows}</tbody></table></div>
+      <div class="tablewrap">
+        <table>
+          <thead>
+            <tr>
+              <th>ওষুধ</th>
+              <th>কোম্পানি</th>
+              <th>পরিমাণ</th>
+              <th>একক দাম</th>
+              <th>মোট</th>
+            </tr>
+          </thead>
+          <tbody>${itemRows}</tbody>
+        </table>
+      </div>
+
       <div class="row" style="margin-top:14px">
-        <b>অর্ডারের মোট: ${money(o.total_amount)}</b>
+        <b>অর্ডারের মোট: ${money(order.total_amount)}</b>
         <div class="actions no-print">
-          <select id="status-${escapeHtml(o.id)}" aria-label="Status">
+          <select class="status-select" aria-label="অর্ডারের Status">
             <option value="pending" ${status==="pending"?"selected":""}>Pending</option>
             <option value="confirmed" ${status==="confirmed"?"selected":""}>Confirmed</option>
             <option value="processing" ${status==="processing"?"selected":""}>Processing</option>
@@ -237,64 +455,275 @@ function renderOrders(){
             <option value="delivered" ${status==="delivered"?"selected":""}>Delivered</option>
             <option value="cancelled" ${status==="cancelled"?"selected":""}>Cancelled</option>
           </select>
-          <button onclick="updateStatus('${escapeHtml(o.id)}',this)">Save Status</button>
-          <button class="secondary" onclick="printReceipt('${escapeHtml(o.id)}')">Receipt / PDF</button>
+          <button onclick="updateStatus(this)">Save Status</button>
+          <button class="secondary" onclick="printReceipt(this)">Receipt / PDF</button>
+          <button class="danger" onclick="deleteOrder(this)">Delete Order</button>
         </div>
       </div>
     </article>`;
   }).join("");
 }
-async function updateStatus(id,button){
-  const select=document.getElementById("status-"+id);
-  const status=select.value;
-  button.disabled=true;
+
+async function updateStatus(button){
+  const card = button.closest(".order");
+  if(!card) return;
+
+  const id = card.dataset.orderId;
+  const select = card.querySelector(".status-select");
+  const status = select.value;
+
+  button.disabled = true;
+  const originalText = button.textContent;
+  button.textContent = "Saving...";
+
   try{
-    const {data,error}=await db.from("orders").update({status}).eq("id",id).select("id,status").maybeSingle();
+    const { data, error } = await db
+      .from("orders")
+      .update({ status })
+      .eq("id", id)
+      .select("id,status")
+      .maybeSingle();
+
     if(error) throw error;
-    if(!data) throw new Error("কোনো row update হয়নি। Supabase UPDATE policy-তে আপনার Admin email এবং USING/WITH CHECK শর্ত পরীক্ষা করতে হবে।");
-    alert("স্ট্যাটাস আপডেট হয়েছে: "+status.toUpperCase());
+
+    if(!data){
+      throw new Error(
+        "কোনো row update হয়নি। Admin UPDATE policy এবং RLS পরীক্ষা করো।"
+      );
+    }
+
+    alert("স্ট্যাটাস আপডেট হয়েছে: " + status.toUpperCase());
     await loadOrders();
-  }catch(e){alert("স্ট্যাটাস পরিবর্তন হয়নি: "+e.message);}
-  finally{button.disabled=false;}
+  }catch(error){
+    alert("স্ট্যাটাস পরিবর্তন হয়নি: " + error.message);
+  }finally{
+    button.disabled = false;
+    button.textContent = originalText;
+  }
 }
-function printReceipt(id){
-  const o=orders.find(x=>String(x.id)===String(id));
-  if(!o){alert("অর্ডার পাওয়া যায়নি। Refresh করে আবার চেষ্টা করো।");return;}
-  const items=Array.isArray(o.items)?o.items:[];
-  const rows=items.map(i=>{
-    const qty=Number(i.quantity??i.qty??0);
-    const price=Number(i.unit_price??i.price??i.sale_price??0);
-    return `<tr><td>${escapeHtml(i.name||i.medicine_name||i.product_name||"ওষুধ")}</td><td>${escapeHtml(i.company||i.company_name||"-")}</td><td>${qty}</td><td>${money(price)}</td><td>${money(qty*price)}</td></tr>`;
+
+async function deleteOrder(button){
+  const card = button.closest(".order");
+  if(!card) return;
+
+  const id = card.dataset.orderId;
+
+  const confirmed = confirm(
+    `সতর্কতা!\n\nঅর্ডার #${id} স্থায়ীভাবে ডিলিট করতে চাও?\n\nএই কাজ ফিরিয়ে আনা যাবে না।`
+  );
+
+  if(!confirmed) return;
+
+  button.disabled = true;
+  const originalText = button.textContent;
+  button.textContent = "ডিলিট হচ্ছে...";
+
+  try{
+    const { data, error } = await db
+      .from("orders")
+      .delete()
+      .eq("id", id)
+      .select("id")
+      .maybeSingle();
+
+    if(error) throw error;
+
+    if(!data){
+      throw new Error(
+        "অর্ডার ডিলিট হয়নি। Admin DELETE/SELECT policy এবং RLS পরীক্ষা করো।"
+      );
+    }
+
+    orders = orders.filter(order => String(order.id) !== String(id));
+    renderOrders();
+
+    alert(`অর্ডার #${id} সফলভাবে ডিলিট হয়েছে।`);
+  }catch(error){
+    console.error("Order delete failed:", error);
+    alert("অর্ডার ডিলিট করা যায়নি:\n" + error.message);
+  }finally{
+    button.disabled = false;
+    button.textContent = originalText;
+  }
+}
+
+function printReceipt(button){
+  const card = button.closest(".order");
+  if(!card) return;
+
+  const id = card.dataset.orderId;
+  const order = orders.find(item => String(item.id) === String(id));
+
+  if(!order){
+    alert("অর্ডার পাওয়া যায়নি। Refresh করে আবার চেষ্টা করো।");
+    return;
+  }
+
+  const items = Array.isArray(order.items) ? order.items : [];
+
+  const rows = items.map(item => {
+    const qty = Number(item.quantity ?? item.qty ?? 0);
+    const price = Number(item.unit_price ?? item.price ?? item.sale_price ?? 0);
+
+    return `<tr>
+      <td>${escapeHtml(item.name || item.medicine_name || item.product_name || "ওষুধ")}</td>
+      <td>${escapeHtml(item.company || item.company_name || "-")}</td>
+      <td>${qty}</td>
+      <td>${money(price)}</td>
+      <td>${money(qty * price)}</td>
+    </tr>`;
   }).join("");
-  const w=window.open("","_blank","width=850,height=700");
-  if(!w){alert("Receipt খুলতে browser popup allow করো।");return;}
-  w.document.write(`<!DOCTYPE html><html lang="bn"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Medispot BD Receipt #${escapeHtml(o.id)}</title>
-  <style>body{font-family:"Noto Sans Bengali","Hind Siliguri",Arial,sans-serif;color:#18352b;max-width:850px;margin:25px auto;padding:20px}header{text-align:center;border-bottom:2px solid #075e46;padding-bottom:14px}h1{margin:0;color:#075e46}h2{font-size:18px} .line{display:flex;justify-content:space-between;gap:15px;flex-wrap:wrap}.info{margin:18px 0}.info p{margin:7px 0}table{width:100%;border-collapse:collapse;margin-top:12px}th,td{border-bottom:1px solid #ddd;text-align:left;padding:10px 6px;font-size:13px}th{background:#f0f6f2}.total{text-align:right;font-size:22px;font-weight:bold;margin-top:20px;border-top:2px solid #075e46;padding-top:14px}.muted{color:#666;font-size:12px}.print{padding:10px 15px;background:#075e46;color:white;border:0;border-radius:6px;cursor:pointer}@media print{.print{display:none}body{margin:0;padding:0}}</style></head><body>
-  <header><h1>MEDISPOT BD</h1><p>Medicine Order Receipt</p></header>
-  <div class="line info"><div><b>Order ID:</b> #${escapeHtml(o.id)}<br><b>Order Date:</b> ${escapeHtml(formatDate(o.created_at))}</div><div><b>Status:</b> ${escapeHtml(String(o.status||"pending").toUpperCase())}</div></div>
-  <h2>অর্ডারকারীর তথ্য</h2><div class="info"><p><b>নাম:</b> ${escapeHtml(o.customer_name||"-")}</p><p><b>ফার্মেসির নাম:</b> ${escapeHtml(o.pharmacy_name||"-")}</p><p><b>মোবাইল:</b> ${escapeHtml(o.phone||"-")}</p><p><b>ঠিকানা:</b> ${escapeHtml(o.address||"-")}</p></div>
-  <h2>অর্ডার করা পণ্য</h2><table><thead><tr><th>পণ্যের নাম</th><th>কোম্পানি</th><th>পরিমাণ</th><th>একক মূল্য</th><th>মোট</th></tr></thead><tbody>${rows||'<tr><td colspan="5">এই অর্ডারের পণ্যের বিস্তারিত সংরক্ষিত নেই।</td></tr>'}</tbody></table>
-  <div class="total">সর্বমোট: ${money(o.total_amount)}</div><p class="muted">এই রসিদটি Medispot BD অর্ডার রেকর্ড থেকে তৈরি।</p><button class="print" onclick="window.print()">Print / Save as PDF</button></body></html>`);
+
+  const w = window.open("", "_blank", "width=850,height=700");
+
+  if(!w){
+    alert("Receipt খুলতে browser popup allow করো।");
+    return;
+  }
+
+  w.document.write(`<!DOCTYPE html>
+  <html lang="bn">
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <title>Medispot BD Receipt #${escapeHtml(order.id)}</title>
+    <style>
+      body{font-family:"Noto Sans Bengali","Hind Siliguri",Arial,sans-serif;color:#18352b;max-width:850px;margin:25px auto;padding:20px}
+      header{text-align:center;border-bottom:2px solid #075e46;padding-bottom:14px}
+      h1{margin:0;color:#075e46}
+      h2{font-size:18px}
+      .line{display:flex;justify-content:space-between;gap:15px;flex-wrap:wrap}
+      .info{margin:18px 0}
+      .info p{margin:7px 0}
+      table{width:100%;border-collapse:collapse;margin-top:12px}
+      th,td{border-bottom:1px solid #ddd;text-align:left;padding:10px 6px;font-size:13px}
+      th{background:#f0f6f2}
+      .total{text-align:right;font-size:22px;font-weight:bold;margin-top:20px;border-top:2px solid #075e46;padding-top:14px}
+      .muted{color:#666;font-size:12px}
+      .print{padding:10px 15px;background:#075e46;color:white;border:0;border-radius:6px;cursor:pointer}
+      @media print{.print{display:none}body{margin:0;padding:0}}
+    </style>
+  </head>
+  <body>
+    <header><h1>MEDISPOT BD</h1><p>Medicine Order Receipt</p></header>
+    <div class="line info">
+      <div><b>Order ID:</b> #${escapeHtml(order.id)}<br><b>Order Date:</b> ${escapeHtml(formatDate(order.created_at))}</div>
+      <div><b>Status:</b> ${escapeHtml(String(order.status || "pending").toUpperCase())}</div>
+    </div>
+    <h2>অর্ডারকারীর তথ্য</h2>
+    <div class="info">
+      <p><b>নাম:</b> ${escapeHtml(order.customer_name || "-")}</p>
+      <p><b>ফার্মেসির নাম:</b> ${escapeHtml(order.pharmacy_name || "-")}</p>
+      <p><b>মোবাইল:</b> ${escapeHtml(order.phone || "-")}</p>
+      <p><b>ঠিকানা:</b> ${escapeHtml(order.address || "-")}</p>
+    </div>
+    <h2>অর্ডার করা পণ্য</h2>
+    <table>
+      <thead><tr><th>পণ্যের নাম</th><th>কোম্পানি</th><th>পরিমাণ</th><th>একক মূল্য</th><th>মোট</th></tr></thead>
+      <tbody>${rows || '<tr><td colspan="5">এই অর্ডারের পণ্যের বিস্তারিত সংরক্ষিত নেই।</td></tr>'}</tbody>
+    </table>
+    <div class="total">সর্বমোট: ${money(order.total_amount)}</div>
+    <p class="muted">এই রসিদটি Medispot BD অর্ডার রেকর্ড থেকে তৈরি।</p>
+    <button class="print" onclick="window.print()">Print / Save as PDF</button>
+  </body>
+  </html>`);
+
   w.document.close();
 }
+
 async function enableNotifications(){
-  if(!("Notification" in window)){alert("এই ব্রাউজারে Notification support নেই।");return;}
-  const permission=await Notification.requestPermission();
-  alert(permission==="granted"?"Notification চালু হয়েছে।":"Browser notification অনুমতি পাওয়া যায়নি।");
-}
-function subscribeOrders(){
-  db.channel("orders-dashboard").on("postgres_changes",{event:"INSERT",schema:"public",table:"orders"},payload=>{
-    loadOrders();
-    if("Notification" in window&&Notification.permission==="granted"){
-      new Notification("Medispot BD: নতুন অর্ডার",{body:"অর্ডার #"+payload.new.id+" এসেছে।"});
+  if(!("Notification" in window)){
+    alert("এই ব্রাউজারে সাধারণ Browser Notification সমর্থিত নয়।");
+    return;
+  }
+
+  try{
+    const permission = await Notification.requestPermission();
+    notificationPermissionAsked = true;
+
+    if(permission === "granted"){
+      alert("Browser Notification অনুমতি দেওয়া হয়েছে। নতুন অর্ডারের Notification পেতে Dashboard খোলা রাখতে হবে।");
+    }else{
+      alert("Notification অনুমতি দেওয়া হয়নি। Browser বা device settings-এ অনুমতি পরীক্ষা করো।");
     }
-  }).subscribe();
+  }catch(error){
+    alert("Notification চালু করা যায়নি: " + error.message);
+  }
 }
-db.auth.getSession().then(({data})=>{
+
+function subscribeOrders(){
+  // একই Dashboard-এ একাধিক channel তৈরি হওয়া আটকাও।
+  if(ordersChannel) return;
+
+  setConnectionStatus("Realtime সংযোগ হচ্ছে...", true);
+
+  ordersChannel = db
+    .channel("orders-dashboard")
+    .on(
+      "postgres_changes",
+      {
+        event: "INSERT",
+        schema: "public",
+        table: "orders"
+      },
+      payload => {
+        const newOrder = payload.new || {};
+        const id = newOrder.id;
+
+        if(id !== undefined && id !== null){
+          showBrowserNotification(
+            "Medispot BD: নতুন অর্ডার",
+            "অর্ডার #" + id + " এসেছে।",
+            id
+          );
+        }
+
+        // নতুন অর্ডার তালিকায় দেখানোর জন্য পুনরায় লোড।
+        loadOrders();
+      }
+    )
+    .subscribe(status => {
+      console.log("Orders Realtime status:", status);
+
+      if(status === "SUBSCRIBED"){
+        setConnectionStatus("Realtime সংযুক্ত");
+      }else if(status === "CHANNEL_ERROR"){
+        setConnectionStatus("Realtime সংযোগে সমস্যা", true);
+      }else if(status === "TIMED_OUT"){
+        setConnectionStatus("Realtime timeout — Refresh করো", true);
+      }else if(status === "CLOSED"){
+        setConnectionStatus("Realtime বন্ধ", true);
+      }else{
+        setConnectionStatus("Realtime: " + status, true);
+      }
+    });
+}
+
+async function startDashboard(){
+  document.getElementById("login").style.display = "none";
+  document.getElementById("dashboard").style.display = "block";
+
+  await loadOrders();
+  subscribeOrders();
+}
+
+db.auth.getSession().then(async ({ data, error }) => {
+  if(error){
+    console.error("Session check failed:", error);
+    return;
+  }
+
   if(data.session){
-    document.getElementById("login").style.display="none";
-    document.getElementById("dashboard").style.display="block";
-    loadOrders(); subscribeOrders();
+    await startDashboard();
+  }
+});
+
+// লগইন অন্য ট্যাব থেকে শেষ হলে বা session শেষ হলে UI আপডেট।
+db.auth.onAuthStateChange((event, session) => {
+  if(event === "SIGNED_OUT"){
+    stopOrderSubscription();
+    document.getElementById("dashboard").style.display = "none";
+    document.getElementById("login").style.display = "block";
   }
 });
 </script>
