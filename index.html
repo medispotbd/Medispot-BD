@@ -37,12 +37,11 @@ header{position:sticky;top:0;z-index:20;background:#fff;border-bottom:1px solid 
 .login-btn:hover{background:var(--light)}
 
 /* Hero */
-.hero2{position:relative;background:linear-gradient(100deg,#dcf2e8 0%,#eaf8f2 50%,#cdeadb 100%);padding:64px 0 52px;overflow:hidden}
+.hero2{position:relative;background:radial-gradient(circle at 88% 20%,#c4ebd8 0,transparent 38%),linear-gradient(100deg,#dcf2e8 0%,#eaf8f2 55%,#d3eee0 100%);padding:34px 0 34px;overflow:hidden}
 .hero2 .container{position:relative}
 .hero2 h1{position:relative;z-index:2;font-size:clamp(32px,4.4vw,54px);line-height:1.3;font-weight:700;color:#0b4a36;max-width:560px}
 .hero2 p{position:relative;z-index:2;margin-top:14px;font-size:20px;line-height:1.7;color:#264a3c;max-width:480px}
-.hero-img{position:absolute;right:calc((100% - 100vw)/2);top:-64px;bottom:84px;width:58%;background:url("hero.jpg") right center/cover no-repeat;-webkit-mask-image:linear-gradient(to right,transparent 0,#000 38%),linear-gradient(to bottom,#000 80%,transparent 100%);-webkit-mask-composite:source-in;mask-image:linear-gradient(to right,transparent 0,#000 38%),linear-gradient(to bottom,#000 80%,transparent 100%);mask-composite:intersect}
-.hero-search{position:relative;z-index:3;margin-top:52px;display:flex;align-items:center;background:#fff;border-radius:18px;padding:8px;box-shadow:0 14px 38px rgba(11,107,79,.2);max-width:940px}
+.hero-search{position:relative;z-index:3;margin-top:0;display:flex;align-items:center;background:#fff;border-radius:18px;padding:8px;box-shadow:0 14px 38px rgba(11,107,79,.2);max-width:940px}
 .hero-cat{display:flex;align-items:center;gap:10px;padding:0 18px;border-right:1px solid var(--border);color:var(--green)}
 .hero-cat select{appearance:none;-webkit-appearance:none;border:0;background:transparent;font-weight:600;font-size:16px;color:var(--text);padding:14px 22px 14px 0;outline:none;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' fill='none' stroke='%2310261e' stroke-width='2' stroke-linecap='round'%3E%3Cpath d='m1 1 5 5 5-5'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right center}
 .hero-search input{flex:1;min-width:0;border:0;outline:0;background:transparent;padding:14px 18px;font-size:16px;color:var(--text)}
@@ -187,10 +186,8 @@ body.cart-open{overflow:hidden}
   .nav-menu{display:none}
   .login-btn span{display:none}
   .login-btn{padding:10px 12px}
-  .hero2{padding:34px 0 34px}
+  .hero2{padding:22px 0 22px}
   .hero2 p{font-size:16px}
-  .hero-img{position:static;width:100%;height:190px;margin-top:20px;border-radius:16px;-webkit-mask-image:none;mask-image:none;background-position:center}
-  .hero-search{margin-top:20px}
   .hero-search button{padding:15px 20px}
   .features-grid{grid-template-columns:1fr 1fr;gap:20px 0}
   .feature:nth-child(3){border-left:0}
@@ -272,9 +269,6 @@ body.cart-open{overflow:hidden}
 <main>
   <section class="hero2">
     <div class="container">
-      <h1>আপনার ফার্মেসির জন্য<br>ওষুধ খুঁজুন সহজেই</h1>
-      <p>বিশ্বস্ত পাইকারি দামে মানসম্মত ওষুধ এখন এক জায়গায় – Medispot BD</p>
-      <div class="hero-img" role="img" aria-label="ওষুধের প্যাকেট"></div>
       <form class="hero-search" id="heroSearchForm">
         <div class="hero-cat"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m10.5 20.5 10-10a4.95 4.95 0 1 0-7-7l-10 10a4.95 4.95 0 1 0 7 7Z"/><path d="m8.5 8.5 7 7"/></svg>
           <select id="searchField" aria-label="কীভাবে খুঁজবেন">
@@ -288,14 +282,7 @@ body.cart-open{overflow:hidden}
     </div>
   </section>
 
-  <section class="features">
-    <div class="container features-grid">
-      <div class="feature"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20 13c0 5-3.5 7.5-7.66 8.95a1 1 0 0 1-.67-.01C7.5 20.5 4 18 4 13V6a1 1 0 0 1 1-1c2 0 4.5-1.2 6.24-2.72a1.17 1.17 0 0 1 1.52 0C14.51 3.81 17 5 19 5a1 1 0 0 1 1 1z"/><path d="m9 12 2 2 4-4"/></svg><strong>বিশ্বস্ত সরবরাহকারী</strong><span>নির্ভরযোগ্য উৎস থেকে পণ্য</span></div>
-      <div class="feature"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="m10.5 20.5 10-10a4.95 4.95 0 1 0-7-7l-10 10a4.95 4.95 0 1 0 7 7Z"/><path d="m8.5 8.5 7 7"/></svg><strong>সকল কোম্পানির ওষুধ</strong><span>বড় ব্র্যান্ড থেকে শুরু করে</span></div>
-      <div class="feature"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12.586 2.586A2 2 0 0 0 11.172 2H4a2 2 0 0 0-2 2v7.172a2 2 0 0 0 .586 1.414l8.704 8.704a2.426 2.426 0 0 0 3.42 0l6.58-6.58a2.426 2.426 0 0 0 0-3.42z"/><circle cx="7.5" cy="7.5" r=".6" fill="currentColor"/></svg><strong>পাইকারি সাশ্রয়ী দাম</strong><span>ফার্মেসির জন্য বিশেষ মূল্য</span></div>
-      <div class="feature"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="m11 17 2 2a1 1 0 1 0 3-3"/><path d="m14 14 2.5 2.5a1 1 0 1 0 3-3l-3.88-3.88a3 3 0 0 0-4.24 0l-.88.88a1 1 0 1 1-3-3l2.81-2.81a5.79 5.79 0 0 1 7.06-.87l.47.28a2 2 0 0 0 1.42.25L21 4"/><path d="m21 3 1 11h-2"/><path d="M3 3 2 14l6.5 6.5a1 1 0 1 0 3-3"/><path d="M3 4h8"/></svg><strong>সহজে ব্যবস্থাপনা</strong><span>এক প্ল্যাটফর্মে সবকিছু</span></div>
-    </div>
-  </section>
+  
 
   <section class="flash-sale-section" id="flashSale" style="display:none;">
     <div class="container">
