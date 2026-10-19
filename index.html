@@ -142,6 +142,29 @@ header{background-color:#f3fbf7;background-image:url("data:image/svg+xml,%3Csvg 
 .order-btn{margin:0;height:38px;padding:0 6px;font-size:13px}
 .order-btn svg{display:none}
 
+/* Account */
+.login-btn.on{border-color:var(--green);color:var(--green)}
+.login-prompt{margin:14px 0 4px;padding:18px;background:#f4faf7;border:1px dashed #8acbb0;border-radius:15px;text-align:center}
+.login-prompt strong{display:block;color:var(--green);font-size:17px}
+.login-prompt p{color:var(--muted);font-size:13px;margin:6px 0 12px}
+.auth-tabs{display:grid;grid-template-columns:1fr 1fr;gap:6px;background:var(--light);border-radius:12px;padding:4px;margin-bottom:6px}
+.auth-tabs button{border:0;background:transparent;border-radius:9px;padding:10px;font-weight:700;color:var(--muted)}
+.auth-tabs button.active{background:#fff;color:var(--green);box-shadow:0 2px 8px rgba(11,107,79,.12)}
+#authForm label,#profileForm label{display:block;font-size:13px;font-weight:600;margin:12px 0 5px}
+#authForm input,#authForm textarea,#profileForm input,#profileForm textarea{width:100%;padding:12px;border:1px solid #dce8e0;border-radius:12px;outline:none;background:#fff;color:var(--text);transition:.2s}
+#authForm input:focus,#authForm textarea:focus,#profileForm input:focus,#profileForm textarea:focus{border-color:var(--green);box-shadow:0 0 0 4px rgba(11,107,79,.12)}
+#profileForm input[readonly]{background:var(--bg);color:var(--muted)}
+#authMessage,#profileMessage{font-size:13px;margin-top:12px;overflow-wrap:anywhere;white-space:pre-wrap}
+.auth-hint{color:var(--muted);font-size:12px;margin-top:8px}
+.my-order{border:1px solid var(--border);border-radius:12px;padding:12px;margin-bottom:10px}
+.my-order-top{display:flex;justify-content:space-between;align-items:center;gap:8px;flex-wrap:wrap}
+.my-order-top b{font-size:15px}
+.status-pill{font-size:12px;font-weight:700;padding:3px 10px;border-radius:20px;background:#fff6dd;color:#8a6100}
+.status-pill.ok{background:var(--light);color:var(--green)}
+.status-pill.bad{background:#fff0ed;color:#b42318}
+.my-order small{display:block;color:var(--muted);margin-top:4px;overflow-wrap:anywhere}
+.my-order .amt{font-weight:700;margin-top:4px}
+
 /* Footer */
 .site-footer{background:linear-gradient(180deg,#0b6b4f,#075a42);color:#fff;padding:48px 0 0}
 .footer-cols{display:grid;grid-template-columns:1.3fr 1fr 1.3fr}
@@ -296,11 +319,9 @@ body.cart-open{overflow:hidden}
         <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="20" r="1.5"/><circle cx="18" cy="20" r="1.5"/><path d="M2 3h3l2.7 12.4a2 2 0 0 0 2 1.6h7.7a2 2 0 0 0 2-1.5L21 8H6"/></svg>
         <span class="cart-badge" id="cartCount">0</span>
       </button>
-      <!-- লগইন পেজের ঠিকানা এখানে বসান (href="#" বদলে) -->
-      <a class="login-btn" href="#">
+      <button class="login-btn" id="accountBtn" type="button" aria-label="একাউন্ট">
         <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="4"/><path d="M4 21a8 8 0 0 1 16 0"/></svg>
-        <span>লগইন</span>
-      </a>
+        <span id="accountLabel">লগইন</span></button>
     </div>
   </div>
 </header>
@@ -382,9 +403,14 @@ body.cart-open{overflow:hidden}
     </section>
 
     <div class="cart-total">মোট: <strong id="cartTotal">৳0</strong></div>
-    <h3 class="checkout-title">ফার্মেসির তথ্য দিন</h3>
+    <div id="loginPrompt" class="login-prompt">
+      <strong>অর্ডার করতে লগইন করুন</strong>
+      <p>একাউন্ট খুললে আপনার নাম, ফার্মেসি ও ঠিকানা সেভ থাকবে, প্রতিবার লিখতে হবে না।</p>
+      <button type="button" class="order-btn" id="loginPromptBtn" style="margin-top:0">লগইন / নতুন একাউন্ট</button>
+    </div>
+    <h3 class="checkout-title" id="checkoutTitle" hidden>ফার্মেসির তথ্য দিন</h3>
 
-    <form id="checkoutForm">
+    <form id="checkoutForm" hidden>
       <label for="ownerName">মালিকের নাম</label>
       <input id="ownerName" name="owner_name" required maxlength="120" autocomplete="name">
 
@@ -402,6 +428,63 @@ body.cart-open{overflow:hidden}
       <p id="checkoutMessage" role="status" aria-live="polite"></p>
       <p class="checkout-hint">অর্ডার জমা দেওয়ার পর Medispot BD থেকে ফোন করে পণ্য, দাম ও প্রাপ্যতা নিশ্চিত করা হবে।</p>
     </form>
+  </section>
+</div>
+
+<div id="authModal" class="cart-overlay" style="display:none">
+  <section class="cart-panel" role="dialog" aria-modal="true" aria-labelledby="authTitle">
+    <div class="cart-heading">
+      <h2 id="authTitle">লগইন</h2>
+      <button type="button" id="authCloseBtn" class="cart-close" aria-label="বন্ধ করুন">✕</button>
+    </div>
+    <div class="auth-tabs">
+      <button type="button" data-auth-tab="login" class="active">লগইন</button>
+      <button type="button" data-auth-tab="register">নতুন একাউন্ট</button>
+    </div>
+    <form id="authForm" novalidate>
+      <div data-reg-only hidden>
+        <label for="regOwner">মালিকের নাম</label>
+        <input id="regOwner" maxlength="120" autocomplete="name">
+        <label for="regPharmacy">ফার্মেসির নাম</label>
+        <input id="regPharmacy" maxlength="160">
+      </div>
+      <label for="authPhone">মোবাইল নম্বর</label>
+      <input id="authPhone" type="tel" inputmode="numeric" maxlength="20" autocomplete="username" placeholder="01XXXXXXXXX">
+      <label for="authPassword">পাসওয়ার্ড</label>
+      <input id="authPassword" type="password" minlength="6" maxlength="72" autocomplete="current-password" placeholder="কমপক্ষে ৬ অক্ষর">
+      <div data-reg-only hidden>
+        <label for="regAddress">ফার্মেসির ঠিকানা</label>
+        <textarea id="regAddress" rows="3" maxlength="500"></textarea>
+      </div>
+      <button id="authSubmit" class="order-btn" type="submit" style="margin-top:16px">লগইন করুন</button>
+      <p id="authMessage" role="status" aria-live="polite"></p>
+      <p class="auth-hint">পাসওয়ার্ড ভুলে গেলে Medispot BD-তে যোগাযোগ করুন।</p>
+    </form>
+  </section>
+</div>
+
+<div id="accountModal" class="cart-overlay" style="display:none">
+  <section class="cart-panel" role="dialog" aria-modal="true" aria-labelledby="accountTitle">
+    <div class="cart-heading">
+      <h2 id="accountTitle">👤 আমার একাউন্ট</h2>
+      <button type="button" id="accountCloseBtn" class="cart-close" aria-label="বন্ধ করুন">✕</button>
+    </div>
+    <h3 class="checkout-title">আমার তথ্য</h3>
+    <form id="profileForm" novalidate>
+      <label for="pfOwner">মালিকের নাম</label>
+      <input id="pfOwner" maxlength="120">
+      <label for="pfPharmacy">ফার্মেসির নাম</label>
+      <input id="pfPharmacy" maxlength="160">
+      <label for="pfPhone">মোবাইল নম্বর</label>
+      <input id="pfPhone" readonly>
+      <label for="pfAddress">ফার্মেসির ঠিকানা</label>
+      <textarea id="pfAddress" rows="3" maxlength="500"></textarea>
+      <button class="order-btn" type="submit" style="margin-top:14px">তথ্য সেভ করুন</button>
+      <p id="profileMessage" role="status" aria-live="polite"></p>
+    </form>
+    <h3 class="checkout-title" style="margin-top:24px">আমার অর্ডার</h3>
+    <div id="myOrders"></div>
+    <button type="button" id="logoutBtn" class="cart-close" style="margin-top:18px;width:100%;padding:12px;color:#b42318;background:#fff5f4">লগআউট</button>
   </section>
 </div>
 
@@ -434,7 +517,7 @@ body.cart-open{overflow:hidden}
 </footer>
 
 <script type="module">
-  import { createClient } from "https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/+esm";
+  import { createClient } from "https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.39.7/+esm";
 
   const SUPABASE_URL = "https://pnaaqkuzazjiabnnwxjq.supabase.co";
   const SUPABASE_PUBLISHABLE_KEY = "sb_publishable_ckj65sbFnET7xOjxPJOwfw_-KrevOkv";
@@ -1000,6 +1083,12 @@ body.cart-open{overflow:hidden}
     event.preventDefault();
     if (isSubmittingOrder) return;
 
+    if (!currentUser) {
+      checkoutMessage.textContent = "অর্ডার করতে আগে লগইন করুন।";
+      openModal(authModal);
+      return;
+    }
+
     if (!cart.length && !customerMedicinePhotoFile) {
       checkoutMessage.textContent = "আগে Cart-এ ওষুধ যোগ করো অথবা ওষুধের ছবি আপলোড করো।";
       return;
@@ -1049,15 +1138,10 @@ body.cart-open{overflow:hidden}
         }
       }
 
-      const response = await fetch(SUPABASE_URL + "/rest/v1/orders", {
-        method:"POST",
-        headers: {
-          apikey:SUPABASE_PUBLISHABLE_KEY,
-          Authorization:"Bearer " + SUPABASE_PUBLISHABLE_KEY,
-          "Content-Type":"application/json",
-          Prefer:"return=minimal"
-        },
-        body:JSON.stringify({
+      const {data:insertedOrder, error:insertError} = await supabase
+        .from("orders")
+        .insert({
+          user_id:currentUser.id,
           customer_name:owner,
           pharmacy_name:pharmacy,
           phone:phone,
@@ -1067,23 +1151,26 @@ body.cart-open{overflow:hidden}
           status:"pending",
           customer_image_url:customerImagePath
         })
-      });
+        .select("id")
+        .single();
 
-      if (!response.ok) {
-        const errorText = await response.text();
-        console.error("Supabase order error:", response.status, errorText);
-        throw new Error("HTTP " + response.status + " — " + errorText);
+      if (insertError) {
+        console.error("Supabase order error:", insertError);
+        throw new Error(insertError.message || "অর্ডার সেভ হয়নি");
       }
+
+      const orderNo = "#" + String(insertedOrder && insertedOrder.id || "").slice(-6).toUpperCase();
 
       cart = [];
       saveCart();
       renderCart();
       checkoutForm.reset();
       clearCustomerMedicinePhoto();
+      prefillCheckout();
 
       checkoutMessage.textContent = customerPhotoUploadFailed
-        ? "✅ অর্ডার সফলভাবে জমা হয়েছে! তবে ছবিটি আপলোড হয়নি। ছবিটি পরে পাঠাতে হবে। Medispot BD থেকে যোগাযোগ করে অর্ডার নিশ্চিত করা হবে।"
-        : "✅ অর্ডার সফলভাবে জমা হয়েছে! Medispot BD থেকে যোগাযোগ করে অর্ডার নিশ্চিত করা হবে।";
+        ? "✅ অর্ডার সফলভাবে জমা হয়েছে (অর্ডার নম্বর: " + orderNo + ")! তবে ছবিটি আপলোড হয়নি। ছবিটি পরে পাঠাতে হবে। Medispot BD থেকে যোগাযোগ করে অর্ডার নিশ্চিত করা হবে।"
+        : "✅ অর্ডার সফলভাবে জমা হয়েছে (অর্ডার নম্বর: " + orderNo + ")! Medispot BD থেকে যোগাযোগ করে অর্ডার নিশ্চিত করা হবে।";
 
     } catch(error) {
       console.error("Order submission error:", error);
@@ -1097,6 +1184,265 @@ body.cart-open{overflow:hidden}
       placeOrderBtn.textContent = "অর্ডার কনফার্ম করুন";
     }
   });
+
+  /* ===== Customer account ===== */
+  const AUTH_DOMAIN = "@medispotbd.com";
+  const accountBtn = document.getElementById("accountBtn");
+  const accountLabel = document.getElementById("accountLabel");
+  const authModal = document.getElementById("authModal");
+  const accountModal = document.getElementById("accountModal");
+  const authForm = document.getElementById("authForm");
+  const authMessage = document.getElementById("authMessage");
+  const authSubmit = document.getElementById("authSubmit");
+  const profileForm = document.getElementById("profileForm");
+  const profileMessage = document.getElementById("profileMessage");
+  const loginPrompt = document.getElementById("loginPrompt");
+  const checkoutTitle = document.getElementById("checkoutTitle");
+  const myOrdersEl = document.getElementById("myOrders");
+  let authMode = "login";
+  let currentUser = null;
+  let profile = null;
+
+  function normalizePhone(value) {
+    let d = String(value || "").replace(/\D/g, "");
+    if (d.startsWith("8801")) d = "0" + d.slice(3);
+    else if (/^1\d{9}$/.test(d)) d = "0" + d;
+    return /^01[3-9]\d{8}$/.test(d) ? d : "";
+  }
+
+  function openModal(el) {
+    el.style.display = "block";
+    document.body.classList.add("cart-open");
+  }
+
+  function closeModal(el) {
+    el.style.display = "none";
+    const anyOpen = [cartModal, authModal, accountModal].some(m => m.style.display !== "none");
+    if (!anyOpen) document.body.classList.remove("cart-open");
+  }
+
+  function setAuthMode(mode) {
+    authMode = mode;
+    const reg = mode === "register";
+    document.querySelectorAll("[data-auth-tab]").forEach(b => b.classList.toggle("active", b.dataset.authTab === mode));
+    document.querySelectorAll("[data-reg-only]").forEach(el => { el.hidden = !reg; });
+    document.getElementById("authTitle").textContent = reg ? "নতুন একাউন্ট" : "লগইন";
+    authSubmit.textContent = reg ? "একাউন্ট খুলুন" : "লগইন করুন";
+    document.getElementById("authPassword").autocomplete = reg ? "new-password" : "current-password";
+    authMessage.textContent = "";
+  }
+
+  function openAuth(mode) {
+    setAuthMode(mode || "login");
+    openModal(authModal);
+  }
+
+  async function loadProfile() {
+    const meta = (currentUser && currentUser.user_metadata) || {};
+    let row = null;
+    try {
+      const res = await supabase.from("profiles")
+        .select("owner_name,pharmacy_name,phone,address")
+        .eq("id", currentUser.id).maybeSingle();
+      row = res.data;
+    } catch (e) { console.warn("Profile load error:", e); }
+    profile = row || {
+      owner_name: meta.owner_name || "",
+      pharmacy_name: meta.pharmacy_name || "",
+      phone: meta.phone || "",
+      address: meta.address || ""
+    };
+  }
+
+  function prefillCheckout() {
+    if (!profile) return;
+    document.getElementById("ownerName").value = profile.owner_name || "";
+    document.getElementById("pharmacyName").value = profile.pharmacy_name || "";
+    document.getElementById("customerPhone").value = profile.phone || "";
+    document.getElementById("customerAddress").value = profile.address || "";
+  }
+
+  async function applySession(session) {
+    currentUser = session && session.user ? session.user : null;
+
+    if (!currentUser) {
+      profile = null;
+      accountLabel.textContent = "লগইন";
+      accountBtn.classList.remove("on");
+      loginPrompt.hidden = false;
+      checkoutForm.hidden = true;
+      checkoutTitle.hidden = true;
+      return;
+    }
+
+    await loadProfile();
+    const firstName = String(profile.owner_name || "").trim().split(/\s+/)[0];
+    accountLabel.textContent = firstName || "একাউন্ট";
+    accountBtn.classList.add("on");
+    loginPrompt.hidden = true;
+    checkoutForm.hidden = false;
+    checkoutTitle.hidden = false;
+    prefillCheckout();
+  }
+
+  const STATUS_LABELS = {
+    pending:["অপেক্ষমাণ",""], confirmed:["নিশ্চিত হয়েছে","ok"], processing:["প্রক্রিয়াধীন","ok"],
+    shipped:["পাঠানো হয়েছে","ok"], delivered:["ডেলিভারি হয়েছে","ok"], completed:["সম্পন্ন","ok"],
+    cancelled:["বাতিল","bad"], canceled:["বাতিল","bad"]
+  };
+
+  async function loadMyOrders() {
+    myOrdersEl.innerHTML = '<div class="cart-empty">লোড হচ্ছে...</div>';
+    const {data, error} = await supabase.from("orders")
+      .select("id,created_at,status,total_amount,items")
+      .eq("user_id", currentUser.id)
+      .order("created_at", {ascending:false})
+      .limit(30);
+
+    if (error) {
+      console.error("My orders error:", error);
+      myOrdersEl.innerHTML = '<div class="cart-empty">অর্ডার লোড করা যায়নি।</div>';
+      return;
+    }
+
+    if (!data || !data.length) {
+      myOrdersEl.innerHTML = '<div class="cart-empty">এখনো কোনো অর্ডার নেই।</div>';
+      return;
+    }
+
+    myOrdersEl.innerHTML = data.map(order => {
+      const st = STATUS_LABELS[String(order.status || "").toLowerCase()] || [String(order.status || "—"), ""];
+      const items = Array.isArray(order.items)
+        ? order.items.map(i => escapeHTML(i.name) + " × " + escapeHTML(i.quantity)).join(", ") : "";
+      const date = order.created_at
+        ? new Date(order.created_at).toLocaleString("bn-BD", {dateStyle:"medium", timeStyle:"short"}) : "";
+      return `<div class="my-order">
+        <div class="my-order-top"><b>#${escapeHTML(String(order.id).slice(-6).toUpperCase())}</b><span class="status-pill ${st[1]}">${escapeHTML(st[0])}</span></div>
+        <small>${escapeHTML(date)}</small>
+        <small>${items}</small>
+        <div class="amt">${money(order.total_amount || 0)}</div>
+      </div>`;
+    }).join("");
+  }
+
+  function openAccount() {
+    document.getElementById("pfOwner").value = profile.owner_name || "";
+    document.getElementById("pfPharmacy").value = profile.pharmacy_name || "";
+    document.getElementById("pfPhone").value = profile.phone || "";
+    document.getElementById("pfAddress").value = profile.address || "";
+    profileMessage.textContent = "";
+    openModal(accountModal);
+    loadMyOrders();
+  }
+
+  accountBtn.addEventListener("click", () => { currentUser ? openAccount() : openAuth("login"); });
+  document.getElementById("loginPromptBtn").addEventListener("click", () => openAuth("login"));
+  document.getElementById("authCloseBtn").addEventListener("click", () => closeModal(authModal));
+  document.getElementById("accountCloseBtn").addEventListener("click", () => closeModal(accountModal));
+  authModal.addEventListener("click", e => { if (e.target === authModal) closeModal(authModal); });
+  accountModal.addEventListener("click", e => { if (e.target === accountModal) closeModal(accountModal); });
+  document.querySelectorAll("[data-auth-tab]").forEach(b => b.addEventListener("click", () => setAuthMode(b.dataset.authTab)));
+
+  document.addEventListener("keydown", e => {
+    if (e.key !== "Escape") return;
+    if (authModal.style.display !== "none") closeModal(authModal);
+    else if (accountModal.style.display !== "none") closeModal(accountModal);
+  });
+
+  authForm.addEventListener("submit", async event => {
+    event.preventDefault();
+    const phone = normalizePhone(document.getElementById("authPhone").value);
+    const password = document.getElementById("authPassword").value;
+    const reg = authMode === "register";
+
+    if (!phone) { authMessage.textContent = "সঠিক মোবাইল নম্বর দিন (যেমন 01XXXXXXXXX)।"; return; }
+    if (password.length < 6) { authMessage.textContent = "পাসওয়ার্ড কমপক্ষে ৬ অক্ষরের হতে হবে।"; return; }
+
+    const info = {
+      owner_name: document.getElementById("regOwner").value.trim(),
+      pharmacy_name: document.getElementById("regPharmacy").value.trim(),
+      phone,
+      address: document.getElementById("regAddress").value.trim()
+    };
+
+    if (reg && (!info.owner_name || !info.pharmacy_name || !info.address)) {
+      authMessage.textContent = "সব তথ্য পূরণ করুন।";
+      return;
+    }
+
+    authSubmit.disabled = true;
+    authMessage.textContent = "অপেক্ষা করুন...";
+
+    try {
+      if (reg) {
+        const {data, error} = await supabase.auth.signUp({
+          email: phone + AUTH_DOMAIN,
+          password,
+          options: {data: info}
+        });
+        if (error) throw error;
+        if (!data.session) {
+          throw new Error("একাউন্ট তৈরি হয়েছে কিন্তু লগইন হয়নি। Supabase-এ \"Confirm email\" বন্ধ আছে কিনা দেখুন।");
+        }
+        const up = await supabase.from("profiles").upsert({id: data.user.id, ...info});
+        if (up.error) console.warn("Profile save error:", up.error);
+      } else {
+        const {error} = await supabase.auth.signInWithPassword({email: phone + AUTH_DOMAIN, password});
+        if (error) throw error;
+      }
+
+      authForm.reset();
+      closeModal(authModal);
+      authMessage.textContent = "";
+    } catch (error) {
+      console.error("Auth error:", error);
+      const m = String(error.message || "");
+      if (/already registered|already been registered/i.test(m)) authMessage.textContent = "এই নম্বরে আগেই একাউন্ট আছে। লগইন করুন।";
+      else if (/invalid login/i.test(m)) authMessage.textContent = "নম্বর বা পাসওয়ার্ড ভুল।";
+      else authMessage.textContent = m || "কিছু একটা সমস্যা হয়েছে।";
+    } finally {
+      authSubmit.disabled = false;
+    }
+  });
+
+  profileForm.addEventListener("submit", async event => {
+    event.preventDefault();
+    const next = {
+      owner_name: document.getElementById("pfOwner").value.trim(),
+      pharmacy_name: document.getElementById("pfPharmacy").value.trim(),
+      phone: profile.phone || "",
+      address: document.getElementById("pfAddress").value.trim()
+    };
+
+    if (!next.owner_name || !next.pharmacy_name || !next.address) {
+      profileMessage.textContent = "সব তথ্য পূরণ করুন।";
+      return;
+    }
+
+    const {error} = await supabase.from("profiles").upsert({id: currentUser.id, ...next});
+    if (error) {
+      console.error("Profile update error:", error);
+      profileMessage.textContent = "❌ সেভ হয়নি: " + error.message;
+      return;
+    }
+
+    profile = next;
+    accountLabel.textContent = next.owner_name.split(/\s+/)[0] || "একাউন্ট";
+    prefillCheckout();
+    profileMessage.textContent = "✅ তথ্য সেভ হয়েছে।";
+  });
+
+  document.getElementById("logoutBtn").addEventListener("click", async () => {
+    await supabase.auth.signOut();
+    closeModal(accountModal);
+    checkoutForm.reset();
+  });
+
+  supabase.auth.onAuthStateChange((event, session) => {
+    setTimeout(() => applySession(session), 0);
+  });
+
+  supabase.auth.getSession().then(({data}) => applySession(data.session));
 
   renderCart();
 
